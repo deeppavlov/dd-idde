@@ -210,6 +210,10 @@ export class DrawioEditor {
 			})
 		);
 
+		// this.dispose.track(
+		// 	webviewPanel.on
+		// )
+
 		drawioClient.onInvokeCommand.sub(({ command }) => {
 			if (command === "convert") {
 				this.handleConvertCommand();

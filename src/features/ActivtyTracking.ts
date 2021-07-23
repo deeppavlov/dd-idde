@@ -72,9 +72,8 @@ export class ActivityTracking {
 		this.config.markAskedToTest();
 
 		const result = await window.showInformationMessage(
-			`With your feedback on GitHub, the Draw.io extension version ${
-				this.config.packageJson.versionName ||
-				this.config.packageJson.version
+			`With your feedback on GitHub, the Draw.io extension version ${this.config.packageJson.versionName ||
+			this.config.packageJson.version
 			} can be released as stable soon!`,
 			{ modal: false },
 			{
@@ -85,7 +84,7 @@ export class ActivityTracking {
 			},
 			{
 				title: "Skip For This Build",
-				action: () => {},
+				action: () => { },
 			}
 		);
 

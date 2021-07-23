@@ -1,5 +1,8 @@
 import { EventEmitter } from "@hediet/std/events";
 import { DrawioClient } from "./DrawioClient";
+import {
+	window
+} from "vscode";
 
 /**
  * Enhances the drawio client with custom events and methods.
@@ -102,7 +105,9 @@ export class CustomizedDrawioClient extends DrawioClient<
 	}
 
 	protected async handleEvent(evt: CustomDrawioEvent): Promise<void> {
+		window.showInformationMessage(evt.event);
 		if (evt.event === "nodeSelected") {
+
 			this.onNodeSelectedEmitter.emit({
 				label: evt.label,
 				linkedData: evt.linkedData,

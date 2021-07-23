@@ -29,7 +29,8 @@ export class Extension {
 	private readonly drawioClientFactory = new DrawioClientFactory(
 		this.config,
 		this.log,
-		this.context.extensionUri
+		this.context.extensionUri,
+		this.context
 	);
 	private readonly editorService = new DrawioEditorService(
 		this.config,

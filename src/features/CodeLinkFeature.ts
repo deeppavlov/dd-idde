@@ -31,6 +31,7 @@ const linkFileWithSelectedNodeCommandName =
 export class LinkCodeWithSelectedNodeService {
 	public readonly dispose = Disposable.fn();
 
+
 	private readonly statusBar = window.createStatusBarItem();
 
 	private lastActiveTextEditor: TextEditor | undefined =
@@ -51,11 +52,16 @@ export class LinkCodeWithSelectedNodeService {
 						this.statusBar.command = toggleCodeLinkActivationCommandName;
 
 						if (activeEditor) {
-							this.statusBar.text = `$(link) ${
-								activeEditor.config.codeLinkActivated
-									? "$(circle-filled)"
-									: "$(circle-outline)"
-							} Code Link`;
+							this.statusBar.text = `$(link) ${activeEditor.config.codeLinkActivated
+								? "$(circle-filled)"
+								: "$(circle-outline)"
+								} Code Link`;
+							// let oleg = editorManager.activeDrawioEditor?.webviewPanel.webview.
+							// 	if(oleg) { }
+							// else {
+							// oleg = "None";
+							// }
+							// window.showInformationMessage(oleg);
 							this.statusBar.show();
 						} else {
 							this.statusBar.hide();
@@ -64,10 +70,12 @@ export class LinkCodeWithSelectedNodeService {
 					{ name: "Update UI" }
 				),
 			},
+
 			window.onDidChangeActiveTextEditor(() => {
 				if (window.activeTextEditor) {
 					this.lastActiveTextEditor = window.activeTextEditor;
 				}
+				window.showInformationMessage(`The file has been created in the root of the workspace.`);
 			}),
 			commands.registerCommand(
 				linkCodeWithSelectedNodeCommandName,
@@ -154,6 +162,8 @@ export class LinkCodeWithSelectedNodeService {
 		});
 
 		drawioInstance.onNodeSelected.sub(async ({ linkedData, label }) => {
+			window.showInformationMessage(`HEY.`);
+
 			if (!editor.config.codeLinkActivated) {
 				return;
 			}
@@ -267,7 +277,7 @@ class CodePosition {
 		);
 	}
 
-	constructor(public readonly uri: Uri, public readonly range?: Range) {}
+	constructor(public readonly uri: Uri, public readonly range?: Range) { }
 
 	public serialize(relativeTo: Uri): unknown {
 		function toPosition(pos: Position): PositionData {
@@ -284,9 +294,9 @@ class CodePosition {
 			),
 			...(this.range
 				? {
-						start: toPosition(this.range.start),
-						end: toPosition(this.range.end),
-				  }
+					start: toPosition(this.range.start),
+					end: toPosition(this.range.end),
+				}
 				: {}),
 		};
 		return data;
@@ -296,12 +306,12 @@ class CodePosition {
 type Data = {
 	path: string;
 } & (
-	| {}
-	| {
+		| {}
+		| {
 			start: PositionData;
 			end: PositionData;
-	  }
-);
+		}
+	);
 
 interface PositionData {
 	line: number;

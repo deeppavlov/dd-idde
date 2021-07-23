@@ -1,4 +1,4 @@
-import { Webview, OutputChannel, Uri, window, WebviewPanel } from "vscode";
+import { Webview, OutputChannel, Uri, window, WebviewPanel, ExtensionContext } from "vscode";
 import { CustomizedDrawioClient, simpleDrawioLibrary } from ".";
 import { Config, DiagramConfig } from "../Config";
 import html from "./webview-content.html";
@@ -13,8 +13,9 @@ export class DrawioClientFactory {
 	constructor(
 		private readonly config: Config,
 		private readonly log: OutputChannel,
-		private readonly extensionUri: Uri
-	) {}
+		private readonly extensionUri: Uri,
+		private readonly context: ExtensionContext
+	) { }
 
 	public async createDrawioClientInWebview(
 		uri: Uri,
@@ -78,10 +79,13 @@ export class DrawioClientFactory {
 				runInAction("Force reload", () => {
 					reloadId.id++;
 				});
-			}
+			},
+			webviewPanel,
+			this.context
 		);
 
 		drawioClient.onUnknownMessage.sub(({ message }) => {
+			window.showInformationMessage(message.event);
 			if (message.event === "updateLocalStorage") {
 				const newLocalStorage = message.newLocalStorage;
 				config.setLocalStorage(newLocalStorage);
@@ -245,10 +249,10 @@ export class DrawioClientFactory {
 					window.addEventListener('message', event => {
 						
 						if (event.source === window.frames[0]) {
-							//console.log("frame -> vscode", event.data);
+							console.log("frame -> vscode", event.data);
 							api.postMessage(event.data);
 						} else {
-							//console.log("vscode -> frame", event.data);
+							console.log("vscode -> frame", event.data);
 							window.frames[0].postMessage(event.data, "*");
 						}
 					});
@@ -276,6 +280,6 @@ function prettify(msg: unknown): string {
 			return formatValue(obj, process.env.DEV === "1" ? 500 : 80);
 		}
 		return formatValue(msg, process.env.DEV === "1" ? 500 : 80);
-	} catch {}
+	} catch { }
 	return "" + msg;
 }

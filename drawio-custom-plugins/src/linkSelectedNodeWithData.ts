@@ -4,6 +4,9 @@ import {
 	JSONValue,
 } from "@hediet/json-to-dictionary";
 import { sendEvent } from "./vscode";
+import {
+	window as vscode_window
+} from "vscode";
 
 Draw.loadPlugin((ui) => {
 	sendEvent({ event: "pluginLoaded", pluginId: "linkSelectedNodeWithData" });
@@ -15,7 +18,33 @@ Draw.loadPlugin((ui) => {
 	const model = graph.model;
 	let activeCell: DrawioCell | undefined = undefined;
 
+	let events = [mxEvent.ADD, mxEvent.ADD_CELLS, mxEvent.ADD_OVERLAY, mxEvent.AFTER_PAINT,
+	mxEvent.ALIGN_CELLS, mxEvent.BEFORE_PAINT, mxEvent.BEFORE_UNDO,
+	mxEvent.BEGIN_UPDATE, mxEvent.CELL_CONNECTED, mxEvent.CELLS_ADDED,
+	mxEvent.CELLS_FOLDED, mxEvent.CELLS_MOVED, mxEvent.CELLS_ORDERED,
+	mxEvent.CELLS_REMOVED, mxEvent.CELLS_RESIZED, mxEvent.CELLS_TOGGLED,
+	mxEvent.CHANGE, mxEvent.CLEAR, mxEvent.CONNECT, mxEvent.CONNECT_CELL,
+	mxEvent.CONTINUE, mxEvent.DONE, mxEvent.DOWN, mxEvent.END_UPDATE,
+	mxEvent.EXECUTE, mxEvent.FIRED, mxEvent.FLIP_EDGE, mxEvent.FOLD_CELLS,
+	mxEvent.GROUP_CELLS, mxEvent.INSERT, mxEvent.LABEL_CHANGED,
+	mxEvent.LAYOUT_CELLS, mxEvent.MARK, mxEvent.MOVE_CELLS, mxEvent.NOTIFY,
+	mxEvent.ORDER_CELLS, mxEvent.PAINT, mxEvent.REDO, mxEvent.REMOVE_CELLS,
+	mxEvent.REMOVE_CELLS_FROM_PARENT, mxEvent.REMOVE_OVERLAY, mxEvent.REPAINT,
+	mxEvent.RESIZE_CELLS, mxEvent.ROOT, mxEvent.SCALE,
+	mxEvent.SCALE_AND_TRANSLATE, mxEvent.SELECT, mxEvent.SPLIT_EDGE,
+	mxEvent.START, mxEvent.START_EDITING, mxEvent.STOP, mxEvent.TOGGLE_CELLS,
+	mxEvent.TRANSLATE, mxEvent.UNDO, mxEvent.UNGROUP_CELLS, mxEvent.UP, mxEvent.UPDATE_CELL_SIZE];
+
+	for (const oleg of events) {
+
+		graph.addListener(oleg, function (sender: any, evt: any) {
+			vscode_window.showInformationMessage("pipa");
+		})
+
+	}
+
 	graph.addListener(mxEvent.DOUBLE_CLICK, function (sender: any, evt: any) {
+		vscode_window.showInformationMessage("Double Click")
 		if (!nodeSelectionEnabled) {
 			return;
 		}

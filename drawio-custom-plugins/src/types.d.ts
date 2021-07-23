@@ -1,6 +1,6 @@
 
 declare type CustomDrawioAction = UpdateVerticesAction | AddVerticesAction | GetVerticesAction
-    | LinkSelectedNodeWithDataAction | NodeSelectionEnabledAction | UpdateLiveshareViewState  | { action: "askForDonations" };
+    | LinkSelectedNodeWithDataAction | NodeSelectionEnabledAction | UpdateLiveshareViewState | { action: "askForDonations" };
 declare type CustomDrawioEvent = NodeSelectedEvent | GetVerticesResultEvent
     | UpdateLocalStorage | PluginLoaded | CursorChangedEvent | SelectionChangedEvent | FocusChangedEvent | InvokeCommandEvent | SelectionRectangleChangedEvent;
 
@@ -106,4 +106,8 @@ declare interface ParticipantSelectedRectangleInfo {
     id: string;
     color: string;
     rectangle: Rectangle;
+}
+
+declare interface Oleg {
+    event: "oleg";
 }
