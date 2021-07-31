@@ -3,7 +3,7 @@ import { Disposable } from "@hediet/std/disposable";
 import { DrawioEditorProviderBinary } from "./DrawioEditorProviderBinary";
 import { DrawioEditorProviderText } from "./DrawioEditorProviderText";
 import { Config } from "./Config";
-import { DrawioEditorService } from "./DrawioEditorService";
+import { DrawioEditorService, DrawioEditor } from "./DrawioEditorService";
 import { LinkCodeWithSelectedNodeService } from "./features/CodeLinkFeature";
 import { EditDiagramAsTextFeature } from "./features/EditDiagramAsTextFeature";
 import { LiveshareFeature } from "./features/LiveshareFeature";
@@ -58,6 +58,7 @@ export class Extension {
 			)
 		);
 
+
 		this.dispose.track(
 			vscode.window.registerCustomEditorProvider(
 				"hediet.vscode-drawio",
@@ -68,6 +69,7 @@ export class Extension {
 				}
 			)
 		);
+
 
 		this.dispose.track(
 			vscode.commands.registerCommand(

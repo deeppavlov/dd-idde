@@ -110,4 +110,6 @@ declare interface ParticipantSelectedRectangleInfo {
 
 declare interface Oleg {
     event: "oleg";
+    cell_id: string | number;
+    data: string;
 }

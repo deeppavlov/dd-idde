@@ -19,8 +19,11 @@
 				"--enable-proposed-api hediet.vscode-drawio",
 				"${workspaceFolder}/examples"
 			],
-			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
-			"preLaunchTask": "npm: dev",
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js",
+				"${workspaceFolder}/drawio/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}",
 			"env": {
 				"DEV": "1"
 			}
@@ -36,7 +39,9 @@
 				"--enable-proposed-api hediet.vscode-drawio",
 				"${workspaceFolder}/docs"
 			],
-			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
 			"preLaunchTask": "npm: dev",
 			"env": {
 				"DEV": "1"
@@ -53,7 +58,9 @@
 				"--enable-proposed-api hediet.vscode-drawio",
 				"${workspaceFolder}/examples"
 			],
-			"outFiles": ["${workspaceFolder}/dist/**/*.js"],
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
 			"preLaunchTask": "npm: dev"
 		}
 	]

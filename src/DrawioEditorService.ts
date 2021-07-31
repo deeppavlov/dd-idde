@@ -45,6 +45,7 @@ export class DrawioEditorService {
 		window.createStatusBarItem(StatusBarAlignment.Right)
 	);
 
+	private suggestions_visibility = false;
 	constructor(
 		private readonly config: Config,
 		private readonly drawioClientFactory: DrawioClientFactory
@@ -101,6 +102,16 @@ export class DrawioEditorService {
 				activeDrawioEditor.handleExportCommand();
 			})
 		);
+
+		this.dispose.track(
+			commands.registerCommand("catCoding.start", () => {
+				const activeDrawioEditor = this.activeDrawioEditor;
+				activeDrawioEditor ? activeDrawioEditor.webviewPanel.viewColumn ? activeDrawioEditor.webviewPanel.webview.postMessage({ oleg: "VisibilityToggle", visibility: this.suggestions_visibility }) : {} : {};
+				this.suggestions_visibility = !this.suggestions_visibility;
+			})
+		);
+
+
 
 		this.dispose.track({
 			dispose: autorun(
@@ -172,6 +183,7 @@ export class DrawioEditor {
 		".drawio.png",
 		".dio.svg",
 		".dio.png",
+		".dff"
 	];
 
 	public get fileExtension(): string {
@@ -304,6 +316,10 @@ export class DrawioEditor {
 					label: ".drawio.png",
 					description: "Converts the diagram to an editable png file",
 				},
+				{
+					label: ".dff",
+					description: "Converts the diagram to a dff file",
+				}
 			].filter((x) => x.label !== this.fileExtension)
 		);
 
@@ -326,6 +342,14 @@ export class DrawioEditor {
 			{
 				label: ".drawio",
 				description: "Exports the diagram to a drawio file",
+			},
+			{
+				label: ".dff",
+				description: "Exports the diagram to a dff file",
+			},
+			{
+				label: ".dff",
+				description: "Exports the diagram to a dff file",
 			},
 		]);
 

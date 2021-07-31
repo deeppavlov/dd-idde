@@ -1,6 +1,9 @@
 export type DrawioEvent =
 	| {
 		event: "oleg";
+		cell_id: string;
+		curr_content: string;
+		cell_title: string;
 	}
 	| {
 		event: "merge";

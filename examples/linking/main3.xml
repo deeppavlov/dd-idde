@@ -1,9 +1,14 @@
 <mxfile host="65bd71144e" scale="1" border="0">
     <diagram id="MgYzXS6eyhghL7g_6re2" name="Page-1">
-        <mxGraphModel dx="613" dy="687" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="742" dy="377" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="2" value="DFF" parent="0"/>
+                <UserObject label="TOGGLE SUGGESTIONS" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;3&quot;]}}]}" id="1">
+                    <mxCell style="ellipse;whiteSpace=wrap;html=1;fillColor=#e51400;strokeColor=#B20000;fontColor=#ffffff;movable=0;resizable=0;rotatable=0;deletable=0;editable=0;connectable=0;" parent="2" vertex="1">
+                        <mxGeometry x="330" width="120" height="80" as="geometry"/>
+                    </mxCell>
+                </UserObject>
                 <object label="Start" id="4">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
                         <mxGeometry x="510" width="120" height="60" as="geometry"/>
@@ -12,7 +17,7 @@
                 <mxCell id="111" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="2" source="5" target="110" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <object label="Step1" oleg="{&quot;kotiki&quot;:&quot;blep&quot;}" data_from_form="{&quot;fname&quot;:&quot;Hello&quot;,&quot;lname&quot;:&quot;World&quot;}" id="5">
+                <object label="Step1" id="5">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
                         <mxGeometry x="150" y="160" width="120" height="60" as="geometry"/>
                     </mxCell>
@@ -22,15 +27,7 @@
                         <mxGeometry x="75" width="120" height="60" as="geometry"/>
                     </mxCell>
                 </object>
-                <mxCell id="114" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="2" source="7" target="112" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="60" y="360"/>
-                            <mxPoint x="210" y="360"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <object label="Step3" oleg="{&quot;kitty&quot;:&quot;blep&quot;}" id="7">
+                <object label="Step3" id="7">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
                         <mxGeometry y="160" width="120" height="60" as="geometry"/>
                     </mxCell>
@@ -51,17 +48,9 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="113" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="2" source="110" target="112" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <object label="Step1" oleg="{&quot;kotiki&quot;:&quot;blep&quot;}" id="110">
+                <object label="Step1" id="110">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="150" y="290" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <object label="Step1" oleg="{&quot;kotiki&quot;:&quot;blep&quot;}" id="112">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="150" y="440" width="120" height="60" as="geometry"/>
+                        <mxGeometry x="150" y="300" width="120" height="60" as="geometry"/>
                     </mxCell>
                 </object>
                 <mxCell id="3" value="Suggestions" parent="0" visible="0"/>

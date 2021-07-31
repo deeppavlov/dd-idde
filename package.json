@@ -126,6 +126,10 @@
 			{
 				"command": "hediet.vscode-drawio.linkFileWithSelectedNode",
 				"title": "Draw.io: Link File With Selected Node In Active Diagram"
+			},
+			{
+				"command": "catCoding.start",
+				"title": "Start new cat coding session"
 			}
 		],
 		"keybindings": [
@@ -368,6 +372,8 @@
 	"dependencies": {
 		"@hediet/json-to-dictionary": "^0.2.1",
 		"@hediet/std": "0.6.0",
+		"@json-editor/json-editor": "^2.5.4",
+		"pako": "^2.0.4",
 		"@knuddels/mobx-logger": "^1.1.1",
 		"js-sha256": "^0.9.0",
 		"jsdom": "^16.2.2",

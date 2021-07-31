@@ -21,7 +21,13 @@
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
-		}
+			},
+			// "options": {
+			// 	"shell": {
+			// 		"executable": "C:\\WINDOWS\\System32\\wsl.exe"
+			// 	},
+			// 	"args": []
+			// }
+		},
 	]
 }
