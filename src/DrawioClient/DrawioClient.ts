@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { title } from "process";
+import { node } from "webpack";
 
 /**
  * Represents a connection to an drawio iframe.
@@ -36,7 +37,8 @@ export class DrawioClient<
 	private currentXml: string | undefined = undefined;
 
 	private vwP: WebviewPanel;
-	private openedEditors: { [key: string]: WebviewPanel };
+	private openedForms: { [key: string]: WebviewPanel };
+	private openedDFFs: { [key: string]: WebviewPanel };
 
 	constructor(
 		private readonly messageStream: MessageStream,
@@ -45,7 +47,8 @@ export class DrawioClient<
 		private readonly vwPanel: WebviewPanel,
 		private readonly context: ExtensionContext
 	) {
-		this.openedEditors = {};
+		this.openedForms = {};
+		this.openedDFFs = {};
 		this.dispose.track(
 			messageStream.registerMessageHandler((msg) => {
 				console.log("1 " + msg as string);
@@ -157,6 +160,31 @@ export class DrawioClient<
 				action: "configure",
 				config,
 			});
+		} else if (drawioEvt.event === "open dff") {
+			let f = (this as any)._doc.document.uri.path;
+			var parsed = path.parse(f);
+			f = path.join(parsed.dir, parsed.name + "_dff.py")
+			if (!fs.existsSync(f)) {
+				fs.writeFile(f, '', () => { });
+			}
+			vscode.window.showInformationMessage("hey! " + f);
+
+			if (!this.openedDFFs.hasOwnProperty(f)) {
+				let col_to_open = ViewColumn.Two;
+
+				vscode.workspace.openTextDocument(f).then(doc => {
+					vscode.window.showTextDocument(doc, col_to_open);
+				});
+
+				// webviewPanel.onDidDispose(
+				// 	() => { delete this.openedDFFs[f] }, null, this.context.subscriptions
+				// )
+			}
+			else {
+				let vwP = this.openedDFFs[f];
+				vwP.reveal()
+			}
+
 		} else if (drawioEvt.event === "oleg") {
 			let cid = drawioEvt.cell_id;
 			let cell_title = drawioEvt.cell_title;
@@ -164,9 +192,10 @@ export class DrawioClient<
 			let node_info = {
 				"cell_id": cid,
 				"title": cell_title,
-				"cell_content": cell_content
+				"cell_content": cell_content,
+				"children": drawioEvt.children
 			}
-			if (!this.openedEditors.hasOwnProperty(cid)) {
+			if (!this.openedForms.hasOwnProperty(cid)) {
 				// vscode.window.showInformationMessage(cid);
 
 
@@ -182,7 +211,7 @@ export class DrawioClient<
 					}
 				);
 				(webviewPanel as any)._cid = cid;
-				this.openedEditors[cid] = webviewPanel;
+				this.openedForms[cid] = webviewPanel;
 				(webviewPanel as any)._drawiovw = this.vwP.webview;
 				webviewPanel.webview.onDidReceiveMessage(
 					message => {
@@ -194,35 +223,26 @@ export class DrawioClient<
 								// this.saveAsPng(message.text);
 								webviewPanel.dispose();
 								(webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
-								// vscode.window.showInformationMessage("closed a panel");
-								return;
+							// vscode.window.showInformationMessage("closed a panel");
+							// return;
+							case 'editCell':
+								var cell_id = message.cell_id;
+								webviewPanel.dispose();
+								(webviewPanel as any)._drawiovw.postMessage({ oleg: "editCell", cell_id: cell_id });
 						}
 					},
 					undefined,
 					this.context.subscriptions
 				);
 				webviewPanel.onDidDispose(
-					() => { delete this.openedEditors[(webviewPanel as any)._cid] }, null, this.context.subscriptions
+					() => { delete this.openedForms[(webviewPanel as any)._cid] }, null, this.context.subscriptions
 				)
 				this.setHtmlContent(webviewPanel.webview, this.context, node_info);
 			}
 			else {
-				let vwP = this.openedEditors[cid];
+				let vwP = this.openedForms[cid];
 				vwP.reveal()
 			}
-			// this.setHtmlContent(webviewPanel.webview, context);
-			// WV = vscode.window.createWebView; WV.setHTMLContent(); 
-			// .onDidReceiveMessage(
-			// 	message => {
-			// 	  switch (message.command) {
-			// 		case 'saveAsPng':
-			// 		  saveAsPng(message.text);
-			// 		  return;
-			// 	  }
-			// 	},
-			// 	undefined,
-			// 	context.subscriptions
-			//   );
 
 			this.onInitEmitter.emit();
 		} else {
@@ -233,96 +253,41 @@ export class DrawioClient<
 	private setHtmlContent(webview: vscode.Webview,
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
-
-		let htmlContent = `<html>
+		let htmlContent2 = `
 		<head>
 		  <meta charset="UTF-8">
 		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src cspSource; script-src 'nonce-nonce';">
 		  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		  <link href="vscodeTest.css" rel="stylesheet">
 		</head>
-		<body>
-		  <div id="canvasSection"><canvas id="vscodeTestCanvas" /></div>
-		  <form id="MyForm">
-		  
-			<label for="fname">First name:</label><br>
-			<input type="text" id="fname" name="fname" value="${node_info.cell_content.lname ? node_info.cell_content.fname : ''}"><br>
-			<label for="lname"></label><br>
-			<input type="text" id="lname" name="lname" value="${node_info.cell_content.lname ? node_info.cell_content.lname : ''}"><br><br>
-			<input type="button" id="saveAsPngButton" value="Save as png">
-		  </form> 
-		  <script type="text/javascript" src="vscodeTest.js"></script>
-		</body>
-	 	</html>`;
-
-		htmlContent = `<div class="rendered-form">
+		<div class="rendered-form">
+		<div class="formbuilder-text form-group field-text-1627806340486">
+		    <form id="MyForm">
+			<label for="text-1627806340486" class="formbuilder-text-label">Title</label>
+			<input type="text" placeholder="Node Title" class="form-control" 
+			       name="node_title" access="false" value="${node_info["title"]}" 
+				   id="b">
+			</form>
+		</div>
+		<input type="button" id="saveAsPngButton" value="Save as png">
 		<div class="">
-			<h1 access="false" id="control-9969465">${node_info["title"]}<br></h1></div>
-		<div class="">
-			<h2 access="false" id="control-8436113">Flow<br></h2></div>
-		<div class="formbuilder-text form-group field-text-1627623234101">
-			<label for="text-1627623234101" class="formbuilder-text-label">Global Transitions
-				<br>
-			</label>
-			<input type="text" class="form-control" name="text-1627623234101" access="false" id="text-1627623234101">
-		</div>
-		<div class="formbuilder-text form-group field-text-1627623284010">
-			<label for="text-1627623284010" class="formbuilder-text-label">Transitions</label>
-			<input type="text" class="form-control" name="text-1627623284010" access="false" id="text-1627623284010">
-		</div>
-		<div class="formbuilder-select form-group field-select-1627623317661">
-			<label for="select-1627623317661" class="formbuilder-select-label">Graph</label>
-			<select class="form-control" name="select-1627623317661" id="select-1627623317661">
-				<option value="option-1" selected="true" id="select-1627623317661-0">Step1</option>
-				<option value="option-2" id="select-1627623317661-1">Step2</option>
-			</select>
-		</div>
-		<div class="formbuilder-button form-group field-button-1627623432873">
-			<button type="button" class="btn-default btn" name="button-1627623432873" access="false" style="default" id="button-1627623432873">Save Flow settings
-				<br>
-			</button>
-		</div>
-		<div class="">
-			<h2 access="false" id="control-7530579">Node ${node_info["title"]}<br></h2></div>
-		<div class="">
-			<h4 access="false" id="control-3235665">Transitions</h4></div>
-		<div class="formbuilder-select form-group field-select-1627623832279">
-			<label for="select-1627623832279" class="formbuilder-select-label">Transitions</label>
-			<select class="form-control" name="select-1627623832279" id="select-1627623832279">
-				<option value="option-1" id="select-1627623832279-0">Step1</option>
-				<option value="option-2" selected="true" id="select-1627623832279-1">Step2</option>
-				<option value="option-3" id="select-1627623832279-2">Step3</option>
-			</select>
-		</div>
-		<div class="formbuilder-button form-group field-button-1627623871406">
-			<button type="button" class="btn-default btn" name="button-1627623871406" access="false" style="default" id="button-1627623871406">Add Transition
-				<br>
-			</button>
-		</div>
-		<div class="">
-			<h4 access="false" id="control-7914359">Preprocessors</h4></div>
-		<div class="formbuilder-button form-group field-button-1627623683628">
-			<button type="button" class="btn-default btn" name="button-1627623683628" access="false" style="default" id="button-1627623683628">Add Preprocessor
-				<br>
-			</button>
-		</div>
-		<div class="">
-			<h4 access="false" id="control-6744857">Header</h4></div>
-		<div class="">
-			<p access="false" id="control-9885126">Hi</p>
-		</div>
-		<div class="">
-			<p access="false" id="control-2375690">Hello</p>
-		</div>
-		<div class="formbuilder-button form-group field-button-1627623708703">
-			<button type="button" class="btn-default btn" name="button-1627623708703" access="false" style="default" id="button-1627623708703">Add Response
-				<br>
-			</button>
-		</div>
-		<div class="formbuilder-button form-group field-button-1627623897644">
-			<button type="button" class="btn-default btn" name="button-1627623897644" access="false" style="default" id="button-1627623897644">Button</button>
-		</div>
-		</div>`;
+			<h4 access="false" id="control-3900261">Connected To<br></h4></div>
+    	</div>
+		`
+		var children_li = "<ul>"
+		node_info["children"].forEach((children: any) => {
+			var children_title = children["title"];
+			var children_cond = children["condition"];
+			var children_cell_id = children["cell_id"];
+			var children_el = `<li>		` +
+				`<input type="button" class="connected_node" id="${children_cell_id}" value="${children_title}">` +
+				`<input type="text" placeholder="condition" value="${children_cond}" id="cond ${children_cell_id}"></li>`
+			children_li = children_li + children_el;
+		});
+		children_li = children_li + "</ul>"
+		htmlContent2 = htmlContent2 + `<div>${children_li}</div>`
+		let htmlContent = htmlContent2;
+		htmlContent = htmlContent + `<script type="text/javascript" src="vscodeTest.js"></script>`;
 		const jsFilePath = vscode.Uri.joinPath(extensionContext.extensionUri, 'src', 'DrawioClient', 'vscodeTest.js');
 		const visUri = webview.asWebviewUri(jsFilePath);
 		htmlContent = htmlContent.replace('vscodeTest.js', visUri.toString());

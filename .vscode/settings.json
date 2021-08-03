@@ -9,6 +9,7 @@
 	"typescript.tsc.autoDetect": "off",
 	"workbench.editorAssociations": {
 		"*.drawio": "default",
-		"*.dio": "default"
+		"*.dio": "default",
+		"*.dff": "default"
 	}
 }

@@ -4,6 +4,9 @@ export type DrawioEvent =
 		cell_id: string;
 		curr_content: string;
 		cell_title: string;
+		children: Array<{ title: string; condition: string; cell_id: number }>
+	} | {
+		event: "open dff";
 	}
 	| {
 		event: "merge";

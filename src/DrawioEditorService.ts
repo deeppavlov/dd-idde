@@ -222,6 +222,8 @@ export class DrawioEditor {
 			})
 		);
 
+		(this.drawioClient as any)._doc = this.document;
+
 		// this.dispose.track(
 		// 	webviewPanel.on
 		// )
