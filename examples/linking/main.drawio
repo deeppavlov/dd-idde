@@ -1,124 +1,15 @@
 <mxfile host="65bd71144e" scale="1" border="0">
     <diagram id="MgYzXS6eyhghL7g_6re2" name="Page-1">
-        <mxGraphModel dx="1709" dy="1556" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="923" dy="440" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="2" value="DFF" parent="0"/>
-                <object label="Start" id="4">
+                <UserObject label="" data_from_form="{&quot;node_title&quot;:&quot;&quot;,&quot;sfc&quot;:&quot;SFC2&quot;}" id="4">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="510" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <mxCell id="111" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="2" source="5" target="110" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="120" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="2" source="5" target="119" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <object label="Step1" oleg="{&quot;kotiki&quot;:&quot;blep&quot;}" data_from_form="[object Object]" id="5">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="150" y="160" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <object label="StepOleg" data_from_form="{&quot;node_title&quot;:&quot;StepOleg&quot;}" id="6">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="75" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <object label="ФФФ" oleg="{&quot;kitty&quot;:&quot;blep&quot;}" data_from_form="[object Object]" id="7">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry y="160" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <mxCell id="8" style="noEdgeStyle=1;orthogonal=1;" parent="2" source="6" target="7" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="98.33333333333333" y="72"/>
-                            <mxPoint x="60" y="148"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="9" style="noEdgeStyle=1;orthogonal=1;" parent="2" source="6" target="5" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="135" y="74"/>
-                            <mxPoint x="182.5" y="148"/>
-                        </Array>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="123" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="2" source="110" target="122" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="125" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="2" source="110" edge="1">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="330" y="510" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <object label="AAA" oleg="{&quot;kotiki&quot;:&quot;blep&quot;}" data_from_form="{&quot;node_title&quot;:&quot;AAA&quot;}" id="110">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="90" y="330" width="120" height="60" as="geometry"/>
-                    </mxCell>
-                </object>
-                <mxCell id="119" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                    <mxGeometry x="280" y="300" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <UserObject label="I can change labels" data_from_form="{&quot;node_title&quot;:&quot;I can change labels&quot;}" id="122">
-                    <mxCell style="whiteSpace=wrap;html=1;rounded=0;" parent="2" vertex="1">
-                        <mxGeometry x="90" y="470" width="120" height="60" as="geometry"/>
+                        <mxGeometry x="130" y="80" width="120" height="60" as="geometry"/>
                     </mxCell>
                 </UserObject>
-                <mxCell id="124" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                    <mxGeometry x="430" y="120" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="126" value="" style="whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                    <mxGeometry x="270" y="500" width="120" height="60" as="geometry"/>
-                </mxCell>
                 <mxCell id="3" value="Suggestions" parent="0"/>
-                <mxCell id="127" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="654" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="128" value="suggestion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="129" value="suggestion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="130" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="294" y="160" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="131" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="219" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="132" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="144" y="160" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="133" value="suggestion" style="noEdgeStyle=1;orthogonal=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="134" value="suggestion" style="noEdgeStyle=1;orthogonal=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="135" value="suggestion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="136" value="suggestion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry as="geometry"/>
-                </mxCell>
-                <mxCell id="137" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="234" y="330" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="138" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="424" y="300" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="139" value="suggestion" style="whiteSpace=wrap;html=1;rounded=0;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="234" y="470" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="140" value="suggestion" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="574" y="120" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="141" value="suggestion" style="whiteSpace=wrap;html=1;dashed=1;" vertex="1" parent="3">
-                    <mxGeometry x="414" y="500" width="120" height="60" as="geometry"/>
-                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>

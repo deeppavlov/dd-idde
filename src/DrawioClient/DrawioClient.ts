@@ -39,6 +39,8 @@ export class DrawioClient<
 	private vwP: WebviewPanel;
 	private openedForms: { [key: string]: WebviewPanel };
 	private openedDFFs: { [key: string]: WebviewPanel };
+	private visibility: boolean = false;
+	private ts: number = 0;
 
 	constructor(
 		private readonly messageStream: MessageStream,
@@ -51,7 +53,6 @@ export class DrawioClient<
 		this.openedDFFs = {};
 		this.dispose.track(
 			messageStream.registerMessageHandler((msg) => {
-				console.log("1 " + msg as string);
 				this.handleEvent(JSON.parse(msg as string) as DrawioEvent);
 			}
 			)
@@ -184,6 +185,31 @@ export class DrawioClient<
 				let vwP = this.openedDFFs[f];
 				vwP.reveal()
 			}
+		} else if (drawioEvt.event === "get_suggs") {
+			var cells_i: any[] = []
+			let ts = Date.now();
+			let delta = ts - this.ts;
+			if (delta > 1000) {
+				this.ts = ts;
+
+				drawioEvt.cells.forEach((cel) => {
+					if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
+						cells_i.push({
+							x: cel.x, y: cel.y, h: cel.h, w: cel.w,
+							sty: cel.sty, sug_sf: [{ sug: "WWW" }, { sug: "OOO" }, { sug: "SSSSSS" }]
+						})
+					}
+				})
+				var vis = this.visibility;
+				this.visibility = !vis;
+				this.vwP.webview.postMessage({
+					oleg: "DrawSuggestions",
+					cells: cells_i
+					, visibility: !vis
+
+				});
+			}
+
 
 		} else if (drawioEvt.event === "oleg") {
 			let cid = drawioEvt.cell_id;
@@ -223,12 +249,23 @@ export class DrawioClient<
 								// this.saveAsPng(message.text);
 								webviewPanel.dispose();
 								(webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
+								break;
 							// vscode.window.showInformationMessage("closed a panel");
 							// return;
 							case 'editCell':
 								var cell_id = message.cell_id;
+
 								webviewPanel.dispose();
 								(webviewPanel as any)._drawiovw.postMessage({ oleg: "editCell", cell_id: cell_id });
+								break;
+							case 'editEdge':
+								var cell_id = message.cell_id;
+
+								var sfc = message.sfc;
+								// vscode.window.showInformationMessage(JSON.stringify({ sfc: sfc, cid: cell_id }));
+								webviewPanel.dispose();
+								// (webviewPanel as any)._drawiovw.postMessage({ oleg: "editEdge", cell_id: cell_id, sfc: sfc });
+								(webviewPanel as any)._drawiovw.postMessage({ oleg: "editEdge", cell_id: 204, sfc: sfc });
 						}
 					},
 					undefined,
@@ -253,6 +290,10 @@ export class DrawioClient<
 	private setHtmlContent(webview: vscode.Webview,
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
+
+		const speech_functions = ["SFC1", "SFC2"];
+		var node_info_sfc = node_info["cell_content"]["sfc"]
+		if (!node_info_sfc) { node_info_sfc = '' }
 		let htmlContent2 = `
 		<head>
 		  <meta charset="UTF-8">
@@ -267,6 +308,17 @@ export class DrawioClient<
 			<input type="text" placeholder="Node Title" class="form-control" 
 			       name="node_title" access="false" value="${node_info["title"]}" 
 				   id="b">
+			<br/>
+			<p>SFC</p><select name="sfc">`
+		speech_functions.forEach(element => {
+			htmlContent2 += `<option value="${element}"`
+			if (node_info_sfc === element) {
+				htmlContent2 += ` selected`
+			}
+			htmlContent2 += `>${element}</option>`
+		});
+		htmlContent2 += `
+		    </select>
 			</form>
 		</div>
 		<input type="button" id="saveAsPngButton" value="Save as png">
@@ -279,9 +331,23 @@ export class DrawioClient<
 			var children_title = children["title"];
 			var children_cond = children["condition"];
 			var children_cell_id = children["cell_id"];
+			var children_sfc = children["sfc"];
+			if (!children_sfc) { children_sfc = ''; }
 			var children_el = `<li>		` +
-				`<input type="button" class="connected_node" id="${children_cell_id}" value="${children_title}">` +
-				`<input type="text" placeholder="condition" value="${children_cond}" id="cond ${children_cell_id}"></li>`
+				`<input type="button" class="connected_node_node" id="${children_cell_id}" value="${children_title}">` +
+				`<select name="children_sfc" id="option_${children_cell_id}">`;
+			speech_functions.forEach(element => {
+				children_el += `<option value="${element}"`
+				if (children_sfc === element) {
+					children_el += ` selected`
+				}
+				children_el += `>${element}</option>`
+			});
+			children_el +=
+				`</select>` +
+				`<input type="text" placeholder="condition" value="${children_cond}" id="cond ${children_cell_id}">` +
+				`<input type="button" class="connected_node_sfc" id="${children_cell_id}" value="save">` +
+				`</li>`
 			children_li = children_li + children_el;
 		});
 		children_li = children_li + "</ul>"

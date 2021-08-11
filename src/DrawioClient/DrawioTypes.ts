@@ -14,6 +14,10 @@ export type DrawioEvent =
 		message: DrawioEvent;
 	}
 	| {
+		event: "get_suggs";
+		cells: Array<{ id: any, x: any, y: any, h: any, w: any, sty: any }>;
+	}
+	| {
 		event: "init";
 	}
 	| {

@@ -1,12 +1,7 @@
-
-// const canvas = document.getElementById('vscodeTestCanvas');
-
 const vscode = acquireVsCodeApi();
 
 function saveAsPng(event) {
-  // Call back to the extension context to save the image to the workspace folder.
   const formElement = document.getElementById("MyForm");
-  // document.body.innerHTML = "";
   const data = new FormData(formElement);
   const js = JSON.stringify(Object.fromEntries(data));
   vscode.postMessage({
@@ -18,30 +13,90 @@ function saveAsPng(event) {
 const saveAsPngButton = document.getElementById('saveAsPngButton');
 saveAsPngButton.addEventListener('click', saveAsPng);
 
-// const b2 = document.getElementById('connected_node');
-// b2.addEventListener('click', saveAsPng);
 
-
-// // const links = document.getElementsByClassName("connected_node");
-// // const li = links[0];
-Array.from(document.getElementsByClassName('connected_node')).forEach(element => {
-  // element.addEventListener('click', a);
+Array.from(document.getElementsByClassName('connected_node_node')).forEach(element => {
   el_id = element.id;
-  // el_text = element.text;
   el_cell_id = element.cell_id;
-  // condition_el = document.getElementById(`cond ${el_id}`);
-  // condition = condition_el.value;
   element.addEventListener('click', () => {
     vscode.postMessage({
       command: 'editCell',
       cell_id: el_id,
-      // cond_value: condition
     })
   });
 });
-// // const connode = document.getElementById('connected_node');
-// // connode.addEventListener('click', a);
+
+Array.from(document.getElementsByClassName('connected_node_sfc')).forEach(element => {
+  var el_id = element.id;
+  var el_cell_id = element.cell_id;
+  element.addEventListener('click', () => {
+    var el_select = document.getElementById(`option_${el_id}`);
+    var selected_sfc = el_select.options[el_select.selectedIndex].text;
+    // tgt_cell = document.getElementsByClassName("connected_node_node").getElementById(el_id);
+    // tg
+    // vscode.postMessage({
+    //   command: 'editEdge',
+    //   cell_id: el_id,
+    //   sfc: "aa"
+    // })
+    vscode.postMessage({
+      command: 'editEdge',
+      cell_id: el_id,
+      sfc: selected_sfc
+    })
+  });
+});
 
 
-// // li.onclick = a
+function addRow(tableID) {
 
+  var table = document.getElementById(tableID);
+
+  var rowCount = table.rows.length;
+  var row = table.insertRow(rowCount);
+
+  var colCount = table.rows[0].cells.length;
+
+  for (var i = 0; i < colCount; i++) {
+
+    var newcell = row.insertCell(i);
+
+    newcell.innerHTML = table.rows[0].cells[i].innerHTML;
+    //alert(newcell.childNodes);
+    switch (newcell.childNodes[0].type) {
+      case "text":
+        newcell.childNodes[0].value = "";
+        break;
+      case "checkbox":
+        newcell.childNodes[0].checked = false;
+        break;
+      case "select-one":
+        newcell.childNodes[0].selectedIndex = 0;
+        break;
+    }
+  }
+}
+
+function deleteRow(tableID) {
+  try {
+    var table = document.getElementById(tableID);
+    var rowCount = table.rows.length;
+
+    for (var i = 0; i < rowCount; i++) {
+      var row = table.rows[i];
+      var chkbox = row.cells[0].childNodes[0];
+      if (null != chkbox && true == chkbox.checked) {
+        if (rowCount <= 1) {
+          alert("Cannot delete all the rows.");
+          break;
+        }
+        table.deleteRow(i);
+        rowCount--;
+        i--;
+      }
+
+
+    }
+  } catch (e) {
+    alert(e);
+  }
+}
