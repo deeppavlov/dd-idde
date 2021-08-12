@@ -15,7 +15,7 @@ export type DrawioEvent =
 	}
 	| {
 		event: "get_suggs";
-		cells: Array<{ id: any, x: any, y: any, h: any, w: any, sty: any }>;
+		cells: Array<{ id: any, x: any, y: any, h: any, w: any, sty: any, sfc: any }>;
 	}
 	| {
 		event: "init";

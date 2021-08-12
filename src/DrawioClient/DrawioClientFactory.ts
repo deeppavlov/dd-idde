@@ -81,7 +81,8 @@ export class DrawioClientFactory {
 				});
 			},
 			webviewPanel,
-			this.context
+			this.context,
+			config._sfcUrl
 		);
 
 		drawioClient.onUnknownMessage.sub(({ message }) => {

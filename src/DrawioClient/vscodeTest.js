@@ -31,6 +31,8 @@ Array.from(document.getElementsByClassName('connected_node_sfc')).forEach(elemen
   element.addEventListener('click', () => {
     var el_select = document.getElementById(`option_${el_id}`);
     var selected_sfc = el_select.options[el_select.selectedIndex].text;
+    var el_opt = document.getElementById(`cond ${el_id}`);
+    var opt_text = el_opt.value;
     // tgt_cell = document.getElementsByClassName("connected_node_node").getElementById(el_id);
     // tg
     // vscode.postMessage({
@@ -41,7 +43,8 @@ Array.from(document.getElementsByClassName('connected_node_sfc')).forEach(elemen
     vscode.postMessage({
       command: 'editEdge',
       cell_id: el_id,
-      sfc: selected_sfc
+      sfc: selected_sfc,
+      cond: opt_text
     })
   });
 });

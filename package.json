@@ -321,6 +321,12 @@
 						"sketch"
 					],
 					"description": "The theme to use for the Draw.io editor. Use \"automatic\" to automatically choose a Draw.io theme that matches your current VS Code theme."
+				},
+				"dff.vscode-drawio.sfc-predictor-url": {
+					"type": "string",
+					"default": "https://7068.lnsigo.mipt.ru/annotation",
+					"title": "Speech Functions Predictor URL",
+					"description": "An endpoint to predict the possible next speech functions given by the current dialog flow"
 				}
 			}
 		},
@@ -381,6 +387,7 @@
 		"mobx": "5.15.4",
 		"mobx-utils": "5.5.7",
 		"pako": "^2.0.4",
+		"request-promise": "^4.2.6",
 		"vsls": "^1.0.2594",
 		"xml-formatter": "^2.0.1",
 		"xml-parser-xo": "^3.0.0"

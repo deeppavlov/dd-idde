@@ -324,6 +324,14 @@ export class DiagramConfig {
 		}
 	);
 
+	public readonly _sfcUrl = new VsCodeSetting(
+		`dff.vscode-drawio.sfc-predictor-url`,
+		{
+			scope: this.uri,
+			serializer: serializerWithDefault("https://7068.lnsigo.mipt.ru/annotation"),
+		}
+	);
+
 	@computed
 	public get mode(): { kind: "offline" } | { kind: "online"; url: string } {
 		if (this._useOfflineMode.get()) {
@@ -533,7 +541,7 @@ export class DiagramConfig {
 
 	// #endregion
 
-	constructor(public readonly uri: Uri, private readonly config: Config) {}
+	constructor(public readonly uri: Uri, private readonly config: Config) { }
 
 	@computed
 	public get drawioLanguage(): string {
@@ -549,15 +557,15 @@ export class DiagramConfig {
 
 type DrawioCustomLibrary = (
 	| {
-			xml: string;
-	  }
+		xml: string;
+	}
 	| {
-			url: string;
-	  }
+		url: string;
+	}
 	| {
-			json: string;
-	  }
+		json: string;
+	}
 	| {
-			file: string;
-	  }
+		file: string;
+	}
 ) & { libName: string; entryId: string };

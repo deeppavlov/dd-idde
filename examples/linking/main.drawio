@@ -1,14 +1,30 @@
 <mxfile host="65bd71144e" scale="1" border="0">
     <diagram id="MgYzXS6eyhghL7g_6re2" name="Page-1">
-        <mxGraphModel dx="923" dy="440" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="923" dy="597" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="2" value="DFF" parent="0"/>
-                <UserObject label="" data_from_form="{&quot;node_title&quot;:&quot;&quot;,&quot;sfc&quot;:&quot;SFC2&quot;}" id="4">
+                <mxCell id="6" value="Open.Demand.Fact (p=1)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="2" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <UserObject label="Cell Open.Attend" data_from_form="{&quot;node_title&quot;:&quot;Cell #4&quot;,&quot;sfc&quot;:&quot;Open.Attend&quot;}" id="4">
                     <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="130" y="80" width="120" height="60" as="geometry"/>
+                        <mxGeometry x="130" y="60" width="120" height="60" as="geometry"/>
                     </mxCell>
                 </UserObject>
+                <UserObject label="Cell Open.Attend" data_from_form="{&quot;node_title&quot;:&quot;Cell #4&quot;,&quot;sfc&quot;:&quot;Open.Attend&quot;}" id="5">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="130" y="200" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="resp_fact Open.Attend" par="5" incsfc="Open.Demand.Fact" data_from_form="{&quot;node_title&quot;:&quot;resp_fact&quot;,&quot;sfc&quot;:&quot;Open.Attend&quot;}" id="8">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;dashed=0;" parent="2" vertex="1">
+                        <mxGeometry x="130" y="380" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="18" value="Open.Demand.Fact" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=0;" edge="1" parent="2" source="5" target="8">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="3" value="Suggestions" parent="0"/>
             </root>
         </mxGraphModel>

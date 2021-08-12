@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { title } from "process";
 import { node } from "webpack";
+import { VsCodeSetting } from "../vscode-utils/VsCodeSetting";
 
 /**
  * Represents a connection to an drawio iframe.
@@ -47,7 +48,8 @@ export class DrawioClient<
 		private readonly getConfig: () => Promise<DrawioConfig>,
 		public readonly reloadWebview: () => void,
 		private readonly vwPanel: WebviewPanel,
-		private readonly context: ExtensionContext
+		private readonly context: ExtensionContext,
+		private readonly sfc_url: VsCodeSetting<string>
 	) {
 		this.openedForms = {};
 		this.openedDFFs = {};
@@ -191,23 +193,60 @@ export class DrawioClient<
 			let delta = ts - this.ts;
 			if (delta > 1000) {
 				this.ts = ts;
-
-				drawioEvt.cells.forEach((cel) => {
-					if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
-						cells_i.push({
-							x: cel.x, y: cel.y, h: cel.h, w: cel.w,
-							sty: cel.sty, sug_sf: [{ sug: "WWW" }, { sug: "OOO" }, { sug: "SSSSSS" }]
-						})
-					}
-				})
 				var vis = this.visibility;
-				this.visibility = !vis;
-				this.vwP.webview.postMessage({
-					oleg: "DrawSuggestions",
-					cells: cells_i
-					, visibility: !vis
-
+				const fs = require('fs');
+				var rp = require('request-promise');
+				var sfcs: Array<string> = []
+				drawioEvt.cells.forEach((cel) => {
+					var cel_sfc = cel.sfc;
+					sfcs.push(cel_sfc);
 				});
+				var options = {
+					method: 'POST',
+					uri: this.sfc_url.get(),
+					body: sfcs,
+					json: true // Automatically stringifies the body to JSON
+				};
+
+				rp(options)
+					.then((parsedBody: any) => {
+						var predictions = parsedBody[0].batch;
+						vscode.window.showInformationMessage(JSON.stringify(predictions));
+						// POST succeeded...
+
+						for (var i in drawioEvt.cells) {
+							var cel = drawioEvt.cells[i];
+							var cel_preds = predictions[i]
+							var sug_sf: any[] = []
+							cel_preds.forEach((pred_: any) => {
+								if (Object.keys(pred_).length > 0) {
+									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
+								}
+							});
+							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
+								cells_i.push({
+									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
+									sty: cel.sty, sug_sf: sug_sf,
+									id: cel.id
+								})
+							}
+
+						}
+
+						this.vwP.webview.postMessage({
+							oleg: "DrawSuggestions",
+							cells: cells_i
+							, visibility: !vis
+
+						});
+					})
+					.catch(function (err: any) {
+						vscode.window.showInformationMessage(err);
+						// POST failed...
+					});
+
+				this.visibility = !vis;
+
 			}
 
 
@@ -262,10 +301,13 @@ export class DrawioClient<
 								var cell_id = message.cell_id;
 
 								var sfc = message.sfc;
+								var cond = message.cond;
 								// vscode.window.showInformationMessage(JSON.stringify({ sfc: sfc, cid: cell_id }));
 								webviewPanel.dispose();
+
 								// (webviewPanel as any)._drawiovw.postMessage({ oleg: "editEdge", cell_id: cell_id, sfc: sfc });
-								(webviewPanel as any)._drawiovw.postMessage({ oleg: "editEdge", cell_id: 204, sfc: sfc });
+								(webviewPanel as any)._drawiovw.postMessage({ oleg: "editEdge", cell_id: cell_id, sfc: sfc, cond: cond });
+
 						}
 					},
 					undefined,
@@ -291,7 +333,36 @@ export class DrawioClient<
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
 
-		const speech_functions = ["SFC1", "SFC2"];
+		const speech_functions = ['Open.Attend',
+			'Open.Demand.Fact',
+			'Open.Demand.Opinion',
+			'Open.Give.Fact',
+			'Open.Give.Opinion',
+			'React.Rejoinder.Confront.Challenge.Counter',
+			'React.Rejoinder.Confront.Response.Re-challenge',
+			'React.Rejoinder.Support.Challenge.Rebound',
+			'React.Rejoinder.Support.Response.Resolve',
+			'React.Rejoinder.Support.Track.Check',
+			'React.Rejoinder.Support.Track.Clarify',
+			'React.Rejoinder.Support.Track.Confirm',
+			'React.Rejoinder.Support.Track.Probe',
+			'React.Respond.Confront.Disengage',
+			'React.Respond.Confront.Reply.Contradict',
+			'React.Respond.Confront.Reply.Disagree',
+			'React.Respond.Confront.Reply.Disawow',
+			'React.Respond.Support.Develop.Elaborate',
+			'React.Respond.Support.Develop.Enhance',
+			'React.Respond.Support.Develop.Extend',
+			'React.Respond.Support.Engage',
+			'React.Respond.Support.Register',
+			'React.Respond.Support.Reply.Acknowledge',
+			'React.Respond.Support.Reply.Affirm',
+			'React.Respond.Support.Reply.Agree',
+			'React.Respond.Support.Response.Resolve',
+			'Sustain.Continue.Monitor',
+			'Sustain.Continue.Prolong.Elaborate',
+			'Sustain.Continue.Prolong.Enhance',
+			'Sustain.Continue.Prolong.Extend'];
 		var node_info_sfc = node_info["cell_content"]["sfc"]
 		if (!node_info_sfc) { node_info_sfc = '' }
 		let htmlContent2 = `
@@ -317,41 +388,50 @@ export class DrawioClient<
 			}
 			htmlContent2 += `>${element}</option>`
 		});
-		htmlContent2 += `
-		    </select>
+		htmlContent2 += `</select>
 			</form>
 		</div>
 		<input type="button" id="saveAsPngButton" value="Save as png">
-		<div class="">
-			<h4 access="false" id="control-3900261">Connected To<br></h4></div>
-    	</div>
 		`
+
 		var children_li = "<ul>"
 		node_info["children"].forEach((children: any) => {
 			var children_title = children["title"];
 			var children_cond = children["condition"];
+			var cond_splitted = children_cond.split(' ');
+			var cond_ = cond_splitted[0];
+			var proba = cond_splitted[1];
+			if (!cond_) { cond_ = ''; }
+			if (!proba) { proba = ''; }
+			proba = proba.replace(' ', '').replace('(p=', '').replace(')', '');
 			var children_cell_id = children["cell_id"];
 			var children_sfc = children["sfc"];
-			if (!children_sfc) { children_sfc = ''; }
 			var children_el = `<li>		` +
 				`<input type="button" class="connected_node_node" id="${children_cell_id}" value="${children_title}">` +
 				`<select name="children_sfc" id="option_${children_cell_id}">`;
 			speech_functions.forEach(element => {
 				children_el += `<option value="${element}"`
-				if (children_sfc === element) {
+				if (cond_ === element) {
 					children_el += ` selected`
 				}
 				children_el += `>${element}</option>`
 			});
 			children_el +=
 				`</select>` +
-				`<input type="text" placeholder="condition" value="${children_cond}" id="cond ${children_cell_id}">` +
+				`<input type="text" placeholder="condition" value="${proba}" id="cond ${children_cell_id}">` +
 				`<input type="button" class="connected_node_sfc" id="${children_cell_id}" value="save">` +
 				`</li>`
 			children_li = children_li + children_el;
 		});
 		children_li = children_li + "</ul>"
-		htmlContent2 = htmlContent2 + `<div>${children_li}</div>`
+		if (node_info["children"].length > 0) {
+			htmlContent2 += `
+			<div class="">
+				<h4 access="false" id="control-3900261">Connected To<br></h4></div>
+			</div>
+			`
+			htmlContent2 = htmlContent2 + `<div>${children_li}</div>`
+		}
 		let htmlContent = htmlContent2;
 		htmlContent = htmlContent + `<script type="text/javascript" src="vscodeTest.js"></script>`;
 		const jsFilePath = vscode.Uri.joinPath(extensionContext.extensionUri, 'src', 'DrawioClient', 'vscodeTest.js');
