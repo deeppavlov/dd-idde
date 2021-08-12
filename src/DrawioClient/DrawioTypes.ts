@@ -4,7 +4,8 @@ export type DrawioEvent =
 		cell_id: string;
 		curr_content: string;
 		cell_title: string;
-		children: Array<{ title: string; condition: string; cell_id: number }>
+		children: Array<{ title: string; condition: string; cell_id: number }>,
+		suggs: any
 	} | {
 		event: "open dff";
 	}

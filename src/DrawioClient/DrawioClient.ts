@@ -188,6 +188,36 @@ export class DrawioClient<
 				vwP.reveal()
 			}
 		} else if (drawioEvt.event === "get_suggs") {
+			const speech_functions = ['Open.Attend',
+				'Open.Demand.Fact',
+				'Open.Demand.Opinion',
+				'Open.Give.Fact',
+				'Open.Give.Opinion',
+				'React.Rejoinder.Confront.Challenge.Counter',
+				'React.Rejoinder.Confront.Response.Re-challenge',
+				'React.Rejoinder.Support.Challenge.Rebound',
+				'React.Rejoinder.Support.Response.Resolve',
+				'React.Rejoinder.Support.Track.Check',
+				'React.Rejoinder.Support.Track.Clarify',
+				'React.Rejoinder.Support.Track.Confirm',
+				'React.Rejoinder.Support.Track.Probe',
+				'React.Respond.Confront.Disengage',
+				'React.Respond.Confront.Reply.Contradict',
+				'React.Respond.Confront.Reply.Disagree',
+				'React.Respond.Confront.Reply.Disawow',
+				'React.Respond.Support.Develop.Elaborate',
+				'React.Respond.Support.Develop.Enhance',
+				'React.Respond.Support.Develop.Extend',
+				'React.Respond.Support.Engage',
+				'React.Respond.Support.Register',
+				'React.Respond.Support.Reply.Acknowledge',
+				'React.Respond.Support.Reply.Affirm',
+				'React.Respond.Support.Reply.Agree',
+				'React.Respond.Support.Response.Resolve',
+				'Sustain.Continue.Monitor',
+				'Sustain.Continue.Prolong.Elaborate',
+				'Sustain.Continue.Prolong.Enhance',
+				'Sustain.Continue.Prolong.Extend'];
 			var cells_i: any[] = []
 			let ts = Date.now();
 			let delta = ts - this.ts;
@@ -197,6 +227,9 @@ export class DrawioClient<
 				const fs = require('fs');
 				var rp = require('request-promise');
 				var sfcs: Array<string> = []
+				speech_functions.forEach((sf) => {
+					sfcs.push(sf);
+				});
 				drawioEvt.cells.forEach((cel) => {
 					var cel_sfc = cel.sfc;
 					sfcs.push(cel_sfc);
@@ -207,16 +240,27 @@ export class DrawioClient<
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
-
+				var basic_sfcs: any = {};
 				rp(options)
 					.then((parsedBody: any) => {
 						var predictions = parsedBody[0].batch;
 						vscode.window.showInformationMessage(JSON.stringify(predictions));
 						// POST succeeded...
+						for (var j = 0; j < speech_functions.length; j++) {
 
-						for (var i in drawioEvt.cells) {
+							var curr_preds: any = [];
+							predictions[j].forEach((pred: any) => {
+								if (Object.keys(pred).length > 0) {
+									curr_preds.push({ sug: pred.prediction, conf: pred.confidence });
+								}
+							});
+							basic_sfcs[speech_functions[j]] = curr_preds;
+						}
+
+						for (var is in drawioEvt.cells) {
+							var i = Number(is);
 							var cel = drawioEvt.cells[i];
-							var cel_preds = predictions[i]
+							var cel_preds = predictions[i + speech_functions.length]
 							var sug_sf: any[] = []
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
@@ -236,7 +280,8 @@ export class DrawioClient<
 						this.vwP.webview.postMessage({
 							oleg: "DrawSuggestions",
 							cells: cells_i
-							, visibility: !vis
+							, visibility: !vis,
+							nodes_suggestions: basic_sfcs
 
 						});
 					})
@@ -258,7 +303,8 @@ export class DrawioClient<
 				"cell_id": cid,
 				"title": cell_title,
 				"cell_content": cell_content,
-				"children": drawioEvt.children
+				"children": drawioEvt.children,
+				"suggs": drawioEvt.suggs
 			}
 			if (!this.openedForms.hasOwnProperty(cid)) {
 				// vscode.window.showInformationMessage(cid);
@@ -333,7 +379,7 @@ export class DrawioClient<
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
 
-		const speech_functions = ['Open.Attend',
+		const base_speech_functions = ['Open.Attend',
 			'Open.Demand.Fact',
 			'Open.Demand.Opinion',
 			'Open.Give.Fact',
@@ -363,6 +409,19 @@ export class DrawioClient<
 			'Sustain.Continue.Prolong.Elaborate',
 			'Sustain.Continue.Prolong.Enhance',
 			'Sustain.Continue.Prolong.Extend'];
+		var speech_functions: any = [];
+		if (node_info["suggs"]) {
+			var suggs = JSON.parse(node_info["suggs"]);
+			suggs.forEach((sug: any) => {
+				var s = sug["sug"];
+				var c = Number(sug["conf"]).toFixed(2);
+				speech_functions.push(`${s} ${c}`);
+			});
+		}
+		if (speech_functions.length == 0) {
+			speech_functions = base_speech_functions
+		}
+		var title = node_info["title"].split(' ')[0];
 		var node_info_sfc = node_info["cell_content"]["sfc"]
 		if (!node_info_sfc) { node_info_sfc = '' }
 		let htmlContent2 = `
@@ -377,11 +436,11 @@ export class DrawioClient<
 		    <form id="MyForm">
 			<label for="text-1627806340486" class="formbuilder-text-label">Title</label>
 			<input type="text" placeholder="Node Title" class="form-control" 
-			       name="node_title" access="false" value="${node_info["title"]}" 
+			       name="node_title" access="false" value="${title}" 
 				   id="b">
 			<br/>
 			<p>SFC</p><select name="sfc">`
-		speech_functions.forEach(element => {
+		speech_functions.forEach((element: any) => {
 			htmlContent2 += `<option value="${element}"`
 			if (node_info_sfc === element) {
 				htmlContent2 += ` selected`
@@ -409,7 +468,7 @@ export class DrawioClient<
 			var children_el = `<li>		` +
 				`<input type="button" class="connected_node_node" id="${children_cell_id}" value="${children_title}">` +
 				`<select name="children_sfc" id="option_${children_cell_id}">`;
-			speech_functions.forEach(element => {
+			speech_functions.forEach((element: any) => {
 				children_el += `<option value="${element}"`
 				if (cond_ === element) {
 					children_el += ` selected`
