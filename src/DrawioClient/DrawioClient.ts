@@ -8,6 +8,8 @@ import * as path from 'path';
 import { title } from "process";
 import { node } from "webpack";
 import { VsCodeSetting } from "../vscode-utils/VsCodeSetting";
+import * as FormData from 'form-data';
+import { request } from "http";
 
 /**
  * Represents a connection to an drawio iframe.
@@ -164,29 +166,63 @@ export class DrawioClient<
 				config,
 			});
 		} else if (drawioEvt.event === "open dff") {
-			let f = (this as any)._doc.document.uri.path;
-			var parsed = path.parse(f);
-			f = path.join(parsed.dir, parsed.name + "_dff.py")
-			if (!fs.existsSync(f)) {
-				fs.writeFile(f, '', () => { });
-			}
-			vscode.window.showInformationMessage("hey! " + f);
+			// begin oleg
 
-			if (!this.openedDFFs.hasOwnProperty(f)) {
-				let col_to_open = ViewColumn.Two;
+			var curfil = (this as any)._doc.document.uri.path;
+			const readStream = fs.createReadStream(curfil);
+			const form = new FormData();
+			form.append('drawio', readStream);
+			let text = "";
+			const req = request(
+				{
+					host: 'localhost',
+					port: '5000',
+					path: '/drawio2dff',
+					method: 'POST',
+					headers: form.getHeaders(),
+				},
+				response => {
+					const chunks: Uint8Array[] = [];
+					response.on('data', (chunk) => {
+						chunks.push(chunk);
+					});
+					response.on('end', () => {
+						const result = Buffer.concat(chunks).toString();
+						var res_parsed = JSON.parse(result);
+						var dff_base64 = res_parsed.dff;
+						let buff = Buffer.from(dff_base64, 'base64');
+						text += buff.toString('utf-8');
+						var parsed = path.parse(curfil);
+						var resfil = path.join(parsed.dir, parsed.name + "_dff.py")
+						// if (!fs.existsSync(resfil)) {
+						fs.writeFile(resfil, text, () => { });
+						// }
+						// vscode.window.showInformationMessage("hey! " + f);
 
-				vscode.workspace.openTextDocument(f).then(doc => {
-					vscode.window.showTextDocument(doc, col_to_open);
-				});
+						if (!this.openedDFFs.hasOwnProperty(resfil)) {
+							let col_to_open = ViewColumn.Two;
 
-				// webviewPanel.onDidDispose(
-				// 	() => { delete this.openedDFFs[f] }, null, this.context.subscriptions
-				// )
-			}
-			else {
-				let vwP = this.openedDFFs[f];
-				vwP.reveal()
-			}
+							vscode.workspace.openTextDocument(resfil).then(doc => {
+								vscode.window.showTextDocument(doc, col_to_open);
+							});
+
+							// webviewPanel.onDidDispose(
+							// 	() => { delete this.openedDFFs[f] }, null, this.context.subscriptions
+							// )
+						}
+						else {
+							let vwP = this.openedDFFs[resfil];
+							vwP.reveal()
+						}
+					});
+				}
+			);
+
+
+			form.pipe(req);
+
+			// end oleg
+
 		} else if (drawioEvt.event === "get_suggs") {
 			const speech_functions = ['Open.Attend',
 				'Open.Demand.Fact',
@@ -256,7 +292,7 @@ export class DrawioClient<
 							});
 							basic_sfcs[speech_functions[j]] = curr_preds;
 						}
-
+						// for is in cells:
 						for (var is in drawioEvt.cells) {
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
@@ -450,13 +486,16 @@ export class DrawioClient<
 		htmlContent2 += `</select>
 			</form>
 		</div>
-		<input type="button" id="saveAsPngButton" value="Save as png">
+		<input type="button" id="saveAsPngButton" value="Save">
 		`
 
 		var children_li = "<ul>"
 		node_info["children"].forEach((children: any) => {
 			var children_title = children["title"];
 			var children_cond = children["condition"];
+			if (!children_cond) {
+				children_cond = '';
+			}
 			var cond_splitted = children_cond.split(' ');
 			var cond_ = cond_splitted[0];
 			var proba = cond_splitted[1];

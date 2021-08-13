@@ -1,18 +1,14 @@
 import common.universal_templates as templates
 import common.constants as common_constants
-from dff import GRAPH, RESPONSE, TRANSITIONS, GLOBAL_TRANSITIONS, PROCESSING, MISC
+from dff import GRAPH, RESPONSE, TRANSITIONS, GLOBAL_TRANSITIONS, PROCESSING
 from dff import previous, forward
-
-from common.dialogflow_framework.extensions import (
-    intents,
-    priorities,
-    generic_responses,
-    custom_functions,
+from common.speech_functions.generic_responses import (
+    sys_response_to_speech_function_request as generic_responses_intent,
 )
+from common.dialogflow_framework.extensions import intents, custom, custom_functions, priorities, generic_responses
 from common.dialogflow_framework.extensions.facts_utils import fact_provider
-from common.dialogflow_framework.extensions.custom_functions import (
-    set_confidence_and_continue_flag,
-)
+from common.dialogflow_framework.extensions.custom_functions import set_confidence_and_continue_flag
+
 
 flows = {
     "animals": {
