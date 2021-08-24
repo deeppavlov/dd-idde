@@ -8,6 +8,7 @@
 !docs/**/*
 !drawio/LICENSE
 !drawio/VERSION
+!src/DrawioClient/vscodeTest.js
 # !drawio/src/main/webapp/js/PreConfig.js
 # !drawio/src/main/webapp/js/app.min.js
 # !drawio/src/main/webapp/js/shapes.min.js
