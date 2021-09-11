@@ -1,7 +1,7 @@
 import { EventEmitter } from "@hediet/std/events";
 import { Disposable } from "@hediet/std/disposable";
 import { DrawioConfig, DrawioEvent, DrawioAction } from "./DrawioTypes";
-import { WebviewPanel, window, ViewColumn, ExtensionContext } from "vscode";
+import { WebviewPanel, window, ViewColumn, ExtensionContext, Uri } from "vscode";
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -167,7 +167,7 @@ export class DrawioClient<
 			});
 		} else if (drawioEvt.event === "open dff") {
 			// begin oleg
-
+			/*
 			var curfil = (this as any)._doc.document.uri.path;
 			const readStream = fs.createReadStream(curfil);
 			const form = new FormData();
@@ -218,10 +218,71 @@ export class DrawioClient<
 				}
 			);
 
-
 			form.pipe(req);
-
 			// end oleg
+			*/
+			
+
+
+			/* Edited Request (Stable version of request to Flask server) */
+			
+			var content = (this as any)._doc.document.getText();
+			var curfil = (this as any)._doc.document.uri.path;
+			// window.showInformationMessage(`Current file content: ${content}`);
+
+			const data = JSON.stringify({
+				drawio: content
+			})
+			let text = "";
+
+			const options = {
+				host: 'localhost',
+				port: '5000',
+				path: '/drawio2dff',
+				method: 'POST',
+				headers: {
+				  'Content-Type': 'application/json',
+				}
+			  }
+			const req = request(options, res => {
+				const chunks: Uint8Array[] = [];
+				res.on('data', (chunk) => {
+					chunks.push(chunk);
+				});
+				res.on('end', () => {
+					const result = Buffer.concat(chunks).toString();
+					var res_parsed = JSON.parse(result);
+					var dff_base64 = res_parsed.dff;
+					let buff = Buffer.from(dff_base64, 'base64');
+					text += buff.toString('utf-8');
+					var parsed = path.parse(curfil);
+					var resfil = path.join(parsed.dir, parsed.name + "_dff.py")
+					var resfilUri = Uri.file(resfil);
+					fs.writeFile(resfilUri.fsPath, text, () => {
+						if (!this.openedDFFs.hasOwnProperty(resfil)) {
+							let col_to_open = ViewColumn.Two;
+
+							vscode.workspace.openTextDocument(resfil).then(doc => {
+								vscode.window.showTextDocument(doc, col_to_open);
+							});
+						}
+						else {
+							let vwP = this.openedDFFs[resfil];
+							vwP.reveal()
+						}
+					});
+				})
+			});
+			  
+			req.on('error', error => {
+				// POST failed, send message to WebView
+				this.vwP.webview.postMessage({ connectionError: "showDFFConnError"});
+				console.log(error);
+			})
+			
+			req.write(data)
+			req.end()
+			/* End of edited request */
 
 		} else if (drawioEvt.event === "get_suggs") {
 			const speech_functions = ['Open.Attend',
@@ -321,9 +382,10 @@ export class DrawioClient<
 
 						});
 					})
-					.catch(function (err: any) {
-						vscode.window.showInformationMessage(err);
-						// POST failed...
+					.catch((err: any) => {
+						// POST failed, send message to WebView
+						this.vwP.webview.postMessage({ connectionError: "getSuggsError", statusCode: err.statusCode});
+						console.log(err);
 					});
 
 				this.visibility = !vis;
