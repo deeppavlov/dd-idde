@@ -137,6 +137,17 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 							() => `<svg host="65bd71144e" `
 						)
 					);
+				} else if (document.uri.path.endsWith(".py")) {
+					output = document.getText();
+					await drawioClient.convertDrawio2Py(newXml)
+						.then(result => {
+							output = result;
+							//webviewPanel.webview.postMessage( { graphOperations: "rearrangeGraph" });
+						})
+						.catch(error => {
+							console.log(error);
+						}
+					);
 				} else {
 					if (newXml.startsWith('<mxfile host="')) {
 						newXml = newXml.replace(

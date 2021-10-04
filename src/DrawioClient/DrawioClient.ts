@@ -10,6 +10,7 @@ import { node } from "webpack";
 import { VsCodeSetting } from "../vscode-utils/VsCodeSetting";
 import * as FormData from 'form-data';
 import { request } from "http";
+import { PythonShell } from 'python-shell';
 
 /**
  * Represents a connection to an drawio iframe.
@@ -131,9 +132,12 @@ export class DrawioClient<
 		} else if (drawioEvt.event === "init") {
 			this.onInitEmitter.emit();
 		} else if (drawioEvt.event === "autosave") {
-			const oldXml = this.currentXml;
-			this.currentXml = drawioEvt.xml;
-			this.onChangeEmitter.emit({ newXml: this.currentXml, oldXml });
+			// Prevent lags while exchanging data between WebView and Extension
+			if (this.vwPanel.active) {
+				const oldXml = this.currentXml;
+				this.currentXml = drawioEvt.xml;
+				this.onChangeEmitter.emit({ newXml: this.currentXml, oldXml });
+			};
 		} else if (drawioEvt.event === "save") {
 			const oldXml = this.currentXml;
 			this.currentXml = drawioEvt.xml;
@@ -649,30 +653,134 @@ export class DrawioClient<
 		return text;
 	}
 
-	public async mergeXmlLike(xmlLike: string): Promise<void> {
-		const evt = await this.sendActionWaitForResponse({
-			action: "merge",
-			xml: xmlLike,
-		});
+	/**
+	 * Convert Python code to XML content
+	 */
+	 public async convertPyData(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			let pyData = (this as any)._doc.document.getText();
+			let xmlData = "";
+			if (!pyData) {
+				return;
+			}
+			const pathToPyScript = vscode.Uri.file(
+				path.join(this.context.extensionPath, 'python-shell-scripts/py2drawio.py')
+			);
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
+			shell.send(pyData);
 
-		if (evt.event !== "merge") {
-			throw new Error("Invalid response");
-		}
-		if (evt.error) {
-			throw new Error(evt.error);
+			shell.on('message', function (batch) {
+				// received a message sent from the Python script
+				xmlData += batch;
+				});
+				
+			// end the input stream and allow the process to exit
+			shell.end( (err,code,signal) => {
+				if (err) throw err;
+				resolve(xmlData);
+			});
+		})
+	};
+
+	/**
+	 * Convert Drawio XML to Python code
+	 */
+	public async convertDrawio2Py(newXML: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			// let pyData = (this as any)._doc.document.getText();
+			let jsonData = {
+				xmlData: newXML,
+				pyData: (this as any)._doc.document.getText()
+			}
+			let chunks = "";
+			const pathToPyScript = vscode.Uri.file(
+				path.join(this.context.extensionPath, 'python-shell-scripts/drawio2py.py')
+			);
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
+			shell.send(JSON.stringify(jsonData));
+
+			shell.on('message', function (batch) {
+				// received a message sent from the Python script
+				chunks += batch
+				});
+				
+			// end the input stream and allow the process to exit
+			shell.end( (err, code, signal) => {
+				if (err) throw err;
+				console.log('The exit code was: ' + code);
+				console.log('The exit signal was: ' + signal);
+				console.log('finished');
+				const result = chunks;
+				var res_parsed = JSON.parse(result);
+				var dff_base64 = res_parsed.pyCode;
+				let buff = Buffer.from(dff_base64, 'base64');
+				let newPyCode = buff.toString('utf-8');
+				resolve(newPyCode);
+			});
+		})
+	};
+
+	/**
+	 * This changes an xml Draw.io diagram
+	 * Modified for Python Scripts
+	 */
+	 public async mergeXmlLike(xmlLike: string): Promise<void> {
+		//
+		let currFile = (this as any)._doc.document.uri.path;
+		if (currFile.endsWith(".py")) {
+			this.convertPyData()
+				.then(result => {
+					const evt = this.sendActionWaitForResponse({
+						action: "merge",
+						xml: result,
+					});
+					this.vwP.webview.postMessage( { graphOperations: "rearrangeGraph" });
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		} else {
+			const evt = await this.sendActionWaitForResponse({
+				action: "merge",
+				xml: xmlLike,
+			});
+			if (evt.event !== "merge") {
+				throw new Error("Invalid response");
+			}
+			if (evt.error) {
+				throw new Error(evt.error);
+			}
 		}
 	}
 
 	/**
 	 * This loads an xml or svg+xml Draw.io diagram.
+	 * Modified for Python Scripts
 	 */
 	public loadXmlLike(xmlLike: string) {
-		this.currentXml = undefined;
-		this.sendAction({
-			action: "load",
-			xml: xmlLike,
-			autosave: 1,
-		});
+		let currFile = (this as any)._doc.document.uri.path;
+		if (currFile.endsWith(".py")) {
+			this.convertPyData()
+				.then(result => {
+					this.currentXml = undefined;
+					this.sendAction({
+						action: "load",
+						xml: result,
+						autosave: 1,
+					});
+					this.vwP.webview.postMessage( { graphOperations: "rearrangeGraph" });
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		} else {
+			this.currentXml = undefined;
+			this.sendAction({
+				action: "load",
+				xml: xmlLike,
+				autosave: 1,
+			});
+		}
 	}
 
 	public async loadPngWithEmbeddedXml(png: Uint8Array): Promise<void> {
