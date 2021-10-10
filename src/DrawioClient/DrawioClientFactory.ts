@@ -86,7 +86,7 @@ export class DrawioClientFactory {
 		);
 
 		drawioClient.onUnknownMessage.sub(({ message }) => {
-			window.showInformationMessage(message.event);
+			// window.showInformationMessage(message.event);
 			if (message.event === "updateLocalStorage") {
 				const newLocalStorage = message.newLocalStorage;
 				config.setLocalStorage(newLocalStorage);

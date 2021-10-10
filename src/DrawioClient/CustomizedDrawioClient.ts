@@ -105,7 +105,6 @@ export class CustomizedDrawioClient extends DrawioClient<
 	}
 
 	protected async handleEvent(evt: CustomDrawioEvent): Promise<void> {
-		window.showInformationMessage(evt.event);
 		if (evt.event === "nodeSelected") {
 
 			this.onNodeSelectedEmitter.emit({

@@ -1,7 +1,7 @@
 import logging
 from typing import Optional, Union
 
-from dff.core.keywords import TRANSITIONS, RESPONSE
+from dff.core.keywords import TRANSITIONS, GRAPH, RESPONSE
 from dff.core import Context, Actor
 import dff.conditions as cnd
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 # In our example, there is one flow called greeting_flow.
 
 # Inside each flow, we can describe a sub-dialog using keyword `GRAPH` from dff.core.keywords module.
-# Here we can also use keyword `GLOBAL_RESPONSE`, which we have considered in other examples.
+# Here we can also use keyword `GLOBAL_TRANSITIONS`, which we have considered in other examples.
 
 # `GRAPH` describes a sub-dialog using linked nodes, each node has the keywords `RESPONSE` and `TRANSITIONS`.
 
@@ -24,88 +24,38 @@ logger = logging.getLogger(__name__)
 # `TRANSITIONS` are described in pairs:
 #      - the node to which the agent will perform the transition
 #      - the condition under which to make the transition
-
-
-def preproc1(): pass
-def preproc2(): pass
-def preproc3(): pass
-def preproc4(): pass
-def preproc5(): pass
-
-
 flows = {
-    GLOBAL: {
-        TRANSITIONS: {},
-        PROCESSING: {},
-        RESPONSE: {},
-    },
     "greeting_flow": {
-        'start_node': {
-            TRANSITIONS: {'node2': "Hi there!"},
-            PROCESSING: {3: [preproc1, preproc2]},
-            RESPONSE: ""
+        GRAPH: {
+            "start_node": {  # This is an initial node, it doesn't need an `RESPONSE`
+                RESPONSE: "",
+                # If "Hi" == request of user then we make the transition
+                TRANSITIONS: {"node1": cnd.exact_match("Hi")},
+            },
+            "node1": {
+                # When the agent goes to node1, we return "Hi, how are you?"
+                RESPONSE: "Hi, how are you?",
+                TRANSITIONS: {"node2": cnd.exact_match("i'm fine, how are you?")},
+            },
+            "node2": {
+                RESPONSE: "Good. What do you want to talk about?",
+                TRANSITIONS: {"node3": cnd.exact_match("Let's talk about music.")},
+            },
+            "node3": {
+                RESPONSE: "Sorry, I can not talk about music now.",
+                TRANSITIONS: {"node4": cnd.exact_match("Ok, goodbye.")},
+            },
+            "node4": {
+                RESPONSE: "bye",
+                TRANSITIONS: {"node1": cnd.exact_match("Hi")},
+            },
+            "fallback_node": {  # We get to this node if an error occurred while the agent was running
+                RESPONSE: "Ooops",
+                TRANSITIONS: {"node1": cnd.exact_match("Hi")},
+            },
         },
-        'node1': {
-            TRANSITIONS: {'node2': cnd.exact_match("i'm fine, how are you?")},
-            PROCESSING: {},
-            RESPONSE: "Hi, how are you?"
-        },
-        'node2': {
-            TRANSITIONS: {'node3': cnd.exact_match()},
-            PROCESSING: {},
-            RESPONSE: "Good. What do you want to talk about?"
-        },
-        'node3': {
-            TRANSITIONS: {'node4': cnd.exact_match("Ok, goodbye.")},
-            PROCESSING: {},
-            RESPONSE: "Sorry, I can not talk about music now."
-        },
-        'node4': {
-            TRANSITIONS: {'node1': cnd.exact_match("Hi")},
-            PROCESSING: {},
-            RESPONSE: "bye"
-        },
-        'fallback_node': {
-            TRANSITIONS: {'node1': cnd.exact_match("Hi")},
-            PROCESSING: {},
-            RESPONSE: "Ooops"
-        }
     },
-    "small_talk_flow": {
-        'start_node': {
-            TRANSITIONS: {'node1': "How are you!"},
-            PROCESSING: {},
-            RESPONSE: ""
-        },
-        'node1': {
-            TRANSITIONS: {'node2': foo.bar("i'm fine, how are you?")},
-            PROCESSING: {},
-            RESPONSE: "Hi, how are you?"
-        },
-        'node2': {
-            TRANSITIONS: {'node3': cnd.exact_match()},
-            PROCESSING: {},
-            RESPONSE: "Good. What do you want to talk about?"
-        },
-        'node3': {
-            TRANSITIONS: {'node4': cnd.exact_match("Ok, goodbye.")},
-            PROCESSING: {},
-            RESPONSE: "Sorry, I can not talk about music now."
-        },
-        'node4': {
-            TRANSITIONS: {'node1': cnd.exact_match("Hi")},
-            PROCESSING: {},
-            RESPONSE: "bye"
-        },
-        'fallback_node': {
-            TRANSITIONS: {'node1': cnd.exact_match("Hi")},
-            PROCESSING: {},
-            RESPONSE: "Ooops"
-        }
-    },
-
 }
-
 
 # An actor is an object that processes user input replicas and returns responses
 # To create the actor, you need to pass the script of the dialogue `flows`

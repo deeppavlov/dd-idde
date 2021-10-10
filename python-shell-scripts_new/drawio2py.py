@@ -185,9 +185,9 @@ def pretty_print(flow, flows_name):
     },\n\t"""
     output += head
     for name, content in flow.items():
-        output += f'"{name}": {{\n\t\tGRAPH: {{\n\t\t\t'
-        content = ",\n\t\t\t".join(content)
-        output += content + "\n\t\t\t}\n\t\t},\n\t"
+        output += f'"{name}": {{\n\t\t'
+        content = ",\n\t\t".join(content)
+        output += content + "\n\t\t},\n\t"
     tail = """\n}"""
     output += tail
     return output

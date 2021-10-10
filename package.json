@@ -327,7 +327,7 @@
 				},
 				"dff.vscode-drawio.sfc-predictor-url": {
 					"type": "string",
-					"default": "https://7068.lnsigo.mipt.ru/annotation",
+					"default": "http://localhost:8107/annotation",
 					"title": "Speech Functions Predictor URL",
 					"description": "An endpoint to predict the possible next speech functions given by the current dialog flow"
 				}

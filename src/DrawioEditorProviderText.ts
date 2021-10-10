@@ -7,10 +7,13 @@ import {
 	window,
 	workspace,
 	WorkspaceEdit,
+	Uri
 } from "vscode";
 import formatter = require("xml-formatter");
 import { DrawioEditorService } from "./DrawioEditorService";
 import { JSDOM } from "jsdom";
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class DrawioEditorProviderText implements CustomTextEditorProvider {
 	constructor(private readonly drawioEditorService: DrawioEditorService) {}
@@ -126,6 +129,16 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 			drawioClient.onChange.sub(async ({ newXml }) => {
 				// We format the xml so that it can be easily edited in a second text editor.
 
+				// Storing previous XML to .drawio file
+				/*
+				var currfile = document.uri.path;
+				var curr_parsed = path.parse(currfile);
+				var xmlFile = path.join(curr_parsed.dir, curr_parsed.name + "_new.drawio")
+				var xmlUri = Uri.file(xmlFile);
+				fs.writeFile(xmlUri.fsPath, formatter(newXml), () => {
+					console.log('XML stored to file')
+				})*/
+
 				let output: string;
 				if (document.uri.path.endsWith(".svg")) {
 					const svg = await drawioClient.exportAsSvgWithEmbeddedXml();
@@ -138,6 +151,8 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 						)
 					);
 				} else if (document.uri.path.endsWith(".py")) {
+					console.log('New XML:');
+					console.log(newXml);
 					output = document.getText();
 					await drawioClient.convertDrawio2Py(newXml)
 						.then(result => {

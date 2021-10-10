@@ -75,7 +75,6 @@ export class LinkCodeWithSelectedNodeService {
 				if (window.activeTextEditor) {
 					this.lastActiveTextEditor = window.activeTextEditor;
 				}
-				window.showInformationMessage(`The file has been created in the root of the workspace.`);
 			}),
 			commands.registerCommand(
 				linkCodeWithSelectedNodeCommandName,
@@ -162,7 +161,6 @@ export class LinkCodeWithSelectedNodeService {
 		});
 
 		drawioInstance.onNodeSelected.sub(async ({ linkedData, label }) => {
-			window.showInformationMessage(`HEY.`);
 
 			if (!editor.config.codeLinkActivated) {
 				return;

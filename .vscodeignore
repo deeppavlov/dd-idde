@@ -8,6 +8,9 @@
 !docs/**/*
 !drawio/LICENSE
 !drawio/VERSION
+!python-shell-scripts
+!python-shell-scripts-old
+!python-shell-scripts-new
 !src/DrawioClient/vscodeTest.js
 # !drawio/src/main/webapp/js/PreConfig.js
 # !drawio/src/main/webapp/js/app.min.js

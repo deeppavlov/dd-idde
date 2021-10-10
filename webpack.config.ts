@@ -53,7 +53,7 @@ module.exports = {
 		new webpack.IgnorePlugin({ resourceRegExp: /^canvas$/ }),
 		new CopyPlugin({
 			patterns: [
-				{ from: "./src/features/LiveshareFeature/assets", to: "." },
+				{ from: "python-shell-scripts", to: "."}
 			],
 		}),
 	],

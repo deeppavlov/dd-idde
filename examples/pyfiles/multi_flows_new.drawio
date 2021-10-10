@@ -1,0 +1,201 @@
+<mxfile scale="1" border="0">
+    <diagram id="Zmxvd3M=" name="Page-1">
+        <mxGraphModel dx="471" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="2" value="flows" parent="0" flows_name="flows"/>
+                <UserObject label="start_node" flow="greeting_flow" data_from_form="{&quot;node_title&quot;: &quot;start_node&quot;, &quot;sfc&quot;: &quot;&quot;}" response="" processing="{3: ['preproc1', 'preproc2']}" id="5">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry y="60" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="4" value="&quot;Hi there!&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="5" target="9" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="132" y="90"/>
+                            <mxPoint x="208" y="90"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node1 React.Respond.Confront.Reply.Disawow" flow="greeting_flow" data_from_form="{&quot;node_title&quot;:&quot;node1&quot;,&quot;sfc&quot;:&quot;React.Respond.Confront.Reply.Disawow&quot;}" response="Hi, how are you?" processing="{}" id="7">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="880" y="60" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="6" value="cnd.exact_match(&quot;i'm fine, how are you?&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="7" target="9" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="866" y="90"/>
+                            <mxPoint x="830" y="90"/>
+                            <mxPoint x="610" y="90"/>
+                            <mxPoint x="610" y="120"/>
+                            <mxPoint x="390" y="120"/>
+                            <mxPoint x="352" y="102.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node2" flow="greeting_flow" data_from_form="{&quot;node_title&quot;: &quot;node2&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Good. What do you want to talk about?" processing="{}" id="9">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="220" y="60" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="8" value="cnd.exact_match()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="9" target="11" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="352" y="77.5"/>
+                            <mxPoint x="428" y="60"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node3" flow="greeting_flow" data_from_form="{&quot;node_title&quot;: &quot;node3&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Sorry, I can not talk about music now." processing="{}" id="11">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="440" y="30" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="10" value="cnd.exact_match(&quot;Ok, goodbye.&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="11" target="13" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="572" y="60"/>
+                            <mxPoint x="648" y="30"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node4" flow="greeting_flow" data_from_form="{&quot;node_title&quot;: &quot;node4&quot;, &quot;sfc&quot;: &quot;&quot;}" response="bye" processing="{}" id="13">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="660" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="12" value="cnd.exact_match(&quot;Hi&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="13" target="7" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="792" y="30"/>
+                            <mxPoint x="868" y="73.33333333333333"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="fallback_node" flow="greeting_flow" data_from_form="{&quot;node_title&quot;: &quot;fallback_node&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Ooops" processing="{}" id="15">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="660" y="120" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="14" value="cnd.exact_match(&quot;Hi&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="15" target="7" flow="greeting_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="792" y="150"/>
+                            <mxPoint x="868" y="106.66666666666667"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="start_node" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;start_node&quot;, &quot;sfc&quot;: &quot;&quot;}" response="" processing="{}" id="17">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry y="240" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="16" value="&quot;How are you!&quot;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="17" target="19" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="132" y="270"/>
+                            <mxPoint x="208" y="310"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node1" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;node1&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Hi, how are you?" processing="{}" id="19">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="220" y="292.5" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="18" value="foo.bar(&quot;i'm fine, how are you?&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="19" target="21" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="352" y="310"/>
+                            <mxPoint x="428" y="300"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node2" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;node2&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Good. What do you want to talk about?" processing="{}" id="21">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="440" y="270" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="20" value="cnd.exact_match()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="21" target="23" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="572" y="300"/>
+                            <mxPoint x="648" y="300"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node3" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;node3&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Sorry, I can not talk about music now." processing="{}" id="23">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="660" y="270" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="22" value="cnd.exact_match(&quot;Ok, goodbye.&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="23" target="25" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="792" y="300"/>
+                            <mxPoint x="868" y="317.5"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="node4" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;node4&quot;, &quot;sfc&quot;: &quot;&quot;}" response="bye" processing="{}" id="25">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry x="880" y="300" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="24" value="cnd.exact_match(&quot;Hi&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="25" target="19" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="868" y="342.5"/>
+                            <mxPoint x="830" y="360"/>
+                            <mxPoint x="610" y="360"/>
+                            <mxPoint x="610" y="360"/>
+                            <mxPoint x="390" y="360"/>
+                            <mxPoint x="352" y="335"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="fallback_node" flow="small_talk_flow" data_from_form="{&quot;node_title&quot;: &quot;fallback_node&quot;, &quot;sfc&quot;: &quot;&quot;}" response="Ooops" processing="{}" id="27">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
+                        <mxGeometry y="330" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="26" value="cnd.exact_match(&quot;Hi&quot;)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;noEdgeStyle=1;orthogonal=1;" parent="2" source="27" target="19" flow="small_talk_flow" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="132" y="360"/>
+                            <mxPoint x="208" y="335"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <UserObject label="suggestion Sustain.Continue.Prolong.Enhance" par="7" incsfc="Sustain.Continue.Prolong.Elaborate" incsfcconf="0.20" possible_sfs="[{&quot;sug&quot;:&quot;Sustain.Continue.Prolong.Extend&quot;,&quot;conf&quot;:0.16363636363636364},{&quot;sug&quot;:&quot;Sustain.Continue.Prolong.Elaborate&quot;,&quot;conf&quot;:0.14545454545454545},{&quot;sug&quot;:&quot;Sustain.Continue.Prolong.Enhance&quot;,&quot;conf&quot;:0.10909090909090909},{&quot;sug&quot;:&quot;React.Respond.Support.Register&quot;,&quot;conf&quot;:0.07272727272727272},{&quot;sug&quot;:&quot;React.Respond.Support.Reply.Agree&quot;,&quot;conf&quot;:0.05454545454545454}]" data_from_form="{&quot;node_title&quot;:&quot;suggestion&quot;,&quot;sfc&quot;:&quot;Sustain.Continue.Prolong.Enhance 0.11&quot;}" id="31">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;dashed=0;" vertex="1" parent="2">
+                        <mxGeometry x="1264" y="140" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="40" value="Sustain.Continue.Prolong.Elaborate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=0;" edge="1" parent="2" source="7" target="31">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="2" source="46" target="31">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <UserObject label=" React.Respond.Support.Develop.Enhance" data_from_form="{&quot;node_title&quot;:&quot;&quot;,&quot;sfc&quot;:&quot;React.Respond.Support.Develop.Enhance&quot;}" id="57">
+                    <mxCell style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="54">
+                        <mxGeometry x="-0.0318" y="-1" relative="1" as="geometry">
+                            <mxPoint as="offset"/>
+                        </mxGeometry>
+                    </mxCell>
+                </UserObject>
+                <UserObject label="suggestion1 Sustain.Continue.Prolong.Enhance" par="31" incsfc="Sustain.Continue.Prolong.Enhance" incsfcconf="0.20" possible_sfs="[{&quot;sug&quot;:&quot;Sustain.Continue.Prolong.Extend&quot;,&quot;conf&quot;:0.2},{&quot;sug&quot;:&quot;React.Respond.Support.Register&quot;,&quot;conf&quot;:0.2},{&quot;sug&quot;:&quot;Sustain.Continue.Prolong.Enhance&quot;,&quot;conf&quot;:0.2},{&quot;sug&quot;:&quot;Sustain.Continue.Monitor&quot;,&quot;conf&quot;:0.08},{&quot;sug&quot;:&quot;Open.Attend&quot;,&quot;conf&quot;:0.02666666666666667}]" data_from_form="{&quot;node_title&quot;:&quot;suggestion1&quot;,&quot;sfc&quot;:&quot;Sustain.Continue.Prolong.Enhance 0.20&quot;}" id="46">
+                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;dashed=0;" vertex="1" parent="2">
+                        <mxGeometry x="1648" y="150" width="120" height="60" as="geometry"/>
+                    </mxCell>
+                </UserObject>
+                <mxCell id="53" value="Sustain.Continue.Prolong.Enhance" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=0;" edge="1" parent="2" source="31" target="46">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Suggestions" parent="0"/>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

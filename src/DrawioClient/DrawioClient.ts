@@ -117,7 +117,7 @@ export class DrawioClient<
 
 	protected async handleEvent(evt: { event: string }): Promise<void> {
 		const drawioEvt = evt as DrawioEvent;
-		window.showInformationMessage(evt.event);
+		// window.showInformationMessage(evt.event);
 		if ("message" in drawioEvt) {
 			const actionId = (drawioEvt.message as any).actionId as
 				| string
@@ -303,7 +303,6 @@ export class DrawioClient<
 				'React.Rejoinder.Support.Track.Confirm',
 				'React.Rejoinder.Support.Track.Probe',
 				'React.Respond.Confront.Disengage',
-				'React.Respond.Confront.Reply.Contradict',
 				'React.Respond.Confront.Reply.Disagree',
 				'React.Respond.Confront.Reply.Disawow',
 				'React.Respond.Support.Develop.Elaborate',
@@ -332,12 +331,13 @@ export class DrawioClient<
 					sfcs.push(sf);
 				});
 				drawioEvt.cells.forEach((cel) => {
-					var cel_sfc = cel.sfc;
-					sfcs.push(cel_sfc);
+					var cel_sfc = cel.sfc.split(" ");
+					console.log(cel_sfc);
+					sfcs.push(cel_sfc[0]);
 				});
 				var options = {
 					method: 'POST',
-					uri: this.sfc_url.get(),
+					uri: "http://localhost:8107/annotation",
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
@@ -345,7 +345,8 @@ export class DrawioClient<
 				rp(options)
 					.then((parsedBody: any) => {
 						var predictions = parsedBody[0].batch;
-						vscode.window.showInformationMessage(JSON.stringify(predictions));
+						console.log(predictions);
+						// vscode.window.showInformationMessage(JSON.stringify(predictions));
 						// POST succeeded...
 						for (var j = 0; j < speech_functions.length; j++) {
 
@@ -388,7 +389,7 @@ export class DrawioClient<
 					})
 					.catch((err: any) => {
 						// POST failed, send message to WebView
-						this.vwP.webview.postMessage({ connectionError: "getSuggsError", statusCode: err.statusCode});
+						this.vwP.webview.postMessage({ connectionError: "getSuggsError" });
 						console.log(err);
 					});
 
@@ -412,7 +413,7 @@ export class DrawioClient<
 				// vscode.window.showInformationMessage(cid);
 
 
-				let col_to_open = ViewColumn.Two;
+				let col_to_open = ViewColumn.Beside;
 
 				let webviewPanel = window.createWebviewPanel(
 					'vscodeTest',
@@ -431,7 +432,6 @@ export class DrawioClient<
 						switch (message.command) {
 							case 'saveAsPng':
 								var form_data = message.form_data;
-								vscode.window.showInformationMessage(form_data);
 
 								// this.saveAsPng(message.text);
 								webviewPanel.dispose();
@@ -471,7 +471,7 @@ export class DrawioClient<
 				vwP.reveal()
 			}
 
-			this.onInitEmitter.emit();
+			// this.onInitEmitter.emit();
 		} else {
 			this.onUnknownMessageEmitter.emit({ message: drawioEvt });
 		}
@@ -495,7 +495,6 @@ export class DrawioClient<
 			'React.Rejoinder.Support.Track.Confirm',
 			'React.Rejoinder.Support.Track.Probe',
 			'React.Respond.Confront.Disengage',
-			'React.Respond.Confront.Reply.Contradict',
 			'React.Respond.Confront.Reply.Disagree',
 			'React.Respond.Confront.Reply.Disawow',
 			'React.Respond.Support.Develop.Elaborate',
@@ -524,6 +523,9 @@ export class DrawioClient<
 			speech_functions = base_speech_functions
 		}
 		var title = node_info["title"].split(' ')[0];
+		if (title == "Cell") {
+			title = "";
+		}
 		var node_info_sfc = node_info["cell_content"]["sfc"]
 		if (!node_info_sfc) { node_info_sfc = '' }
 		let htmlContent2 = `
