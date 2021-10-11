@@ -129,11 +129,14 @@ class Flows:
                             flow_name, flow_name, value, self.imports, self.source)
                     else:
                         local_flow = {}
-                        for node_key, node_val in zip(value.keys, value.values):
-                            node_name = self.get_name(node_key)
-                            local_flow[(flow_name, node_name)] = Node.parse_node(
-                                flow_name, node_name, node_val, self.imports, self.source)
-                        self.local_flows[flow_name] = local_flow
+                        for gr_key, gr_val in zip(value.keys, value.values):
+                            gr_name = self.get_name(gr_key)
+                            if gr_name == 'GRAPH':
+                                for node_key, node_val in zip(gr_val.keys, gr_val.values):
+                                    node_name = self.get_name(node_key)
+                                    local_flow[(flow_name, node_name)] = Node.parse_node(
+                                        flow_name, node_name, node_val, self.imports, self.source)
+                                self.local_flows[flow_name] = local_flow
 
     def get_flow(self) -> ast.Assign:
         """
