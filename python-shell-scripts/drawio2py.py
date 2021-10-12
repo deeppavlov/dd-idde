@@ -16,7 +16,7 @@ class Transition:
             if isinstance(self.parsed, (ast.Constant, ast.Call)):
                 pass
             elif isinstance(self.parsed, ast.Attribute):
-                self.func = f'cnd.all([custom_functions.speech_functions("{self.func}")])'
+                self.func = f'cnd.all([dm_cnd.is_sf("{self.func}")])'
         else:
             self.func = '""'
 

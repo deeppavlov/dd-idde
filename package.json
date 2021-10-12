@@ -1,23 +1,20 @@
 {
-	"name": "vscode-drawio",
+	"name": "vscode-dd-idde",
 	"private": true,
-	"displayName": "Draw.io Integration",
-	"description": "This unofficial extension integrates Draw.io into VS Code.",
-	"version": "999.0.0-alpha",
+	"displayName": "DD-IDDE",
+	"description": "Discourse-Driven Integrated Dialog Development Environment. Built on top of the unofficial Draw.io extension for VS Code made by Henning Dieterichs.",
+	"version": "0.2.20-alpha",
 	"license": "GPL-3.0",
-	"publisher": "hediet",
+	"publisher": "deeppavlov",
 	"keywords": [
-		"drawio",
-		"diagram",
-		"diagrams.net",
-		"visio",
-		"architecture",
-		"uml",
-		"code link"
+		"deeppavlov",
+		"discourse",
+		"dialog",
+		"IDE"
 	],
 	"author": {
-		"email": "henning.dieterichs@live.de",
-		"name": "Henning Dieterichs"
+		"email": "dima.babadeev@mail.ru",
+		"name": "Dmitry Babadeev"
 	},
 	"readme": "./README.md",
 	"icon": "docs/logo.drawio.png",
@@ -33,7 +30,7 @@
 		"onCommand:hediet.vscode-drawio.newDiagram"
 	],
 	"repository": {
-		"url": "https://github.com/hediet/vscode-drawio.git"
+		"url": "https://github.com/deepmipt/vscode-dff.git"
 	},
 	"main": "./dist/extension/index",
 	"capabilities": {
@@ -75,7 +72,7 @@
 			},
 			{
 				"viewType": "hediet.vscode-drawio-text",
-				"displayName": "Draw.io",
+				"displayName": "DD-IDDE Dialog Designer",
 				"selector": [
 					{
 						"filenamePattern": "*.drawio"
@@ -348,6 +345,7 @@
 		"lint": "yarn run-script check-version && prettier --check ./src",
 		"build": "yarn pre-build && vsce package --yarn --out ./vscode-drawio.vsix",
 		"pre-build": "webpack --mode production && webpack --mode production --config ./drawio-custom-plugins/webpack.config.ts",
+		"postbuild": "cp package.json dist/package.json && cd dist && npm install --only=production",
 		"dev": "webpack --mode development --watch",
 		"dev-drawio-plugins": "webpack --mode development --watch --config ./drawio-custom-plugins/webpack.config.ts",
 		"dev-drawio-plugins-web": "webpack-dev-server --hot --config ./drawio-custom-plugins/webpack.config.ts"
