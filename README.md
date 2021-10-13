@@ -5,11 +5,11 @@
 
 This extension enables developers of the open-domain chatbots with an option to design them within VS Code using customized Draw.io UI and **Discourse Moves Recommendations** to make dialog more smooth and natural.
 
-This extension uses DeepPavlov's [Dialog Flow Framework](https://github.com/deepmipt/dialog_flow_framework) as the runtime environment for the open-domain chatbots. It also uses [DD-IDDE SDK](https://github.com/deepmipt/dd_idde_sdk) that enables the use of the Discourse Moves recommendations during the design phase.
+This extension uses DeepPavlov's [Dialog Flow Framework](https://github.com/deepmipt/dialog_flow_framework) as the runtime environment for the open-domain chatbots. It also uses [DD-IDDE SDK](https://github.com/deepmipt/dd_idde_sdk) that enables the use of the Discourse Moves recommendations during the design phase as well in the runtime.
 
 **Discourse Moves Recommendation System** has been built based on the Discourse & Speech Functions theory originally created by M.A.K. Halliday and further developed by Eggins & Slade in their book ["Analysing Casual Conversation"](https://www.equinoxpub.com/home/analysing-casual-conversation-suzanne-eggins-diana-slade/).
 
-This extension was built on top of the unnoficial integration of the [Draw.io](https://app.diagrams.net/) (also known as [diagrams.net](diagrams.net)) into VS Code made by Henning Dieterichs, [hediet](https://github.com/hediet) on Github (Main Contributor / Author).
+This extension is built on top of the unnoficial integration of the [Draw.io](https://app.diagrams.net/) (also known as [diagrams.net](diagrams.net)) into VS Code made by Henning Dieterichs, [hediet](https://github.com/hediet) on Github (Main Contributor / Author).
 
 ## Features
 
@@ -87,8 +87,9 @@ Use the `View: Reopen Editor With...` command to toggle between the text or the 
 
 -   Oleg Serikov, [oserikov](https://github.com/oserikov) on Github (Author)
 -   Dmitry Babadeev, [prog420](https://github.com/prog420) on Github (Main Contributor)
--   Denis Kuznetsov, [kudep](https://github.com/kudep) on Github (Author of DD-IDDE SDK & Dialog Flow Framework)
+-   Denis Kuznetsov, [kudep](https://github.com/kudep) on Github (Author of DD-IDDE SDK & Dialog Flow Framework/DFF)
 -   Lida Ostyakova, [lnpetrova](https://github.com/lnpetrova) on Github (Author of Discourse Moves Recommendation System)
+-   Dmitry Evseev, [dmitrijeuseew](https://github.com/dmitrijeuseew) on Github (Author of Wiki-based entity detection extensions for DFF)
 -   Daniel Kornev, [DanielKornev](https://github.com/DanielKornev) on Github (PM)
 
 ## Original Draw.io Extension Contributors

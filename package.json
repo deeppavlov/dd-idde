@@ -2,8 +2,8 @@
 	"name": "vscode-dd-idde",
 	"private": true,
 	"displayName": "DD-IDDE",
-	"description": "Discourse-Driven Integrated Dialog Development Environment. Built on top of the unofficial Draw.io extension for VS Code made by Henning Dieterichs.",
-	"version": "0.2.20-alpha",
+	"description": "Discourse-Driven Integrated Dialog Development Environment.",
+	"version": "0.2.21",
 	"license": "GPL-3.0",
 	"publisher": "deeppavlov",
 	"keywords": [
