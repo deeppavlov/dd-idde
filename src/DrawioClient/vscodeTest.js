@@ -1,11 +1,11 @@
 const vscode = acquireVsCodeApi();
 
 function saveAsPng(event) {
-  const formElement = document.getElementById("MyForm");
-  const data = new FormData(formElement);
-  const js = JSON.stringify(Object.fromEntries(data));
+  const input_elements = document.querySelectorAll('.formbuilder-text [name]')
+  const data = {}
+  input_elements.forEach((node) => data[node.name] = node.value)
   vscode.postMessage({
-    command: 'saveAsPng', form_data: js
+    command: 'saveAsPng', form_data: JSON.stringify(data)
   });
 }
 

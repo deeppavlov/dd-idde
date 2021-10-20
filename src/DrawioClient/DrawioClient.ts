@@ -537,7 +537,6 @@ export class DrawioClient<
 		</head>
 		<div class="rendered-form">
 		<div class="formbuilder-text form-group field-text-1627806340486">
-		    <form id="MyForm">
 			<label for="text-1627806340486" class="formbuilder-text-label">Title</label>
 			<input type="text" placeholder="Node Title" class="form-control" 
 			       name="node_title" access="false" value="${title}" 
@@ -552,7 +551,6 @@ export class DrawioClient<
 			htmlContent2 += `>${element}</option>`
 		});
 		htmlContent2 += `</select>
-			</form>
 		</div>
 		<input type="button" id="saveAsPngButton" value="Save">
 		`
