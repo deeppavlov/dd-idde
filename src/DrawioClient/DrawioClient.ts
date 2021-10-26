@@ -730,8 +730,8 @@ export class DrawioClient<
 		if (currFile.endsWith(".py")) {
 			this.convertPyData()
 				.then(result => {
-					const evt = this.sendActionWaitForResponse({
-						action: "merge",
+					this.sendActionWaitForResponse({
+						action: "replace",
 						xml: result,
 					});
 					this.vwP.webview.postMessage( { graphOperations: "rearrangeGraph" });

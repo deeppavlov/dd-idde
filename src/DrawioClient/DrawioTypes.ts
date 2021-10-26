@@ -47,6 +47,7 @@ export type DrawioAction =
 		autosave?: 1;
 	}
 	| { action: "merge"; xml: string }
+	| { action: "replace"; xml: string }
 	| {
 		action: "prompt";
 	}
