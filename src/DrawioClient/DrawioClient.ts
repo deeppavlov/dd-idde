@@ -696,7 +696,10 @@ export class DrawioClient<
 			const pathToPyScript = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts/drawio2py.py')
 			);
-			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
+      const pathToVenv = vscode.Uri.file(
+				path.join(this.context.extensionPath, 'python-shell-scripts', 'venv', 'bin', 'python')
+			);
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
 			shell.send(JSON.stringify(jsonData));
 
 			shell.on('message', function (batch) {
