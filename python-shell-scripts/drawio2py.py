@@ -8,7 +8,7 @@ import libcst.matchers as m
 from lxml import etree
 from dataclasses import dataclass
 from collections import defaultdict
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any, cast
 
 
 class Transition:
@@ -49,14 +49,14 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
     updated_nodes: Dict[str, Dict[str, UpdatedNode]]
     dict_stack: List[cst.Dict] = []
     key_stack: List[str] = []
-    target_elements: Optional[Dict[str, str]] = None
+    target_elements: Optional[Dict[str, Any]] = None
     current_node: Optional[UpdatedNode] = None
     example_dict: Dict[int, cst.Dict] = {}
     example_comma: Dict[int, cst.Comma] = {}
         
     def _formatted_dict(self, offset = 0):
         level = len(self.dict_stack) + offset
-        return cst.parse_expression(f"{{\n{'    ' * level}\n}}")
+        return cast(cst.Dict, cst.parse_expression(f"{{\n{'    ' * level}\n}}"))
     
     def _formatted_comma(self):
         level = len(self.dict_stack)
@@ -87,22 +87,22 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         self.dict_stack.append(node)
         if len(node.elements) > 0:
             self.example_dict[len(self.dict_stack)] = node
-        keys = [el.key.value for el in node.elements if hasattr(el.key, "value")]
+        keys = [el.key.value for el in node.elements if isinstance(el, cst.DictElement) and hasattr(el.key, "value")]
         if len(self.dict_stack) == 3 and 'TRANSITIONS' in keys:
             self.current_node = self.updated_nodes.get(self.key_stack[0], {}).get(self.key_stack[1], None)
-            if self.current_node:
+            if self.current_node is not None:
                 self.need_misc = self.current_node.speech_func != ""
         elif self.current_node is not None:
             if self.key_stack[-1] == 'TRANSITIONS':
                 self.target_elements = self.current_node.transitions.copy()
             elif self.key_stack[-1] == 'MISC':
-                self.target_elements = { "speech_functions": [self.current_node.speech_func] }
+                self.target_elements = { "speech_functions": self.current_node.speech_func }
                 self.need_misc = False
     
     @m.call_if_inside(
         m.SimpleStatementLine(body=[m.Assign(value=m.Dict())])
     )
-    def leave_Dict(self, node: cst.Dict, upd_node: cst.Dict) -> None:
+    def leave_Dict(self, node: cst.Dict, upd_node: cst.Dict) -> cst.Dict:
         if self.target_elements is not None:
             new_els = [cst.DictElement(
                 key=cst.SimpleString(f"'{k}'"),
@@ -122,7 +122,7 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                 elements=[*prev, *new_els]
             )
         self.target_elements = None
-        if len(self.dict_stack) < 4:
+        if len(self.dict_stack) < 4 and self.current_node is not None:
             if self.need_misc:
                 prev = upd_node.elements[-1].with_deep_changes(
                     upd_node.elements[-1],
@@ -151,7 +151,7 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         m.DictElement(value=m.Dict())
     )
     def visit_DictElement(self, node: cst.DictElement):
-        if m.matches(node.comma, m.ParenthesizedWhitespace()):
+        if isinstance(node.comma, cst.Comma) and isinstance(node.comma.whitespace_after, cst.ParenthesizedWhitespace):
             self.example_comma[len(self.dict_stack)] = node.comma
         if hasattr(node.key, "raw_value"):
             self.key_stack.append(node.key.raw_value)
@@ -183,13 +183,16 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                 elif isinstance(upd_node.value, cst.List):
                     val = cst.parse_expression(repr(val))
                     for el in upd_node.value.elements:
-                        if el.deep_equals(val):
+                        if el.value.deep_equals(val):
                             val = upd_node.value
                             break
-                #     else:
-                #         val = upd_node.value.with_changes(
-                #             elements=[*upd_node.value.elements, val]
-                #         )
+                    else:
+                        el = cst.Element(
+                            value=val
+                        )
+                        val = upd_node.value.with_changes(
+                            elements=[*upd_node.value.elements, el]
+                        )
                 else:
                     val = cst.parse_expression(repr(val))
                 return upd_node.with_deep_changes(
