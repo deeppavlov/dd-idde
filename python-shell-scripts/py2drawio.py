@@ -187,7 +187,7 @@ def flow2graph(flow):
             processing = {}
             for path, description in node.transitions.items():
                 edges[path] = {"title": description, "id": node_id}
-                node_id += 1
+                node_id += 3 # Each edge will need three cells
             for id_, preproc in node.processing.items():
                 processing[id_] = preproc
             node_data['processing'] = processing
@@ -196,7 +196,7 @@ def flow2graph(flow):
             node_data['edges'] = edges
             node_data['id'] = node_id
             nodes[local_flow][name] = node_data
-            node_id += 1
+            node_id += 3 # Each node will need to ids
     return nodes
 
 
@@ -233,12 +233,19 @@ def graph2drawio(graph, flow):
                 "sfc": sfcs
             }
             data_from_form = json.dumps(data_from_form).replace("\"", "&quot;")
+            sys.stderr.write(f"{node[1]}: {data['id']}\n")
             node_text = f"""
-                <UserObject label="{node[1]}" flow="{local_flow}" data_from_form="{data_from_form}" response="{data['response']}" processing="{str(data['processing'])}" id="{data['id']}">
-                    <mxCell style="rounded=0;whiteSpace=wrap;html=1;" parent="2" vertex="1">
-                        <mxGeometry x="150" y="{70 + y_shift}" width="120" height="60" as="geometry"/>
+                <UserObject data_from_form="{data_from_form}" label="{node[1]}" id="{data['id']}">
+                    <mxCell id="{data['id'] + 1}" value="{node[1]}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="2" collapsed="1">
+                          <mxGeometry x="150" y="{70 + y_shift}" width="200" height="26" as="geometry">
+                              <mxRectangle x="10" y="40" width="200" height="90" as="alternateBounds" />
+                          </mxGeometry>
                     </mxCell>
-                </UserObject>"""
+                </UserObject>
+                <mxCell isnode="1" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" response="{data['response']}" processing="{str(data['processing'])}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                    <mxGeometry y="26" width="200" height="64" as="geometry" />
+                </mxCell>
+            """
             output += node_text
             for target, edge_data in data['edges'].items():
                 target_id = ""
@@ -252,14 +259,31 @@ def graph2drawio(graph, flow):
                         except KeyError:
                             continue
                 edge_text = f"""
-                    <mxCell id="{edge_data['id']}" flow="{local_flow}" value="{edge_data['title']}" style="{edge_style}" parent="2" source="{data["id"]}" target="{target_id}" edge="1">
+                    <mxCell isedge="1" id="{edge_data['id']}" flow="{local_flow}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{edge_data['title']}" realtarget="{target_id}" edge="1">
                         <mxGeometry relative="1" as="geometry">
                             <Array as="points">
                                 <mxPoint x="150" y="{70 + y_shift}"/>
                                 <mxPoint x="150" y="{70 + y_shift}"/>
                             </Array>
                         </mxGeometry>
-                    </mxCell>"""
+                    </mxCell>
+                    <mxCell id="{edge_data['id'] + 2}" flow="{local_flow}" style="{edge_style}" parent="2" source="{edge_data['id'] + 1}" target="{target_id}" edge="1">
+                        <mxGeometry relative="1" as="geometry">
+                            <Array as="points">
+                                <mxPoint x="150" y="{70 + y_shift}"/>
+                                <mxPoint x="150" y="{70 + y_shift}"/>
+                            </Array>
+                        </mxGeometry>
+                    </mxCell>
+                    <mxCell id="{edge_data['id'] + 1}" value="{edge_data['title']}" style="swimlane;fontColor=default;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="2" collapsed="1">
+                          <mxGeometry x="150" y="{70 + y_shift}" width="200" height="26" as="geometry">
+                              <mxRectangle x="10" y="40" width="200" height="90" as="alternateBounds" />
+                          </mxGeometry>
+                    </mxCell>
+                    <mxCell parent="{edge_data['id'] + 1}" value="DETAAAAAAAIIIIL" style="text;strokeColor=none;fontColor=default;fillColor=default;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                        <mxGeometry y="26" width="200" height="64" as="geometry" />
+                    </mxCell>
+                """
                 output += edge_text
         y_shift += 300
     output += tail
@@ -270,6 +294,8 @@ def pipeline(content):
     tree = ast.parse(content)
     flow = Flows(content, tree)
     nodes = flow2graph(flow)
+    # from pprint import pprint
+    # print(nodes)
     xml = graph2drawio(nodes, flow)
     return xml
 
