@@ -85,8 +85,9 @@ Use the `View: Reopen Editor With...` command to toggle between the text or the 
 
 ## DD-IDDE Contributors
 
--   Oleg Serikov, [oserikov](https://github.com/oserikov) on Github (Author)
--   Dmitry Babadeev, [prog420](https://github.com/prog420) on Github (Main Contributor)
+-   Oleg Serikov, [oserikov](https://github.com/oserikov) on Github (Original Author)
+-   Bálint Magyar, [mablin7](https://github.com/mablin7) on Github (Frontend Software Engineer)
+-   Dmitry Babadeev, [prog420](https://github.com/prog420) on Github (Main Contributor in August-October 2021)
 -   Denis Kuznetsov, [kudep](https://github.com/kudep) on Github (Author of DD-IDDE SDK & Dialog Flow Framework/DFF)
 -   Lida Ostyakova, [lnpetrova](https://github.com/lnpetrova) on Github (Author of Discourse Moves Recommendation System)
 -   Dmitry Evseev, [dmitrijeuseew](https://github.com/dmitrijeuseew) on Github (Author of Wiki-based entity detection extensions for DFF)
