@@ -669,8 +669,8 @@ export class DrawioClient<
       const pathToVenv = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts', 'venv', 'bin', 'python')
 			);
-			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
-			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
+			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
 			shell.send(pyData);
 
 			shell.on('message', function (batch) {
@@ -703,7 +703,8 @@ export class DrawioClient<
       const pathToVenv = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts', 'venv', 'bin', 'python')
 			);
-			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
+			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
 			shell.send(JSON.stringify(jsonData));
 
 			shell.on('message', function (batch) {
