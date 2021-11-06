@@ -2,7 +2,7 @@ import ast
 import sys
 import json
 from base64 import b64encode
-
+import libcst as cst
 
 class Node:
     """
@@ -258,8 +258,16 @@ def graph2drawio(graph, flow):
                             break
                         except KeyError:
                             continue
+                parsed = cst.parse_expression(edge_data['title'].replace('&quot;', '"'))
+                if isinstance(parsed, cst.Call) and len(parsed.args) > 0  and isinstance(parsed.args[0].value, cst.List):
+                    mod = cst.parse_module(edge_data['title'].replace('&quot;', '"'))
+                    cndlist = [mod.code_for_node(el.value) for el in parsed.args[0].value.elements]
+                    title = parsed.func.attr.value.capitalize().replace('"', '&quot;')
+                else:
+                    cndlist = []
+                    title = edge_data['title']
                 edge_text = f"""
-                    <mxCell isedge="1" id="{edge_data['id']}" flow="{local_flow}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{edge_data['title']}" realtarget="{target_id}" edge="1">
+                    <mxCell isedge="1" id="{edge_data['id']}" flow="{local_flow}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{title}" realtarget="{target_id}" edge="1">
                         <mxGeometry relative="1" as="geometry">
                             <Array as="points">
                                 <mxPoint x="150" y="{70 + y_shift}"/>
@@ -275,15 +283,18 @@ def graph2drawio(graph, flow):
                             </Array>
                         </mxGeometry>
                     </mxCell>
-                    <mxCell id="{edge_data['id'] + 1}" value="{edge_data['title']}" style="swimlane;fontColor=default;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="2" collapsed="1">
+                    <mxCell id="{edge_data['id'] + 1}" value="{title}" style="swimlane;fontColor=default;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="2" collapsed="1">
                           <mxGeometry x="150" y="{70 + y_shift}" width="200" height="26" as="geometry">
                               <mxRectangle x="10" y="40" width="200" height="90" as="alternateBounds" />
                           </mxGeometry>
                     </mxCell>
-                    <mxCell parent="{edge_data['id'] + 1}" value="DETAAAAAAAIIIIL" style="text;strokeColor=none;fontColor=default;fillColor=default;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
-                        <mxGeometry y="26" width="200" height="64" as="geometry" />
-                    </mxCell>
                 """
+                for cnd in cndlist:
+                    edge_text += f"""
+                        <mxCell parent="{edge_data['id'] + 1}" value="{cnd.replace('"', '&quot;')}" style="text;strokeColor=none;fontColor=default;fillColor=white;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                            <mxGeometry y="26" width="200" height="30" as="geometry" />
+                        </mxCell>
+                    """
                 output += edge_text
         y_shift += 300
     output += tail
