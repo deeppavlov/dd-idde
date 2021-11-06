@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 \-  Updates README.MD.
 
+**##** **[****0.2.22-Alpha****]**
+
+\-  New list style nodes in graph
+\-  Updated code generation
+
 **##** **[****0.2.20-Alpha****]**
 
 \-  Updated Change Log.
