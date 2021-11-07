@@ -9,19 +9,15 @@ class Node:
     Representation of global or local nodes.
     """
 
-    def __init__(self, name, tr, proc, resp, misc):
+    def __init__(self, name, tr,  misc):
         self.name = name
-        self.response = resp
         self.transitions = tr
-        self.processing = proc
         self.misc = misc
 
     @classmethod
     def parse_node(cls, flow_name, node_name, node, imports, source):
         node_tuple = (flow_name, node_name)
         transitions = {}
-        processing = {}
-        response = ""
         misc = ""
         for key, value in zip(node.keys, node.values):
             if key.id == 'TRANSITIONS':
@@ -56,17 +52,6 @@ class Node:
                     elif isinstance(tr_v, ast.Attribute):
                         tr_description = f"{tr_v.value.id}.{tr_v.attr}"
                     transitions[target_title] = tr_description
-            elif key.id == 'PROCESSING':
-                for proc_k, proc_v in zip(value.keys, value.values):
-                    if isinstance(proc_k, ast.Constant):
-                        processing[proc_k.value] = []
-                        for function in proc_v.elts:
-                            processing[proc_k.value].append(function.id)
-            elif key.id == 'RESPONSE':
-                if isinstance(value, ast.Dict):
-                    continue
-                elif isinstance(value, ast.Constant):
-                    response = value.value
             elif key.id == "MISC":
                 misc = []
                 if not isinstance(value, ast.Dict):
@@ -80,7 +65,7 @@ class Node:
                             misc.append(element.value)
                             #misc = ast.get_source_segment(content, value).replace("\"", "&quot;")
 
-        return cls(node_tuple, transitions, processing, response, misc)
+        return cls(node_tuple, transitions, misc)
 
 
 class Flows:
@@ -184,14 +169,9 @@ def flow2graph(flow):
                 continue
             node_data = {}
             edges = {}
-            processing = {}
             for path, description in node.transitions.items():
                 edges[path] = {"title": description, "id": node_id}
                 node_id += 3 # Each edge will need three cells
-            for id_, preproc in node.processing.items():
-                processing[id_] = preproc
-            node_data['processing'] = processing
-            node_data['response'] = node.response
             node_data['misc'] = node.misc
             node_data['edges'] = edges
             node_data['id'] = node_id
@@ -242,7 +222,7 @@ def graph2drawio(graph, flow):
                           </mxGeometry>
                     </mxCell>
                 </UserObject>
-                <mxCell isnode="1" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" response="{data['response']}" processing="{str(data['processing'])}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                <mxCell isnode="1" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
                     <mxGeometry y="26" width="200" height="64" as="geometry" />
                 </mxCell>
             """
@@ -262,7 +242,10 @@ def graph2drawio(graph, flow):
                 if isinstance(parsed, cst.Call) and len(parsed.args) > 0  and isinstance(parsed.args[0].value, cst.List):
                     mod = cst.parse_module(edge_data['title'].replace('&quot;', '"'))
                     cndlist = [mod.code_for_node(el.value) for el in parsed.args[0].value.elements]
-                    title = parsed.func.attr.value.capitalize().replace('"', '&quot;')
+                    if isinstance(parsed.func, cst.Attribute):
+                        title = parsed.func.attr.value.capitalize().replace('"', '&quot;')
+                    else:
+                        title = edge_data['title']
                 else:
                     cndlist = []
                     title = edge_data['title']
