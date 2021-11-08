@@ -399,6 +399,7 @@ export class DrawioClient<
 
 
 		} else if (drawioEvt.event === "oleg") {
+      console.warn("OLEG", drawioEvt)
 			let cid = drawioEvt.cell_id;
 			let cell_title = drawioEvt.cell_title;
 			let cell_content = JSON.parse(drawioEvt.curr_content);
@@ -522,7 +523,7 @@ export class DrawioClient<
 		if (speech_functions.length == 0) {
 			speech_functions = base_speech_functions
 		}
-		var title = node_info["title"].split(' ')[0];
+		var title = node_info["title"];
 		if (title == "Cell") {
 			title = "";
 		}

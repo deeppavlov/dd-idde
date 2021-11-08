@@ -24,9 +24,7 @@ def parse_file(drawio_fn):
                 form_data = json.loads(usr_obj[0].attrib['data_from_form'])
             else:
                 form_data = {}
-            title = form_data['sfc'] if 'sfc' in form_data else node.attrib['label']
-            if 'sfc' not in form_data:
-                form_data['sfc'] = title.split()[0]
+            title = form_data.get('node_title', node.attrib['label'])
             if 'node_title' not in form_data:
                 form_data['node_title'] = title
             nodeid = int(node.attrib["id"])
@@ -49,13 +47,8 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
         flow_name = node.attrib["flow"]
         from_form = node_dict['form_data']
 
-        # Check if node name contains Speech Function
-        node_name = node.attrib["label"].split(" ")
-        if len(node_name) > 1:
-            node_name, sfc = node_name[:2]
-        else:
-            node_name = node_name[0]
-            sfc = from_form["sfc"]
+        node_name = node.attrib["label"]
+        sfc = from_form.get("sfc", "")
         # Transitions
         # Check if node has child nodes
         transitions: Dict[str, str] = {}
