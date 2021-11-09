@@ -1,4 +1,3 @@
-#!/usr/bin/env python3.9
 import base64
 import json
 import sys
@@ -82,19 +81,14 @@ def fix_missing_flows(nodes, edges, edge_flows):
     for node_dict in nodes.values():
         node = node_dict["node"]
         try:
-            sys.stderr.write("KEY: " + repr(node.attrib['flow']) + "\n")
             node.attrib["flow"]
         except KeyError:
-            sys.stderr.write("LOOKING ID " + str(int(node.attrib["id"])) + "\n")
             i = int(node.attrib["id"])
             for source, target in edges.items():
                 if i in edge_flows:
                     node.attrib["flow"] = edge_flows[i]
-                    sys.stderr.write("FOUND " + edge_flows[i] + "\n")
-                sys.stderr.write("LOOKING ID " + str(int(node.attrib["id"])) + "\n")
                 try:  # If we find missing flow, check flow of parent node
                     target[int(node.attrib["id"])]
-                    sys.stderr.write("FOUND " + target[int(node.attrib["id"])] + "\n")
                     node.attrib["flow"] = nodes[source]["node"].attrib["flow"]
                 except KeyError:
                     continue
@@ -103,10 +97,6 @@ def fix_missing_flows(nodes, edges, edge_flows):
 
 def parse_xml(content):
     nodes, edges, edge_flows = parse_file(content)
-    import pprint
-    pprint.pprint(nodes, sys.stderr)
-    pprint.pprint(edges, sys.stderr)
-    pprint.pprint(edges.items(), sys.stderr)
     nodes, edges = fix_missing_flows(nodes, edges, edge_flows)
     updated = get_updated_nodes(nodes, edges)
     return updated
@@ -132,3 +122,4 @@ if old_flow:
 base64response = base64.b64encode(bytes(python_code, "utf-8")).decode("utf-8")
 response = json.dumps({"pyCode": base64response})
 sys.stdout.write(response)
+

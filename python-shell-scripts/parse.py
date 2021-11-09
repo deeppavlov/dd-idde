@@ -1,3 +1,4 @@
+import sys
 import dataclasses
 import libcst as cst
 import libcst.matchers as m
@@ -54,6 +55,10 @@ class DictUpdate:
     def pop(self, key: Union[str, cst.BaseExpression]):
         if isinstance(key, (cst.Name, cst.SimpleString)):
             str_key = key.value
+        elif isinstance(key, cst.Tuple):
+            str_key = f"({key.elements[0].value}, {key.elements[1].value})"
+        elif isinstance(key, cst.Call):
+            return None
         elif isinstance(key, str):
             str_key = key
         else:
@@ -352,14 +357,14 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             base_indent = self.offset_indent(self.indent_stack.pop(), -1)
         else:
             base_indent = self.indent_stack[-1] if len(self.indent_stack) > 0 else ""
-        # print(f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}")
+        sys.stderr.write(f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}\n")
 
         target = self.get_target()
-        # print(
-        #     f"transforming node {type(node)} in path {'.'.join(str(i) for i in self.path)}, update: {type(target)}"
-        # )
+        sys.stderr.write(
+            f"transforming node {type(node)} in path {'.'.join(str(i) for i in self.path)}, update: {type(target)}\n"
+        )
         if target is None:
-            # print(f"code for updated node: {self.py_tree.code_for_node(node)}")
+            sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
             return node
 
         if isinstance(target, DictUpdate) and not isinstance(node, cst.Dict):
@@ -406,7 +411,7 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         if len(target.elements) > 0:
             right_ws = cst.SimpleWhitespace("")
 
-        # print(f"Remaining {target.elements}")
+        sys.stderr.write(f"Remaining {target.elements}\n")
         # Remaining elements
         for key, update in target:
             key = (
@@ -450,5 +455,5 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             node, base_indent, is_expanded, is_expanded and has_trailing_comma
         )
 
-        # print(f"code for updated node: {self.py_tree.code_for_node(node)}")
+        sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
         return node

@@ -6,6 +6,9 @@ export type DrawioEvent =
 		cell_title: string;
 		children: Array<{ title: string; condition: string; cell_id: number }>,
 		suggs: any
+    parent: string;
+    flow: string
+    cnd: string
 	} | {
 		event: "open dff";
 	}

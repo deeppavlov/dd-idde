@@ -33,6 +33,10 @@ class Node:
                             continue
                     elif isinstance(tr_k, ast.Constant):  # Target node in the same flow
                         target_title = (flow_name, tr_k.value)
+                    else:
+                        target_title = (flow_name, ast.get_source_segment(
+                            source, tr_k).replace('\"', '&quot;'))
+
                     # Check type of values in Transitions dict
                     if isinstance(tr_v, ast.Constant):
                         tr_description = f"&quot;{tr_v.value}&quot;"
@@ -48,9 +52,9 @@ class Node:
                             func_args.append(arg.value)
                         tr_description = f'{tr_v.func.value.id}.{tr_v.func.attr}({", ".join(func_args)})'"""
                         tr_description = ast.get_source_segment(
-                            content, tr_v).replace('\"', '&quot;')
+                            source, tr_v).replace('\"', '&quot;')
                     elif isinstance(tr_v, ast.Attribute):
-                        tr_description = f"{tr_v.value.id}.{tr_v.attr}"
+                        tr_description = f"{ast.get_source_segment(source, tr_v.value)}.{tr_v.attr}"
                     elif hasattr(tr_v, "value"):
                         tr_description = tr_v.value
                     elif hasattr(tr_v, "id"):
@@ -222,38 +226,52 @@ def graph2drawio(graph, flow):
             sys.stderr.write(f"{node[1]}: {data['id']}\n")
             node_text = f"""
                 <UserObject data_from_form="{data_from_form}" label="{node[1]}" id="{data['id']}">
-                    <mxCell id="{data['id'] + 1}" value="{node[1]}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="2" collapsed="1">
-                          <mxGeometry x="150" y="{70 + y_shift}" width="200" height="26" as="geometry">
-                              <mxRectangle x="10" y="40" width="200" height="90" as="alternateBounds" />
+                    <mxCell id="{data['id'] + 1}" value="{node[1]}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;autosize=1;" vertex="1" parent="2" collapsed="1">
+                          <mxGeometry x="150" y="{70 + y_shift}" width="150" height="26" as="geometry">
+                              <mxRectangle x="10" y="40" width="150" height="90" as="alternateBounds" />
                           </mxGeometry>
                     </mxCell>
                 </UserObject>
                 <mxCell isnode="1" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
-                    <mxGeometry y="26" width="200" height="64" as="geometry" />
+                    <mxGeometry y="26" width="150" height="64" as="geometry" />
                 </mxCell>
             """
             output += node_text
             for target, edge_data in data['edges'].items():
+                sys.stderr.write(f"{edge_data}\n")
                 target_id = ""
                 try:  # Check if target node is not in another flow
                     target_id = flow_data[target]['id']
                 except KeyError:  # Search target node in another flows
-                    for l_flow, f_data in graph.items():
+                    for _, f_data in graph.items():
                         try:
-                            target_id = flow_data[target]['id']
+                            target_id = f_data[target]['id']
                             break
                         except KeyError:
                             continue
+                if target_id == "":
+                    # from pprint import pprint
+                    # sys.stdout.write('\n\n')
+                    # pprint(flow_data, sys.stderr)
+                    # sys.stdout.write('\n')
+                    # sys.stderr.write(f"key type {type(target)} \n")
+                    continue
                 parsed = cst.parse_expression(edge_data['title'].replace('&quot;', '"'))
-                if isinstance(parsed, cst.Call) and len(parsed.args) > 0  and isinstance(parsed.args[0].value, cst.List):
+                cndlist = []
+                if isinstance(parsed, cst.Call) and len(parsed.args) > 0:
                     mod = cst.parse_module(edge_data['title'].replace('&quot;', '"'))
-                    cndlist = [mod.code_for_node(el.value) for el in parsed.args[0].value.elements]
-                    if isinstance(parsed.func, cst.Attribute):
-                        title = parsed.func.attr.value.capitalize().replace('"', '&quot;')
+                    if isinstance(parsed.args[0].value, cst.List):
+                        cndlist = [mod.code_for_node(el.value) for el in parsed.args[0].value.elements]
+                        if isinstance(parsed.func, cst.Attribute):
+                            title = parsed.func.attr.value.capitalize().replace('"', '&quot;')
+                        else:
+                            title = edge_data['title']
+                    elif "sf" in mod.code_for_node(parsed.func):
+                        title = mod.code_for_node(parsed.args[0]).replace('"', '&quot;')
+                        # title= edge_data['title']
                     else:
                         title = edge_data['title']
                 else:
-                    cndlist = []
                     title = edge_data['title']
                 edge_text = f"""
                     <mxCell isedge="1" id="{edge_data['id']}" flow="{local_flow}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{title}" realtarget="{target_id}" edge="1">
@@ -272,16 +290,16 @@ def graph2drawio(graph, flow):
                             </Array>
                         </mxGeometry>
                     </mxCell>
-                    <mxCell id="{edge_data['id'] + 1}" value="{title}" style="swimlane;fontColor=default;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="2" collapsed="1">
-                          <mxGeometry x="150" y="{70 + y_shift}" width="200" height="26" as="geometry">
-                              <mxRectangle x="10" y="40" width="200" height="90" as="alternateBounds" />
+                    <mxCell id="{edge_data['id'] + 1}" value="{title}" style="swimlane;fontColor=default;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;autosize=1;" vertex="1" parent="2" collapsed="1">
+                          <mxGeometry x="150" y="{70 + y_shift}" width="150" height="26" as="geometry">
+                              <mxRectangle x="10" y="40" width="150" height="90" as="alternateBounds" />
                           </mxGeometry>
                     </mxCell>
                 """
                 for cnd in cndlist:
                     edge_text += f"""
                         <mxCell parent="{edge_data['id'] + 1}" value="{cnd.replace('"', '&quot;')}" style="text;strokeColor=none;fontColor=default;fillColor=white;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
-                            <mxGeometry y="26" width="200" height="30" as="geometry" />
+                            <mxGeometry y="26" width="150" height="30" as="geometry" />
                         </mxCell>
                     """
                 output += edge_text

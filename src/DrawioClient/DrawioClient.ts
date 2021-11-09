@@ -1,7 +1,7 @@
 import { EventEmitter } from "@hediet/std/events";
 import { Disposable } from "@hediet/std/disposable";
 import { DrawioConfig, DrawioEvent, DrawioAction } from "./DrawioTypes";
-import { WebviewPanel, window, ViewColumn, ExtensionContext, Uri } from "vscode";
+import { WebviewPanel, window, ViewColumn, ExtensionContext, Uri, workspace, WorkspaceEdit, Range } from "vscode";
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -403,6 +403,7 @@ export class DrawioClient<
 			let cid = drawioEvt.cell_id;
 			let cell_title = drawioEvt.cell_title;
 			let cell_content = JSON.parse(drawioEvt.curr_content);
+      cell_title = cell_content.node_title || cell_title;
 			let node_info = {
 				"cell_id": cid,
 				"title": cell_title,
@@ -432,11 +433,36 @@ export class DrawioClient<
 					message => {
 						switch (message.command) {
 							case 'saveAsPng':
-								var form_data = message.form_data;
+								var form_data_str: string = message.form_data;
+                var form_data = JSON.parse(form_data_str)
+                console.warn('form_data', form_data_str)
 
 								// this.saveAsPng(message.text);
 								webviewPanel.dispose();
-								(webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
+
+                if (drawioEvt.suggs) {
+                  // newly inserted
+                  console.warn("added suggestion", drawioEvt)
+                  this.addSuggNode({
+                    title: form_data.node_title,
+                    flow: drawioEvt.flow,
+                    parent: drawioEvt.parent,
+                    sfc: form_data.sfc.split(" ")[0],
+                    cnd: drawioEvt.cnd,
+                  }).then(async (output) => {
+                      let workspaceEdit = new WorkspaceEdit()
+                      workspaceEdit.replace(
+                        (this as any)._doc.document.uri,
+                        new Range(0, 0, (this as any)._doc.document.lineCount, 0),
+                        output
+                      );
+                      await workspace.applyEdit(workspaceEdit);
+                      // (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
+                    })
+                } else {
+                  (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data_str });
+                }
+
 								break;
 							// vscode.window.showInformationMessage("closed a panel");
 							// return;
@@ -482,6 +508,7 @@ export class DrawioClient<
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
 
+    console.warn('seththis.setHtmlContent', node_info)
 		const base_speech_functions = ['Open.Attend',
 			'Open.Demand.Fact',
 			'Open.Demand.Opinion',
@@ -523,7 +550,7 @@ export class DrawioClient<
 		if (speech_functions.length == 0) {
 			speech_functions = base_speech_functions
 		}
-		var title = node_info["title"];
+		var title = node_info.cell_content.node_title || node_info["title"];
 		if (title == "Cell") {
 			title = "";
 		}
@@ -653,6 +680,37 @@ export class DrawioClient<
 		}
 		return text;
 	}
+  
+  public async addSuggNode(data: { title: string; sfc: string; flow: string; parent: string; cnd: string }): Promise<any> {
+		return new Promise((resolve, reject) => {
+			let pyData = (this as any)._doc.document.getText();
+			if (!pyData) {
+				return;
+			}
+			const pathToPyScript = vscode.Uri.file(
+				path.join(this.context.extensionPath, 'python-shell-scripts/addsuggs.py')
+			);
+			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
+			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
+      const input = {
+        pyData, ...data
+      }
+			shell.send(JSON.stringify(input));
+
+      let out = ""
+			shell.on('message', function (batch) {
+				// received a message sent from the Python script
+				out += batch;
+				});
+			// end the input stream and allow the process to exit
+			shell.end( (err,code,signal) => {
+				if (err) throw err;
+				let buff = Buffer.from(out, 'base64');
+				let newPyCode = buff.toString('utf-8');
+				resolve(newPyCode);
+			});
+		})
+  }
 
 	/**
 	 * Convert Python code to XML content
