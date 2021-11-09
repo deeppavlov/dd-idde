@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+**##** **[****0.2.31-Alpha****]**
+
+\-  Fix error when generic responses are in conditions
+\-  Fix node names disappearing
+
 **##** **[****0.2.29-Alpha****]**
 
 \-  Fix error when PROCESSING contains function calls
