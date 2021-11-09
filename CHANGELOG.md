@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **##** **[****0.2.31-Alpha****]**
 
+\-  Fix suggestions
+\-  Set cell sizes to fit content
+\-  Make fullscreen default
+\-  Fix lots of minor issues
+
+**##** **[****0.2.31-Alpha****]**
+
 \-  Fix error when generic responses are in conditions
 \-  Fix node names disappearing
 
