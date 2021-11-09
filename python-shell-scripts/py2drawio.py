@@ -51,6 +51,12 @@ class Node:
                             content, tr_v).replace('\"', '&quot;')
                     elif isinstance(tr_v, ast.Attribute):
                         tr_description = f"{tr_v.value.id}.{tr_v.attr}"
+                    elif hasattr(tr_v, "value"):
+                        tr_description = tr_v.value
+                    elif hasattr(tr_v, "id"):
+                        tr_description = tr_v.id
+                    else:
+                        tr_description = '&quot;&quot;'
                     transitions[target_title] = tr_description
             elif key.id == "MISC":
                 misc = []
