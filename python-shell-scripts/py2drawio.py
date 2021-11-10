@@ -224,6 +224,7 @@ def graph2drawio(graph, flow):
                 sfcs = ""
             data_from_form = {
                 "node_title": node[1],
+                "old_titles": [node[1]],
                 "sfc": sfcs
             }
             data_from_form = json.dumps(data_from_form).replace("\"", "&quot;")
@@ -236,7 +237,7 @@ def graph2drawio(graph, flow):
                           </mxGeometry>
                     </mxCell>
                 </UserObject>
-                <mxCell isnode="1" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                <mxCell isnode="1" old_title="{node[1]}" parent="{data['id']}" label="{node[1]}" value="" flow="{local_flow}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
                     <mxGeometry y="26" width="150" height="64" as="geometry" />
                 </mxCell>
             """

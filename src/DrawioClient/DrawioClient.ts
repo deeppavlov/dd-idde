@@ -569,6 +569,7 @@ export class DrawioClient<
 			<input type="text" placeholder="Node Title" class="form-control" 
 			       name="node_title" access="false" value="${title}" 
 				   id="b">
+			<input type="hidden" name="old_titles" value="[&quot;${title}&quot;]"/>
 			<br/>
 			<p>SFC</p><select name="sfc">`
 		speech_functions.forEach((element: any) => {

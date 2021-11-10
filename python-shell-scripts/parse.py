@@ -3,7 +3,7 @@ import dataclasses
 import libcst as cst
 import libcst.matchers as m
 
-from typing import Literal, Optional, Union, List, Dict, DefaultDict, cast
+from typing import Literal, Optional, Tuple, Union, List, Dict, DefaultDict, cast
 from dataclasses import dataclass, field
 from collections import defaultdict
 
@@ -11,8 +11,20 @@ BaseUpdate = Union["ValueUpdate", "ListUpdate", "DictUpdate"]
 
 
 @dataclass
+class KeyUpdate:
+    old_key: str
+    new_key: str
+
+    def __hash__(self):
+        return hash(self.old_key)
+
+    def __str__(self):
+        return self.old_key
+
+
+@dataclass
 class DictUpdate:
-    elements: Dict[str, BaseUpdate] = field(default_factory=dict)
+    elements: Dict[KeyUpdate, BaseUpdate] = field(default_factory=dict)
     allow_extra: bool = True
 
     @classmethod
@@ -37,36 +49,35 @@ class DictUpdate:
         return cast(DictUpdate, convert(dicitonary))
 
     def get(self, key: str):
-        if key in self.elements:
-            return key, self.elements[key]
         target_expr = cst.parse_expression(key)
-        expr_val = getattr(target_expr, "value", None)
-        if expr_val in self.elements:
-            return expr_val, self.elements[expr_val]  # type: ignore
         key = getattr(target_expr, "raw_value", key)
         for k, v in self.elements.items():
-            expr = cst.parse_expression(k) if k != "" else ""
+            expr = cst.parse_expression(str(k)) if k != "" else ""
             if getattr(expr, "value", None) == key:
                 return k, v
             if getattr(expr, "raw_value", None) == key:
                 return k, v
         return None, None
 
-    def pop(self, key: Union[str, cst.BaseExpression]):
+    def pop(self, key: Union[str, cst.BaseExpression]) -> Union[Tuple[None, None], Tuple[str, Optional[BaseUpdate]]]:
         if isinstance(key, (cst.Name, cst.SimpleString)):
             str_key = key.value
         elif isinstance(key, cst.Tuple):
             str_key = f"({key.elements[0].value}, {key.elements[1].value})"
         elif isinstance(key, cst.Call):
-            return None
+            return None, None
         elif isinstance(key, str):
             str_key = key
         else:
             raise TypeError(f"Unsupported type {type(key)}")
-        str_key, _ = self.get(str_key)
-        if str_key is None:
-            return None
-        return self.elements.pop(str_key, None)
+        found_key, _ = self.get(str_key)
+        if found_key is None:
+            return None, None
+        if isinstance(found_key, KeyUpdate):
+            new_key = found_key.new_key
+        else:
+            new_key = found_key
+        return new_key, self.elements.pop(found_key, None)
 
     def __iter__(self):
         for k in list(self.elements.keys()):
@@ -81,7 +92,7 @@ class ListUpdate:
 
     def pop(self, item: Union[BaseUpdate, cst.BaseExpression]):
         idx = next((i for i, el in enumerate(self.elements) if el == item), None)
-        return None if idx is None else self.elements.pop(idx)
+        return None, None if idx is None else self.elements.pop(idx)
 
     def __iter__(self):
         for i in range(len(self.elements)):
@@ -357,14 +368,18 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             base_indent = self.offset_indent(self.indent_stack.pop(), -1)
         else:
             base_indent = self.indent_stack[-1] if len(self.indent_stack) > 0 else ""
-        sys.stderr.write(f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}\n")
+        sys.stderr.write(
+            f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}\n"
+        )
 
         target = self.get_target()
         sys.stderr.write(
             f"transforming node {type(node)} in path {'.'.join(str(i) for i in self.path)}, update: {type(target)}\n"
         )
         if target is None:
-            sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
+            sys.stderr.write(
+                f"code for updated node: {self.module.code_for_node(node)}\n"
+            )
             return node
 
         if isinstance(target, DictUpdate) and not isinstance(node, cst.Dict):
@@ -389,7 +404,18 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         new_elements = []
         for el in node.elements:
             key = el.key if isinstance(el, cst.DictElement) else el.value
-            update = target.pop(key)
+            new_key_str, update = target.pop(key)
+            if new_key_str and isinstance(el, cst.DictElement):
+                if isinstance(el.key, cst.SimpleString):
+                    if not new_key_str.startswith(('"', "'", "f'", 'f"')):
+                        new_key_str = el.key.value.replace(el.key.raw_value, new_key_str)
+                    new_key = el.key.with_changes(
+                        value=new_key_str
+                    )
+                    el = el.with_changes(key=new_key)
+                elif isinstance(el.key, cst.Name):
+                    new_key = el.key.with_changes(value=new_key_str)
+                    el = el.with_changes(key=new_key)
             if isinstance(update, ValueUpdate):
                 if update != el.value:
                     # Update element

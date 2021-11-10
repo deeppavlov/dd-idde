@@ -4,6 +4,8 @@ function saveAsPng(event) {
   const input_elements = document.querySelectorAll('.formbuilder-text [name]')
   const data = {}
   input_elements.forEach((node) => data[node.name] = node.value)
+  console.log(data)
+  data.old_titles = JSON.parse(data.old_titles)
   vscode.postMessage({
     command: 'saveAsPng', form_data: JSON.stringify(data)
   });

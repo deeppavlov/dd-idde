@@ -10,7 +10,7 @@ from lxml import etree
 from collections import defaultdict
 from typing import Optional, List, Dict, Any, cast
 
-from parse import ListUpdate, find_flow, NodeVisitor, DictUpdate
+from parse import KeyUpdate, ListUpdate, find_flow, NodeVisitor, DictUpdate
 
 
 def parse_file(drawio_fn):
@@ -28,10 +28,19 @@ def parse_file(drawio_fn):
             else:
                 form_data = {}
             title = form_data.get('node_title', node.attrib['label'])
+            old_titles = form_data.get('old_titles', [node.attrib['old_title'], None])
+            if len(old_titles) > 1:
+                old_title = old_titles[-2]
+            else:
+                old_title = old_titles[0]
+            # if 'start' in old_title:
+            #     sys.stderr.write(f"title {title}, old title {old_title}\n")
+            #     assert False
             if 'node_title' not in form_data:
                 form_data['node_title'] = title
             nodeid = int(node.attrib["id"])
             nodes[nodeid] = {
+                "old_title": old_title,
                 "title": title,
                 "node": node,
                 "form_data": form_data
@@ -50,7 +59,9 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
         flow_name = node.attrib["flow"]
         from_form = node_dict['form_data']
 
-        node_name = node.attrib["label"]
+        old_title = node_dict['old_title']
+        node_name = node_dict['title']
+        sys.stderr.write(f"title {node_name}, old title {old_title}\n")
         sfc = from_form.get("sfc", "")
         # Transitions
         # Check if node has child nodes
@@ -69,12 +80,13 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
         except KeyError:
             pass
 
-        updated[flow_name][node_name] = {
+        node_key = KeyUpdate(old_key=old_title, new_key=node_name)
+        updated[flow_name][node_key] = {
             "TRANSITIONS": transitions,
         }
 
         if sfc != "":
-            updated[flow_name][node_name]["MISC"] = {
+            updated[flow_name][node_key]["MISC"] = {
                 '"speech_functions"': ListUpdate(['"' + sfc + '"'], allow_extra=False)
             }
 
