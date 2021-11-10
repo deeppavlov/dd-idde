@@ -1,6 +1,10 @@
+#!/usr/bin/env python3.9
+import sys, pathlib
+deps_path = pathlib.Path(__file__).parent.absolute() / "deps.zip"
+sys.path.insert(0, str(deps_path))
+
 import base64
 import json
-import sys
 import libcst as cst
 from lxml import etree
 from collections import defaultdict

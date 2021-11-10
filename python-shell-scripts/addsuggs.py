@@ -1,6 +1,9 @@
 #!/usr/bin/env python3.9
+import sys, pathlib
+deps_path = pathlib.Path(__file__).parent.absolute() / "deps.zip"
+sys.path.insert(0, str(deps_path))
+
 import json, base64
-import sys
 import libcst as cst
 from typing import cast
 
