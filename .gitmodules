@@ -1,3 +1,4 @@
 [submodule "drawio"]
 	path = drawio
-	url = https://github.com/jgraph/drawio
+	url = https://github.com/deepmipt/drawio-dff
+	branch = fri_dm
