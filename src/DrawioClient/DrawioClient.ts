@@ -342,6 +342,7 @@ export class DrawioClient<
 					json: true // Automatically stringifies the body to JSON
 				};
 				var basic_sfcs: any = {};
+        var defaultSuggs: any[] = [{ sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
 				rp(options)
 					.then((parsedBody: any) => {
 						var predictions = parsedBody[0].batch;
@@ -389,7 +390,25 @@ export class DrawioClient<
 					})
 					.catch((err: any) => {
 						// POST failed, send message to WebView
-						this.vwP.webview.postMessage({ connectionError: "getSuggsError" });
+						// this.vwP.webview.postMessage({ connectionError: "getSuggsError" });
+						for (var is in drawioEvt.cells) {
+							var i = Number(is);
+							var cel = drawioEvt.cells[i];
+							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
+								cells_i.push({
+									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
+									sty: cel.sty, sug_sf: defaultSuggs,
+									id: cel.id
+								})
+							}
+						}
+						this.vwP.webview.postMessage({
+							oleg: "DrawSuggestions",
+							cells: cells_i
+							, visibility: !vis,
+							nodes_suggestions: basic_sfcs
+
+						});
 						console.log(err);
 					});
 
