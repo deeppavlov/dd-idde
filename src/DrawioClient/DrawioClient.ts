@@ -364,7 +364,7 @@ export class DrawioClient<
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
 							var cel_preds = predictions[i + speech_functions.length]
-							var sug_sf: any[] = []
+							var sug_sf: any[] = [...defaultSuggs]
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
@@ -454,6 +454,9 @@ export class DrawioClient<
 							case 'saveAsPng':
 								var form_data_str: string = message.form_data;
                 var form_data = JSON.parse(form_data_str)
+                if (form_data.sfc === '----') {
+                  form_data.sfc = ''
+                }
                 console.warn('form_data', form_data_str)
 
 								// this.saveAsPng(message.text);
@@ -569,6 +572,7 @@ export class DrawioClient<
 		if (speech_functions.length == 0) {
 			speech_functions = base_speech_functions
 		}
+    speech_functions = ['----', ...speech_functions]
 		var title = node_info.cell_content.node_title || node_info["title"];
 		if (title == "Cell") {
 			title = "";

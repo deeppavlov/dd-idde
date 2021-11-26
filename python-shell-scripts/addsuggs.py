@@ -28,14 +28,12 @@ update_dict = {
         node_title: {
             "TRANSITIONS": {},
             "RESPONSE": "''",
-            "MISC": {
-                '"speech_functions"': ListUpdate([ValueUpdate(sfc)], allow_extra=False)
-                if sfc != '""'
-                else []
-            }
         }
     }
 }
+if sfc != '""':
+    update_dict[node_title]["MISC"] = {}
+    update_dict[node_title]["MISC"]['"speech_functions"'] = ListUpdate([ValueUpdate(sfc)], allow_extra=False)
 update = DictUpdate.from_dict(update_dict)
 
 module = cst.parse_module(python_code)
