@@ -341,7 +341,7 @@ export class DrawioClient<
 					json: true // Automatically stringifies the body to JSON
 				};
 				var basic_sfcs: any = {};
-        var defaultSuggs: any[] = [{ sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
+        var defaultSuggs: any[] = [{ sug: "Custom condition", conf: 1 }, { sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
 				rp(options)
 					.then((parsedBody: any) => {
 						var predictions = parsedBody[0].batch;
@@ -471,13 +471,24 @@ export class DrawioClient<
                     parent: drawioEvt.parent,
                     sfc: form_data.sfc.split(" ")[0],
                     cnd: drawioEvt.cnd,
-                  }).then(async (output) => {
+                  }).then(async ({ newPyCode, customCondPos }) => {
                       let workspaceEdit = new WorkspaceEdit()
                       workspaceEdit.replace(
                         (this as any)._doc.document.uri,
                         new Range(0, 0, (this as any)._doc.document.lineCount, 0),
-                        output
+                        newPyCode
                       );
+                      console.warn('customCondPos', customCondPos)
+                      if (customCondPos) {
+                        for (let editor of window.visibleTextEditors){
+                          if (editor.document.uri === (this as any)._doc.document.uri) {
+                            window.showTextDocument((this as any)._doc.document, { preview: false, viewColumn: editor.viewColumn, })
+                            setTimeout(() => {
+                              editor.selection = new vscode.Selection(customCondPos.line-1, customCondPos.col, customCondPos.line-1, customCondPos.end)
+                            }, 10)
+                          }
+                        }
+                      }
                       await workspace.applyEdit(workspaceEdit);
                       // (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
                     })
@@ -729,9 +740,11 @@ export class DrawioClient<
 			// end the input stream and allow the process to exit
 			shell.end( (err,code,signal) => {
 				if (err) throw err;
-				let buff = Buffer.from(out, 'base64');
+				var res_parsed = JSON.parse(out);
+				var dff_base64 = res_parsed.pycode;
+				let buff = Buffer.from(dff_base64, 'base64');
 				let newPyCode = buff.toString('utf-8');
-				resolve(newPyCode);
+				resolve({ newPyCode, customCondPos: res_parsed.customCondPos });
 			});
 		})
   }
