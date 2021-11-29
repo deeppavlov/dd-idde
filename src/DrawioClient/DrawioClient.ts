@@ -8,7 +8,6 @@ import * as path from 'path';
 import { title } from "process";
 import { node } from "webpack";
 import { VsCodeSetting } from "../vscode-utils/VsCodeSetting";
-import * as FormData from 'form-data';
 import { request } from "http";
 import { PythonShell } from 'python-shell';
 
