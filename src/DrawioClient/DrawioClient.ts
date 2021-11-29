@@ -363,12 +363,13 @@ export class DrawioClient<
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
 							var cel_preds = predictions[i + speech_functions.length]
-							var sug_sf: any[] = [...defaultSuggs]
+							var sug_sf: any[] = [];
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
 								}
 							});
+              sug_sf = [...sug_sf, ...defaultSuggs];
 							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
 								cells_i.push({
 									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
