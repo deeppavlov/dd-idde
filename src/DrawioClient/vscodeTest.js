@@ -15,6 +15,26 @@ function saveAsPng(event) {
 const saveAsPngButton = document.getElementById('saveAsPngButton');
 saveAsPngButton.addEventListener('click', saveAsPng);
 
+const exTitle = document.getElementById('example-title')
+const sfcs = document.getElementById('sfc-selector');
+const examples = document.getElementById('sfc-examples')
+const updateEx = (ev) => {
+  if (ev.target.value === '----') {
+    examples.style.display = 'none'
+    exTitle.style.display = 'none'
+  } else {
+    examples.style.display = 'block'
+    exTitle.style.display = 'block'
+  }
+  if (ev.target.value in window.SFCExamples) {
+    console.warn('found example!')
+    examples.innerHTML = window.SFCExamples[ev.target.value].map(l => `<p>${l}</p>`).join('\n')
+  } else {
+    examples.innerHTML = "---"
+  }
+}
+sfcs.addEventListener('change', updateEx)
+updateEx({ target: sfcs })
 
 Array.from(document.getElementsByClassName('connected_node_node')).forEach(element => {
   el_id = element.id;

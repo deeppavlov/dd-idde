@@ -11,6 +11,8 @@ import { VsCodeSetting } from "../vscode-utils/VsCodeSetting";
 import { request } from "http";
 import { PythonShell } from 'python-shell';
 
+import examples from './examples';
+
 /**
  * Represents a connection to an drawio iframe.
  */
@@ -593,9 +595,17 @@ export class DrawioClient<
 		let htmlContent2 = `
 		<head>
 		  <meta charset="UTF-8">
-		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src cspSource; script-src 'nonce-nonce';">
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-nonce' 'sha256-rOmhpiHDFUlKixAGF3lTlBKcT/gt9AWIyipexRdmWas='">
 		  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		  <link href="vscodeTest.css" rel="stylesheet">
+      <style>
+      #sfc-examples {
+        padding-left: 1em;
+        border: 1px solid grey;
+      }
+      </style>
+
+      <script>window.SFCExamples = ${JSON.stringify(examples)};</script>
 		</head>
 		<div class="rendered-form">
 		<div class="formbuilder-text form-group field-text-1627806340486">
@@ -605,7 +615,7 @@ export class DrawioClient<
 				   id="b">
 			<input type="hidden" name="old_titles" value="[&quot;${title}&quot;]"/>
 			<br/>
-			<p>SFC</p><select name="sfc">`
+			<h3>SFC</h3><select name="sfc" id="sfc-selector">`
 		speech_functions.forEach((element: any) => {
 			htmlContent2 += `<option value="${element}"`
 			if (node_info_sfc === element) {
@@ -616,6 +626,8 @@ export class DrawioClient<
 		htmlContent2 += `</select>
 		</div>
 		<input type="button" id="saveAsPngButton" value="Save">
+      <h3 id="example-title">Examples:</h3>
+      <div id="sfc-examples"></div>
 		`
 
 		var children_li = "<ul>"
