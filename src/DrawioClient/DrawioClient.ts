@@ -298,14 +298,12 @@ export class DrawioClient<
 				'React.Rejoinder.Confront.Challenge.Counter',
 				'React.Rejoinder.Confront.Response.Re-challenge',
 				'React.Rejoinder.Support.Challenge.Rebound',
-				'React.Rejoinder.Support.Response.Resolve',
 				'React.Rejoinder.Support.Track.Check',
 				'React.Rejoinder.Support.Track.Clarify',
 				'React.Rejoinder.Support.Track.Confirm',
 				'React.Rejoinder.Support.Track.Probe',
-				'React.Respond.Confront.Disengage',
 				'React.Respond.Confront.Reply.Disagree',
-				'React.Respond.Confront.Reply.Disawow',
+				'React.Respond.Confront.Reply.Disavow',
 				'React.Respond.Support.Develop.Elaborate',
 				'React.Respond.Support.Develop.Enhance',
 				'React.Respond.Support.Develop.Extend',
@@ -314,7 +312,7 @@ export class DrawioClient<
 				'React.Respond.Support.Reply.Acknowledge',
 				'React.Respond.Support.Reply.Affirm',
 				'React.Respond.Support.Reply.Agree',
-				'React.Respond.Support.Response.Resolve',
+				'React.Rejoinder.Support.Response.Resolve',
 				'Sustain.Continue.Monitor',
 				'Sustain.Continue.Prolong.Elaborate',
 				'Sustain.Continue.Prolong.Enhance',
@@ -557,9 +555,8 @@ export class DrawioClient<
 			'React.Rejoinder.Support.Track.Clarify',
 			'React.Rejoinder.Support.Track.Confirm',
 			'React.Rejoinder.Support.Track.Probe',
-			'React.Respond.Confront.Disengage',
 			'React.Respond.Confront.Reply.Disagree',
-			'React.Respond.Confront.Reply.Disawow',
+			'React.Respond.Confront.Reply.Disavow',
 			'React.Respond.Support.Develop.Elaborate',
 			'React.Respond.Support.Develop.Enhance',
 			'React.Respond.Support.Develop.Extend',
@@ -568,7 +565,6 @@ export class DrawioClient<
 			'React.Respond.Support.Reply.Acknowledge',
 			'React.Respond.Support.Reply.Affirm',
 			'React.Respond.Support.Reply.Agree',
-			'React.Respond.Support.Response.Resolve',
 			'Sustain.Continue.Monitor',
 			'Sustain.Continue.Prolong.Elaborate',
 			'Sustain.Continue.Prolong.Enhance',
@@ -595,7 +591,7 @@ export class DrawioClient<
 		let htmlContent2 = `
 		<head>
 		  <meta charset="UTF-8">
-		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-nonce' 'sha256-rOmhpiHDFUlKixAGF3lTlBKcT/gt9AWIyipexRdmWas='">
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-nonce' 'sha256-YKIYvXEI144i6DEkPR1V/4T2zVP+z9wjQxnN/H53ajc='">
 		  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		  <link href="vscodeTest.css" rel="stylesheet">
       <style>

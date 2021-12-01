@@ -19,16 +19,17 @@ const exTitle = document.getElementById('example-title')
 const sfcs = document.getElementById('sfc-selector');
 const examples = document.getElementById('sfc-examples')
 const updateEx = (ev) => {
-  if (ev.target.value === '----') {
+  const val = ev.target.value.split(' ')[0];
+  if (val === '----') {
     examples.style.display = 'none'
     exTitle.style.display = 'none'
   } else {
     examples.style.display = 'block'
     exTitle.style.display = 'block'
   }
-  if (ev.target.value in window.SFCExamples) {
+  if (val in window.SFCExamples) {
     console.warn('found example!')
-    examples.innerHTML = window.SFCExamples[ev.target.value].map(l => `<p>${l}</p>`).join('\n')
+    examples.innerHTML = window.SFCExamples[val].map(l => `<p>${l}</p>`).join('\n')
   } else {
     examples.innerHTML = "---"
   }
