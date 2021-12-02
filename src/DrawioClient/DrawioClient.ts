@@ -313,7 +313,7 @@ export class DrawioClient<
 				'React.Rejoinder.Support.Track.Confirm',
 				'React.Rejoinder.Support.Track.Probe',
 				'React.Respond.Confront.Reply.Disagree',
-				'React.Respond.Confront.Reply.Disavow',
+				'React.Respond.Confront.Reply.Disawow',
 				'React.Respond.Support.Develop.Elaborate',
 				'React.Respond.Support.Develop.Enhance',
 				'React.Respond.Support.Develop.Extend',
@@ -379,7 +379,7 @@ export class DrawioClient<
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
 								}
 							});
-              sug_sf = [...sug_sf, ...defaultSuggs];
+              sug_sf = [...sug_sf.reverse(), ...defaultSuggs];
 							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
 								cells_i.push({
 									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
@@ -566,7 +566,7 @@ export class DrawioClient<
 			'React.Rejoinder.Support.Track.Confirm',
 			'React.Rejoinder.Support.Track.Probe',
 			'React.Respond.Confront.Reply.Disagree',
-			'React.Respond.Confront.Reply.Disavow',
+			'React.Respond.Confront.Reply.Disawow',
 			'React.Respond.Support.Develop.Elaborate',
 			'React.Respond.Support.Develop.Enhance',
 			'React.Respond.Support.Develop.Extend',
