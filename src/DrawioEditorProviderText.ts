@@ -201,6 +201,7 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 				isThisEditorSaving = true;
 				try {
 					await workspace.applyEdit(workspaceEdit);
+          await drawioClient.mergeXmlLike("")
 				} finally {
 					isThisEditorSaving = false;
 				}

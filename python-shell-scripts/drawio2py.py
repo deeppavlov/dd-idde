@@ -85,6 +85,7 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
         node_name = node_dict['title']
         transitions: Dict[Union[str, KeyUpdate], str] = {}
         for edge, edge_title in edges[int(node.attrib["id"])].items():
+            if edge not in nodes: continue
             target_data = nodes[edge]["form_data"]
             # sys.stderr.write(f"node: {node_name}, flow name {node.attrib['flow']}, target flow {nodes[edge]['node'].attrib['flow']}\n")
             if unesc(node.attrib["flow"]) != unesc(nodes[edge]["node"].attrib["flow"]):
@@ -108,6 +109,8 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
                 else:
                     transitions[new_name] = edge_title
         updated[flow_name][old_title]['TRANSITIONS'] = transitions
+
+    updated = { fn: DictUpdate({ nn: DictUpdate(nc, allow_extra=False) for nn, nc in fc.items() }, allow_extra=False) for fn, fc in updated.items() }
         
     return DictUpdate.from_dict(updated)
 
