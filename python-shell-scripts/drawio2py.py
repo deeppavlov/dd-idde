@@ -48,8 +48,8 @@ def parse_file(drawio_fn):
                 "form_data": form_data
             }
         elif 'isedge' in node.attrib:
-            edges[int(node.attrib["source"]) + 1][
-            int(node.attrib["realtarget"]) + 1
+            edges[int(node.attrib["source"])][
+            int(node.attrib["realtarget"])
             ] = unesc(node.attrib['reallabel'])
     return nodes, edges, edge_flows
 
@@ -75,7 +75,7 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
 
         if sfc != "":
             updated[flow_name][node_key]["MISC"] = {
-                '"speech_functions"': ListUpdate([sfc], allow_extra=False)
+                '"speech_functions"': ListUpdate([sfc], order_significant=True)
             }
 
     for node_dict in nodes.values():
@@ -87,16 +87,16 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
         for edge, edge_title in edges[int(node.attrib["id"])].items():
             if edge not in nodes: continue
             target_data = nodes[edge]["form_data"]
-            # sys.stderr.write(f"node: {node_name}, flow name {node.attrib['flow']}, target flow {nodes[edge]['node'].attrib['flow']}\n")
+            sys.stderr.write(f"node: {node_name}, flow name {node.attrib['flow']}, target flow {nodes[edge]['node'].attrib['flow']}\n")
             if unesc(node.attrib["flow"]) != unesc(nodes[edge]["node"].attrib["flow"]):
                 target_flow = unesc(nodes[edge]['node'].attrib['flow'])
                 new_target_node = target_data['node_title']
                 old_target_node = next((o for o, n in renames.items() if n == new_target_node), new_target_node)
-                # sys.stderr.write(f"flow name {target_flow}, node name (new) {new_target_node}, (old) {old_target_node}\n")
+                sys.stderr.write(f"flow name {target_flow}, node name (new) {new_target_node}, (old) {old_target_node}\n")
                 if old_target_node != new_target_node:
                     old_name = f"({target_flow}, {old_target_node})"
                     new_name = f"({target_flow}, {new_target_node})"
-                    # sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
+                    sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
                     transitions[KeyUpdate(old_key=old_name, new_key=new_name)] = edge_title
                 else:
                     transitions[f"({target_flow}, {old_target_node})"] = edge_title
@@ -104,15 +104,17 @@ def get_updated_nodes(nodes, edges) -> DictUpdate:
                 new_name = target_data["node_title"] 
                 old_name = next((o for o, n in renames.items() if n == new_name), new_name) 
                 if new_name != old_name:
-                    # sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
+                    sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
                     transitions[KeyUpdate(old_key=old_name, new_key=new_name)] = edge_title
                 else:
                     transitions[new_name] = edge_title
         updated[flow_name][old_title]['TRANSITIONS'] = transitions
 
-    updated = { fn: DictUpdate({ nn: DictUpdate(nc, allow_extra=False) for nn, nc in fc.items() }, allow_extra=False) for fn, fc in updated.items() }
+    updated = { fn: DictUpdate(fc, allow_extra=False) for fn, fc in updated.items() }
         
-    return DictUpdate.from_dict(updated)
+    upd = DictUpdate.from_dict(updated)
+    upd.allow_extra = False
+    return upd
 
 
 def fix_missing_flows(nodes, edges, edge_flows):

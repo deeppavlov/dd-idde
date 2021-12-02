@@ -14,7 +14,6 @@ import { PythonShell } from 'python-shell';
 import examples from './examples';
 
 
-
 function quoteattr(s: string): string {
     return ('' + s) /* Forces the conversion to string. */
         .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
@@ -342,7 +341,7 @@ export class DrawioClient<
 				});
 				drawioEvt.cells.forEach((cel) => {
 					var cel_sfc = cel.sfc.split(" ");
-					sfcs.push(cel_sfc[0]);
+					sfcs.push(cel_sfc[0].replace(/^f?['"]/, '').replace(/['"]$/, ''));
 				});
 				var options = {
 					method: 'POST',
@@ -350,6 +349,7 @@ export class DrawioClient<
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
+        console.warn('req', sfcs)
 				var basic_sfcs: any = {};
         var defaultSuggs: any[] = [{ sug: "Custom condition", conf: 1 }, { sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
 				rp(options)
@@ -358,24 +358,21 @@ export class DrawioClient<
 						console.log(predictions);
 						// vscode.window.showInformationMessage(JSON.stringify(predictions));
 						// POST succeeded...
-						for (var j = 0; j < predictions.length; j++) {
+						for (var j = 0; j < speech_functions.length; j++) {
 
-              if (Array.isArray(predictions[j])){
-                var curr_preds: any = [];
-                predictions[j].forEach((pred: any) => {
-                  if (Object.keys(pred).length > 0) {
-                    curr_preds.push({ sug: pred.prediction, conf: pred.confidence });
-                  }
-                });
-                basic_sfcs[speech_functions[j]] = curr_preds;
-              }
+							var curr_preds: any = [];
+							predictions[j].forEach((pred: any) => {
+								if (Object.keys(pred).length > 0) {
+									curr_preds.push({ sug: pred.prediction, conf: pred.confidence });
+								}
+							});
+							basic_sfcs[speech_functions[j]] = curr_preds;
 						}
 						// for is in cells:
 						for (var is in drawioEvt.cells) {
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
-							var cel_preds = predictions[i * speech_functions.length]
-              if (!Array.isArray(cel_preds)) continue;
+							var cel_preds = predictions[i + speech_functions.length]
 							var sug_sf: any[] = [];
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
@@ -390,7 +387,6 @@ export class DrawioClient<
 									id: cel.id
 								})
 							}
-
 						}
 
 						this.vwP.webview.postMessage({

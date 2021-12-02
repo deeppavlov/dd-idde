@@ -55,7 +55,7 @@ class Node:
         for elem in misc.elements:
             if not isinstance(elem, cst.DictElement): continue
             if 'speech_functions' in getattr(elem.key, "value", "") and isinstance(elem.value, cst.List):
-                self.sfcs = [ module.code_for_node(e) for e in elem.value.elements ]
+                self.sfcs = [ module.code_for_node(e.value) for e in elem.value.elements ]
 
 
 def parse_flow(flow_node: cst.Dict, module: cst.Module):
@@ -169,7 +169,7 @@ def graph2drawio(graph):
                     title = edge_data['title']
                 title = esc(title)
                 edge_text = f"""
-                    <mxCell isedge="1" id="{edge_data['id']}" flow="{flow_name}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{title}" realtarget="{target_id}" edge="1">
+                    <mxCell isedge="1" id="{edge_data['id']}" flow="{flow_name}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{esc(edge_data['title'])}" realtarget="{target_id}" edge="1">
                         <mxGeometry relative="1" as="geometry">
                             <Array as="points">
                                 <mxPoint x="150" y="{70 + y_shift}"/>
