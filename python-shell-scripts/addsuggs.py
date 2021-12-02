@@ -11,6 +11,12 @@ from libcst.metadata import PositionProvider, CodeRange
 
 from parse import ListUpdate, ValueUpdate, find_flow, NodeVisitor, DictUpdate
 
+def unesc(s: str):
+    return s.replace("&amp;", "&") \
+        .replace("&lt;", "<") \
+        .replace("&gt;", ">") \
+        .replace("&quot;", "\"")
+
 
 class CustomCondFinder(cst.CSTVisitor):
     METADATA_DEPENDENCIES = (PositionProvider,)
@@ -33,11 +39,11 @@ class CustomCondFinder(cst.CSTVisitor):
 
 data = json.loads(sys.stdin.read())
 python_code: str = data["pyData"]
-node_title = f'"{data["title"]}"'
-sfc = f'"{data.get("sfc", "")}"'
-flow = f'"{data["flow"]}"'
-parent = f'"{data["parent"]}"'
-cnd = data["cnd"]
+node_title = unesc(data["title"])
+sfc = unesc(data.get("sfc", ""))
+flow = unesc(data["flow"])
+parent = unesc(data["parent"])
+cnd = unesc(data["cnd"])
 
 update_dict = {
     flow: {
@@ -52,9 +58,9 @@ update_dict = {
         }
     }
 }
-if sfc != '""':
-    update_dict[node_title]["MISC"] = {}
-    update_dict[node_title]["MISC"]['"speech_functions"'] = ListUpdate([ValueUpdate(sfc)], allow_extra=False)
+if sfc != '':
+    update_dict[flow][node_title]["MISC"] = {}
+    update_dict[flow][node_title]["MISC"]['"speech_functions"'] = ListUpdate([ValueUpdate(sfc)], allow_extra=False)
 update = DictUpdate.from_dict(update_dict)
 
 module = cst.parse_module(python_code)

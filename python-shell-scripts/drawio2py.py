@@ -8,10 +8,15 @@ import json
 import libcst as cst
 from lxml import etree
 from collections import defaultdict
-from typing import Optional, List, Dict, Any, cast
+from typing import Dict, Union, cast
 
 from parse import KeyUpdate, ListUpdate, find_flow, NodeVisitor, DictUpdate
 
+def unesc(s: str):
+    return s.replace("&amp;", "&") \
+        .replace("&lt;", "<") \
+        .replace("&gt;", ">") \
+        .replace("&quot;", "\"")
 
 def parse_file(drawio_fn):
     doc = etree.fromstring(drawio_fn)
@@ -24,18 +29,15 @@ def parse_file(drawio_fn):
         if 'isnode' in node.attrib:
             usr_obj = doc.xpath(f"//*[@id='{node.attrib['parent']}']")
             if len(usr_obj) > 0 and 'data_from_form' in usr_obj[0].attrib:
-                form_data = json.loads(usr_obj[0].attrib['data_from_form'])
+                form_data = json.loads(unesc(usr_obj[0].attrib['data_from_form']))
             else:
                 form_data = {}
             title = form_data.get('node_title', node.attrib['label'])
-            old_titles = form_data.get('old_titles', [node.attrib['old_title'], None])
+            old_titles = form_data.get('old_titles', [unesc(node.attrib['old_title']), None])
             if len(old_titles) > 1:
                 old_title = old_titles[-2]
             else:
                 old_title = old_titles[0]
-            # if 'start' in old_title:
-            #     sys.stderr.write(f"title {title}, old title {old_title}\n")
-            #     assert False
             if 'node_title' not in form_data:
                 form_data['node_title'] = title
             nodeid = int(node.attrib["id"])
@@ -46,50 +48,67 @@ def parse_file(drawio_fn):
                 "form_data": form_data
             }
         elif 'isedge' in node.attrib:
-            edges[int(node.attrib["source"])][
-            int(node.attrib["realtarget"])
-            ] = node.attrib['reallabel']
+            edges[int(node.attrib["source"]) + 1][
+            int(node.attrib["realtarget"]) + 1
+            ] = unesc(node.attrib['reallabel'])
     return nodes, edges, edge_flows
 
 
 def get_updated_nodes(nodes, edges) -> DictUpdate:
     updated = defaultdict(dict)
+    renames = {}
     for node_dict in nodes.values():
         node = node_dict["node"]
-        flow_name = node.attrib["flow"]
+        flow_name = unesc(node.attrib["flow"])
         from_form = node_dict['form_data']
 
         old_title = node_dict['old_title']
         node_name = node_dict['title']
-        sys.stderr.write(f"title {node_name}, old title {old_title}\n")
+        if old_title != node_name:
+            renames[old_title] = node_name
         sfc = from_form.get("sfc", "")
-        # Transitions
-        # Check if node has child nodes
-        transitions: Dict[str, str] = {}
-        try:
-            for edge, edge_title in edges[int(node.attrib["id"])].items():
-                target_data = json.loads(nodes[edge]["form_data"])
-                # Compare flow of source node and flow of target node.
-                # If !=, then add tuple to transition
-                if node.attrib["flow"] != nodes[edge]["node"].attrib["flow"]:
-                    # Tuple: ( <flow of target node>, <name of target node> )
-                    target_title = f"({nodes['edge']['node'].attrib['flow']}, {target_data['node_title']})"
-                else:
-                    target_title = target_data["node_title"]
-                transitions[target_title] = edge_title
-        except KeyError:
-            pass
 
         node_key = KeyUpdate(old_key=old_title, new_key=node_name)
         updated[flow_name][node_key] = {
-            "TRANSITIONS": transitions,
+            "TRANSITIONS": {},
         }
 
         if sfc != "":
             updated[flow_name][node_key]["MISC"] = {
-                '"speech_functions"': ListUpdate(['"' + sfc + '"'], allow_extra=False)
+                '"speech_functions"': ListUpdate([sfc], allow_extra=False)
             }
 
+    for node_dict in nodes.values():
+        node = node_dict["node"]
+        flow_name = unesc(node.attrib["flow"])
+        old_title = node_dict['old_title']
+        node_name = node_dict['title']
+        transitions: Dict[Union[str, KeyUpdate], str] = {}
+        for edge, edge_title in edges[int(node.attrib["id"])].items():
+            target_data = nodes[edge]["form_data"]
+            # sys.stderr.write(f"node: {node_name}, flow name {node.attrib['flow']}, target flow {nodes[edge]['node'].attrib['flow']}\n")
+            if unesc(node.attrib["flow"]) != unesc(nodes[edge]["node"].attrib["flow"]):
+                target_flow = unesc(nodes[edge]['node'].attrib['flow'])
+                new_target_node = target_data['node_title']
+                old_target_node = next((o for o, n in renames.items() if n == new_target_node), new_target_node)
+                # sys.stderr.write(f"flow name {target_flow}, node name (new) {new_target_node}, (old) {old_target_node}\n")
+                if old_target_node != new_target_node:
+                    old_name = f"({target_flow}, {old_target_node})"
+                    new_name = f"({target_flow}, {new_target_node})"
+                    # sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
+                    transitions[KeyUpdate(old_key=old_name, new_key=new_name)] = edge_title
+                else:
+                    transitions[f"({target_flow}, {old_target_node})"] = edge_title
+            else:
+                new_name = target_data["node_title"] 
+                old_name = next((o for o, n in renames.items() if n == new_name), new_name) 
+                if new_name != old_name:
+                    # sys.stderr.write(f"trans {old_title} -> {old_name}={new_name}\n")
+                    transitions[KeyUpdate(old_key=old_name, new_key=new_name)] = edge_title
+                else:
+                    transitions[new_name] = edge_title
+        updated[flow_name][old_title]['TRANSITIONS'] = transitions
+        
     return DictUpdate.from_dict(updated)
 
 
@@ -127,6 +146,7 @@ module = cst.parse_module(python_code)
 old_flow = find_flow(module)
 if old_flow:
     new_flow = cast(cst.Dict, old_flow.visit(NodeVisitor(updated, module)))
+    # assert False
     python_code = cast(cst.Module, module.deep_replace(old_flow, new_flow)).code
     if module.has_trailing_newline:
         if not python_code.endswith(module.default_newline):

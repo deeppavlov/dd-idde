@@ -13,6 +13,17 @@ import { PythonShell } from 'python-shell';
 
 import examples from './examples';
 
+
+
+function quoteattr(s: string): string {
+    return ('' + s) /* Forces the conversion to string. */
+        .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
+        .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
 /**
  * Represents a connection to an drawio iframe.
  */
@@ -331,7 +342,6 @@ export class DrawioClient<
 				});
 				drawioEvt.cells.forEach((cel) => {
 					var cel_sfc = cel.sfc.split(" ");
-					console.log(cel_sfc);
 					sfcs.push(cel_sfc[0]);
 				});
 				var options = {
@@ -348,21 +358,24 @@ export class DrawioClient<
 						console.log(predictions);
 						// vscode.window.showInformationMessage(JSON.stringify(predictions));
 						// POST succeeded...
-						for (var j = 0; j < speech_functions.length; j++) {
+						for (var j = 0; j < predictions.length; j++) {
 
-							var curr_preds: any = [];
-							predictions[j].forEach((pred: any) => {
-								if (Object.keys(pred).length > 0) {
-									curr_preds.push({ sug: pred.prediction, conf: pred.confidence });
-								}
-							});
-							basic_sfcs[speech_functions[j]] = curr_preds;
+              if (Array.isArray(predictions[j])){
+                var curr_preds: any = [];
+                predictions[j].forEach((pred: any) => {
+                  if (Object.keys(pred).length > 0) {
+                    curr_preds.push({ sug: pred.prediction, conf: pred.confidence });
+                  }
+                });
+                basic_sfcs[speech_functions[j]] = curr_preds;
+              }
 						}
 						// for is in cells:
 						for (var is in drawioEvt.cells) {
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
-							var cel_preds = predictions[i + speech_functions.length]
+							var cel_preds = predictions[i * speech_functions.length]
+              if (!Array.isArray(cel_preds)) continue;
 							var sug_sf: any[] = [];
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
@@ -391,6 +404,7 @@ export class DrawioClient<
 					.catch((err: any) => {
 						// POST failed, send message to WebView
 						// this.vwP.webview.postMessage({ connectionError: "getSuggsError" });
+            console.error(err)
 						for (var is in drawioEvt.cells) {
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
@@ -454,7 +468,7 @@ export class DrawioClient<
 							case 'saveAsPng':
 								var form_data_str: string = message.form_data;
                 var form_data = JSON.parse(form_data_str)
-                if (form_data.sfc === '----') {
+                if (form_data.sfc.includes('----')) {
                   form_data.sfc = ''
                 }
                 console.warn('form_data', form_data_str)
@@ -469,7 +483,7 @@ export class DrawioClient<
                     title: form_data.node_title,
                     flow: drawioEvt.flow,
                     parent: drawioEvt.parent,
-                    sfc: form_data.sfc.split(" ")[0],
+                    sfc: form_data.sfc.split(" ")[0] + '"',
                     cnd: drawioEvt.cnd,
                   }).then(async ({ newPyCode, customCondPos }) => {
                       let workspaceEdit = new WorkspaceEdit()
@@ -493,7 +507,7 @@ export class DrawioClient<
                       // (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
                     })
                 } else {
-                  (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data_str });
+                  (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: JSON.stringify(form_data) });
                 }
 
 								break;
@@ -607,14 +621,15 @@ export class DrawioClient<
 		<div class="formbuilder-text form-group field-text-1627806340486">
 			<label for="text-1627806340486" class="formbuilder-text-label">Title</label>
 			<input type="text" placeholder="Node Title" class="form-control" 
-			       name="node_title" access="false" value="${title}" 
+			       name="node_title" access="false" value="${quoteattr(title.replace(/^f?['"]/, '').replace(/['"]$/, ''))}" 
 				   id="b">
-			<input type="hidden" name="old_titles" value="[&quot;${title}&quot;]"/>
+			<input type="hidden" name="old_titles" value="${quoteattr(JSON.stringify([title]))}"/>
 			<br/>
 			<h3>SFC</h3><select name="sfc" id="sfc-selector">`
-		speech_functions.forEach((element: any) => {
+		speech_functions.forEach((element: any, idx: number) => {
+      let sfc_name = node_info_sfc.replace(/^f?['"]/, '').replace(/['"]$/, '')
 			htmlContent2 += `<option value="${element}"`
-			if (node_info_sfc === element) {
+			if (element === sfc_name || (node_info["suggs"] && idx == 1)) {
 				htmlContent2 += ` selected`
 			}
 			htmlContent2 += `>${element}</option>`
@@ -642,7 +657,7 @@ export class DrawioClient<
 			var children_cell_id = children["cell_id"];
 			var children_sfc = children["sfc"];
 			var children_el = `<li>		` +
-				`<input type="button" class="connected_node_node" id="${children_cell_id}" value="${children_title}">` +
+				`<input type="button" class="connected_node_node" id="${children_cell_id}" value="${quoteattr(children_title)}">` +
 				`<select name="children_sfc" id="option_${children_cell_id}">`;
 			speech_functions.forEach((element: any) => {
 				children_el += `<option value="${element}"`

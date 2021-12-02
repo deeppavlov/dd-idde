@@ -6,6 +6,8 @@ function saveAsPng(event) {
   input_elements.forEach((node) => data[node.name] = node.value)
   console.log(data)
   data.old_titles = JSON.parse(data.old_titles)
+  data.node_title = `"${data.node_title}"`
+  data.sfc = `"${data.sfc}"`
   vscode.postMessage({
     command: 'saveAsPng', form_data: JSON.stringify(data)
   });

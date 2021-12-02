@@ -21,6 +21,13 @@ class KeyUpdate:
     def __str__(self):
         return self.old_key
 
+    def __eq__(self, b):
+        if isinstance(b, KeyUpdate):
+            return self.old_key == b.old_key
+        elif isinstance(b, str):
+            return self.old_key == b
+        return False
+
 
 @dataclass
 class DictUpdate:
@@ -48,22 +55,34 @@ class DictUpdate:
 
         return cast(DictUpdate, convert(dicitonary))
 
-    def get(self, key: str):
-        target_expr = cst.parse_expression(key)
+    def get(self, key: Union[str, cst.BaseExpression]):
+        target_expr = cst.parse_expression(key) if isinstance(key, str) else key
         key = getattr(target_expr, "raw_value", key)
         for k, v in self.elements.items():
+            if k == key: return k, v
             expr = cst.parse_expression(str(k)) if k != "" else ""
             if getattr(expr, "value", None) == key:
                 return k, v
             if getattr(expr, "raw_value", None) == key:
                 return k, v
+            elif isinstance(expr, cst.BaseExpression) and expr.deep_equals(target_expr):
+                return k, v
+            elif isinstance(k, KeyUpdate):
+                expr = cst.parse_expression(str(k.new_key)) if k.new_key != "" else ""
+                if getattr(expr, "value", None) == key:
+                    return k.new_key, v
+                if getattr(expr, "raw_value", None) == key:
+                    return k.new_key, v
+                elif isinstance(expr, cst.BaseExpression) and expr.deep_equals(target_expr):
+                    return k.new_key, v
+                
         return None, None
 
     def pop(self, key: Union[str, cst.BaseExpression]) -> Union[Tuple[None, None], Tuple[str, Optional[BaseUpdate]]]:
         if isinstance(key, (cst.Name, cst.SimpleString)):
             str_key = key.value
         elif isinstance(key, cst.Tuple):
-            str_key = f"({key.elements[0].value}, {key.elements[1].value})"
+            str_key = key
         elif isinstance(key, cst.Call):
             return None, None
         elif isinstance(key, str):
@@ -72,12 +91,20 @@ class DictUpdate:
             raise TypeError(f"Unsupported type {type(key)}")
         found_key, _ = self.get(str_key)
         if found_key is None:
+            # sys.stderr.write(f"{key}: found_key is none\n")
             return None, None
         if isinstance(found_key, KeyUpdate):
             new_key = found_key.new_key
+            # sys.stderr.write(f"found_key KeyUpdate {found_key}, new {new_key}\n")
+            return new_key, self.elements.pop(found_key, None)
         else:
+            # sys.stderr.write(f"found_key str {found_key}\n")
             new_key = found_key
-        return new_key, self.elements.pop(found_key, None)
+            if found_key not in self.elements:
+                for k in self.elements.keys():
+                    if isinstance(k, KeyUpdate) and k.new_key == found_key:
+                        return new_key, self.elements.pop(k, None)
+            return new_key, self.elements.pop(found_key, None)
 
     def __iter__(self):
         for k in list(self.elements.keys()):
@@ -368,18 +395,18 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             base_indent = self.offset_indent(self.indent_stack.pop(), -1)
         else:
             base_indent = self.indent_stack[-1] if len(self.indent_stack) > 0 else ""
-        sys.stderr.write(
-            f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}\n"
-        )
+        # sys.stderr.write(
+        #     f"{'.'.join(str(i) for i in self.path)}: {len(base_indent)/len(self.module.default_indent)}\n"
+        # )
 
         target = self.get_target()
-        sys.stderr.write(
-            f"transforming node {type(node)} in path {'.'.join(str(i) for i in self.path)}, update: {type(target)}\n"
-        )
+        # sys.stderr.write(
+        #     f"transforming node {type(node)} in path {'.'.join(str(i) for i in self.path)}, update: {type(target)}\n"
+        # )
         if target is None:
-            sys.stderr.write(
-                f"code for updated node: {self.module.code_for_node(node)}\n"
-            )
+            # sys.stderr.write(
+            #     f"code for updated node: {self.module.code_for_node(node)}\n"
+            # )
             return node
 
         if isinstance(target, DictUpdate) and not isinstance(node, cst.Dict):
@@ -416,6 +443,10 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                 elif isinstance(el.key, cst.Name):
                     new_key = el.key.with_changes(value=new_key_str)
                     el = el.with_changes(key=new_key)
+                else:
+                    el = el.with_changes(
+                        key=cst.parse_expression(new_key_str)
+                    )
             if isinstance(update, ValueUpdate):
                 if update != el.value:
                     # Update element
@@ -437,7 +468,7 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         if len(target.elements) > 0:
             right_ws = cst.SimpleWhitespace("")
 
-        sys.stderr.write(f"Remaining {target.elements}\n")
+        # sys.stderr.write(f"Remaining {target.elements}\n")
         # Remaining elements
         for key, update in target:
             key = (
@@ -481,5 +512,5 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             node, base_indent, is_expanded, is_expanded and has_trailing_comma
         )
 
-        sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
+        # sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
         return node
