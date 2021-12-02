@@ -57,6 +57,8 @@ export class DrawioClient<
 	private visibility: boolean = false;
 	private ts: number = 0;
 
+  private showingSugg = false;
+
 	constructor(
 		private readonly messageStream: MessageStream,
 		private readonly getConfig: () => Promise<DrawioConfig>,
@@ -128,6 +130,7 @@ export class DrawioClient<
 
 	protected async handleEvent(evt: { event: string }): Promise<void> {
 		const drawioEvt = evt as DrawioEvent;
+    console.warn('drawioEvt', drawioEvt)
 		// window.showInformationMessage(evt.event);
 		if ("message" in drawioEvt) {
 			const actionId = (drawioEvt.message as any).actionId as
@@ -300,6 +303,7 @@ export class DrawioClient<
 			/* End of edited request */
 
 		} else if (drawioEvt.event === "get_suggs") {
+      this.showingSugg = true;
 			const speech_functions = ['Open.Attend',
 				'Open.Demand.Fact',
 				'Open.Demand.Opinion',
@@ -330,7 +334,8 @@ export class DrawioClient<
 			var cells_i: any[] = []
 			let ts = Date.now();
 			let delta = ts - this.ts;
-			if (delta > 1000) {
+      console.warn('delta', delta)
+			if (delta > 500) {
 				this.ts = ts;
 				var vis = this.visibility;
 				const fs = require('fs');
@@ -425,7 +430,9 @@ export class DrawioClient<
 
 				this.visibility = !vis;
 
-			}
+			} else {
+        console.warn('SUGG REQ TOO FAST')
+      }
 
 
 		} else if (drawioEvt.event === "oleg") {
@@ -854,6 +861,7 @@ export class DrawioClient<
 	 */
 	 public async mergeXmlLike(xmlLike: string): Promise<void> {
 		//
+    console.log('merging XML')
 		let currFile = (this as any)._doc.document.uri.path;
 		if (currFile.endsWith(".py")) {
 			this.convertPyData()

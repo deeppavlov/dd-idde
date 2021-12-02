@@ -16,6 +16,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class DrawioEditorProviderText implements CustomTextEditorProvider {
+  private debounceTimer?: any;
+
 	constructor(private readonly drawioEditorService: DrawioEditorService) {}
 
 	public async resolveCustomTextEditor(
@@ -116,15 +118,21 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 					return;
 				}
 
-				const newText = evt.document.getText();
-				const newDocument = getNormalizedDocument(newText);
-				if (newDocument.equals(lastDocument)) {
-					return;
-				}
-				lastDocument = newDocument;
+        const doUpdate = async () => {
+          const newText = evt.document.getText();
+          const newDocument = getNormalizedDocument(newText);
+          if (newDocument.equals(lastDocument)) {
+            return;
+          }
+          lastDocument = newDocument;
 
-				await drawioClient.mergeXmlLike(newText);
-			});
+          await drawioClient.mergeXmlLike(newText);
+        }
+        if (this.debounceTimer) {
+          clearTimeout(this.debounceTimer)
+        }
+        this.debounceTimer = setTimeout(doUpdate, 200)
+      });
 
 			drawioClient.onChange.sub(async ({ newXml }) => {
 				// We format the xml so that it can be easily edited in a second text editor.
@@ -161,8 +169,11 @@ export class DrawioEditorProviderText implements CustomTextEditorProvider {
 						})
 						.catch(error => {
 							console.log(error);
-						}
-					);
+						});
+          if (output === document.getText()) {
+            console.log('Python unchanged')
+            return
+          }
 				} else {
 					if (newXml.startsWith('<mxfile host="')) {
 						newXml = newXml.replace(

@@ -140,7 +140,7 @@ def graph2drawio(graph):
                           </mxGeometry>
                     </mxCell>
                 </UserObject>
-                <mxCell isnode="1" old_title="{node_name}" parent="{data['id']}" label="{node_name}" value="" flow="{flow_name}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                <mxCell isnode="1" id="{data['id'] + 2}" old_title="{node_name}" parent="{data['id']}" label="{node_name}" value="" flow="{flow_name}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
                     <mxGeometry y="26" width="150" height="64" as="geometry" />
                 </mxCell>
             """
@@ -171,7 +171,7 @@ def graph2drawio(graph):
                     title = edge_data['title']
                 title = esc(title)
                 edge_text = f"""
-                    <mxCell isedge="1" id="{edge_data['id']}" flow="{flow_name}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{esc(edge_data['title'])}" realtarget="{target_id}" edge="1">
+                    <mxCell isedge="1" id="{edge_data['id']}" flow="{flow_name}" style="{edge_style}" parent="2" source="{data["id"]}" target="{edge_data['id'] + 1}" reallabel="{esc(edge_data['title'])}" realtarget="{int(target_id)}" edge="1">
                         <mxGeometry relative="1" as="geometry">
                             <Array as="points">
                                 <mxPoint x="150" y="{70 + y_shift}"/>

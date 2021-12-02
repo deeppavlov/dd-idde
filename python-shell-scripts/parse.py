@@ -3,7 +3,7 @@ import dataclasses
 import libcst as cst
 import libcst.matchers as m
 
-from typing import Literal, Optional, Tuple, Union, List, Dict, DefaultDict, cast
+from typing import Literal, Optional, Tuple, Union, List, Dict, DefaultDict, Set, cast
 from dataclasses import dataclass, field
 from collections import defaultdict
 
@@ -58,6 +58,7 @@ class DictUpdate:
     def get(self, key: Union[str, cst.BaseExpression]):
         target_expr = cst.parse_expression(key) if isinstance(key, str) else key
         key = getattr(target_expr, "raw_value", key)
+        sys.stderr.write(f"Looking for key {key} in {self.elements}\n\n")
         for k, v in self.elements.items():
             if k == key: return k, v
             expr = cst.parse_expression(str(k)) if k != "" else ""
@@ -452,16 +453,23 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                         key=cst.parse_expression(new_key_str)
                     )
             if isinstance(update, ValueUpdate):
-                if update != el.value:
-                    # Update element
-                    new_el = el.with_changes(value=update.parsed)
-                    new_elements.append(new_el)
-                else:
-                    # Unchanged
-                    new_elements.append(el)
+                if not update.remove:
+                    if update != el.value:
+                        # Update element
+                        new_el = el.with_changes(value=update.parsed)
+                        new_elements.append(new_el)
+                    else:
+                        # Unchanged
+                        new_elements.append(el)
             elif isinstance(update, (DictUpdate, ListUpdate)):
                 new_elements.append(el)
             elif update is None and target.allow_extra:
+                # if self.path[-1] == "TRANSITIONS":
+                #     flow_name = str(self.path[0])
+                #     node_name = self.path[1]
+                #     if node_name in self.node_names.get(flow_name, set()):
+                #         new_elements.append(el)
+                # else:
                 # Not in update, but extra is allowed
                 new_elements.append(el)
 
@@ -507,14 +515,20 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         else:
             ws_dict["rbracket"] = cst.RightSquareBracket(right_ws)
         node = node.with_changes(elements=new_elements, **ws_dict)
-        if not is_expanded:
-            line_len = max(
-                (len(l) for l in self.module.code_for_node(node).splitlines())
+        if len(node.elements) == 0:
+            if isinstance(node, cst.Dict):
+                node = cst.parse_expression('{}')
+            else:
+                node = cst.parse_expression('[]')
+        else:
+            if not is_expanded:
+                line_len = max(
+                    (len(l) for l in self.module.code_for_node(node).splitlines())
+                )
+                is_expanded = line_len > 80
+            node = self.format_collection(
+                node, base_indent, is_expanded, is_expanded and has_trailing_comma
             )
-            is_expanded = line_len > 80
-        node = self.format_collection(
-            node, base_indent, is_expanded, is_expanded and has_trailing_comma
-        )
 
         sys.stderr.write(f"code for updated node: {self.module.code_for_node(node)}\n")
         return node
