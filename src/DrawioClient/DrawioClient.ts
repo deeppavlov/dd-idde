@@ -341,6 +341,7 @@ export class DrawioClient<
 				});
 				drawioEvt.cells.forEach((cel) => {
 					var cel_sfc = cel.sfc.split(" ");
+          console.log('celsfc', cel_sfc)
 					sfcs.push(cel_sfc[0].replace(/^f?['"]/, '').replace(/['"]$/, ''));
 				});
 				var options = {
@@ -475,11 +476,13 @@ export class DrawioClient<
                 if (drawioEvt.suggs) {
                   // newly inserted
                   console.warn("added suggestion", drawioEvt)
+                  let sfc = form_data.sfc.split(" ")[0]
+                  if (sfc != '' && !sfc.endsWith('"')) sfc += '"'
                   this.addSuggNode({
                     title: form_data.node_title,
                     flow: drawioEvt.flow,
                     parent: drawioEvt.parent,
-                    sfc: form_data.sfc.split(" ")[0] + '"',
+                    sfc,
                     cnd: drawioEvt.cnd,
                   }).then(async ({ newPyCode, customCondPos }) => {
                       let workspaceEdit = new WorkspaceEdit()
@@ -796,6 +799,8 @@ export class DrawioClient<
 			// end the input stream and allow the process to exit
 			shell.end( (err,code,signal) => {
 				if (err) throw err;
+        console.log('got xml: ')
+        console.log(xmlData)
 				resolve(xmlData);
 			});
 		})

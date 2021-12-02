@@ -122,6 +122,8 @@ def graph2drawio(graph):
                 sfcs = data['sfcs'][0]
             else:
                 sfcs = ""
+            sys.stderr.write(f"{sfcs}\n")
+            # assert False
             data_from_form = {
                 "node_title": node_name,
                 "old_titles": [node_name],
@@ -132,7 +134,7 @@ def graph2drawio(graph):
             node_name = esc(node_name)
             node_text = f"""
                 <UserObject data_from_form="{data_from_form}" label="{node_name}" id="{data['id']}">
-                    <mxCell id="{data['id'] + 1}" value="{node_name}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;autosize=1;" vertex="1" parent="2" collapsed="1">
+                    <mxCell id="{data['id'] + 1}" label="{node_name}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;autosize=1;" vertex="1" parent="2" collapsed="1">
                           <mxGeometry x="150" y="{70 + y_shift}" width="150" height="26" as="geometry">
                               <mxRectangle x="10" y="40" width="150" height="90" as="alternateBounds" />
                           </mxGeometry>
