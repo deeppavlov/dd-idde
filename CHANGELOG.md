@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **##** **[****0.2.35-Alpha****]**
 
+\-  Fix deleting nodes
+
+**##** **[****0.2.35-Alpha****]**
+
 \-  Fix issues with node creation and renaming in python
 
 **##** **[****0.2.34-Alpha****]**

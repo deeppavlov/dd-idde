@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "DD-IDDE",
 	"description": "Discourse-Driven Integrated Dialog Development Environment.",
-	"version": "0.2.35",
+	"version": "0.2.36",
 	"license": "GPL-3.0",
 	"publisher": "deeppavlov",
 	"keywords": [
