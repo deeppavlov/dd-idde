@@ -1,6 +1,8 @@
 const vscode = acquireVsCodeApi();
+const nodeTitleField = document.getElementById('b');
 
 function saveAsPng(event) {
+  if (window.nodeNames.includes(nodeTitleField.value)) return
   const input_elements = document.querySelectorAll('.formbuilder-text [name]')
   const data = {}
   input_elements.forEach((node) => data[node.name] = node.value)
@@ -16,6 +18,21 @@ function saveAsPng(event) {
 
 const saveAsPngButton = document.getElementById('saveAsPngButton');
 saveAsPngButton.addEventListener('click', saveAsPng);
+
+const checkName = (newName) => {
+  if (window.nodeNames.includes(newName)) {
+    nodeTitleField.style.border = '1px solid red'
+    nodeTitleField.style.color = 'red'
+  } else {
+    nodeTitleField.style.border = '1px solid black'
+    nodeTitleField.style.color = 'black'
+  }
+}
+nodeTitleField.addEventListener('input', (ev) => {
+  const newName = ev.target.value;
+  checkName(newName)
+})
+checkName(nodeTitleField.value)
 
 const exTitle = document.getElementById('example-title')
 const sfcs = document.getElementById('sfc-selector');

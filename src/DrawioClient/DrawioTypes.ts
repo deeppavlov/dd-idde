@@ -9,6 +9,7 @@ export type DrawioEvent =
     parent: string;
     flow: string
     cnd: string
+    nodeNames: string[]
 	} | {
 		event: "open dff";
 	}

@@ -327,6 +327,7 @@ export class DrawioClient<
 				'React.Respond.Support.Reply.Affirm',
 				'React.Respond.Support.Reply.Agree',
 				'React.Rejoinder.Support.Response.Resolve',
+        'Sustain.Continue',
 				'Sustain.Continue.Monitor',
 				'Sustain.Continue.Prolong.Elaborate',
 				'Sustain.Continue.Prolong.Enhance',
@@ -385,7 +386,7 @@ export class DrawioClient<
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
 								}
 							});
-              sug_sf = [...sug_sf.reverse(), ...defaultSuggs];
+              sug_sf = [...sug_sf, ...defaultSuggs];
 							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
 								cells_i.push({
 									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
@@ -446,7 +447,8 @@ export class DrawioClient<
 				"title": cell_title,
 				"cell_content": cell_content,
 				"children": drawioEvt.children,
-				"suggs": drawioEvt.suggs
+				"suggs": drawioEvt.suggs,
+        "nodeNames": drawioEvt.nodeNames,
 			}
 			if (!this.openedForms.hasOwnProperty(cid)) {
 				// vscode.window.showInformationMessage(cid);
@@ -544,6 +546,10 @@ export class DrawioClient<
 				webviewPanel.onDidDispose(
 					() => { delete this.openedForms[(webviewPanel as any)._cid] }, null, this.context.subscriptions
 				)
+        if (!drawioEvt.suggs) {
+          const idx = node_info.nodeNames.indexOf(node_info.title.replace(/^f?['"]/, '').replace(/['"]$/, ''))
+          if (idx !== -1) node_info.nodeNames.splice(idx, 1)
+        }
 				this.setHtmlContent(webviewPanel.webview, this.context, node_info);
 			}
 			else {
@@ -585,6 +591,7 @@ export class DrawioClient<
 			'React.Respond.Support.Reply.Acknowledge',
 			'React.Respond.Support.Reply.Affirm',
 			'React.Respond.Support.Reply.Agree',
+      'Sustain.Continue',
 			'Sustain.Continue.Monitor',
 			'Sustain.Continue.Prolong.Elaborate',
 			'Sustain.Continue.Prolong.Enhance',
@@ -592,7 +599,7 @@ export class DrawioClient<
 		var speech_functions: any = [];
 		if (node_info["suggs"]) {
 			var suggs = JSON.parse(node_info["suggs"]);
-			suggs.forEach((sug: any) => {
+			suggs.reverse().forEach((sug: any) => {
 				var s = sug["sug"];
 				var c = Number(sug["conf"]).toFixed(2);
 				speech_functions.push(`${s} ${c}`);
@@ -611,7 +618,7 @@ export class DrawioClient<
 		let htmlContent2 = `
 		<head>
 		  <meta charset="UTF-8">
-		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-nonce' 'sha256-YKIYvXEI144i6DEkPR1V/4T2zVP+z9wjQxnN/H53ajc='">
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-nonce';">
 		  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		  <link href="vscodeTest.css" rel="stylesheet">
       <style>
@@ -621,7 +628,8 @@ export class DrawioClient<
       }
       </style>
 
-      <script>window.SFCExamples = ${JSON.stringify(examples)};</script>
+      <script >window.SFCExamples = ${JSON.stringify(examples)};</script>
+      <script >window.nodeNames = ${JSON.stringify(node_info.nodeNames || [])};</script>
 		</head>
 		<div class="rendered-form">
 		<div class="formbuilder-text form-group field-text-1627806340486">
@@ -635,7 +643,7 @@ export class DrawioClient<
 		speech_functions.forEach((element: any, idx: number) => {
       let sfc_name = node_info_sfc.replace(/^f?['"]/, '').replace(/['"]$/, '')
 			htmlContent2 += `<option value="${element}"`
-			if (element === sfc_name || (node_info["suggs"] && idx == 1)) {
+			if (element.split(' ')[0] === sfc_name || (node_info["suggs"] && idx === 1) || (sfc_name === '' && idx === 0)) {
 				htmlContent2 += ` selected`
 			}
 			htmlContent2 += `>${element}</option>`

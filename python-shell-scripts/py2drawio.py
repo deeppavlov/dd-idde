@@ -64,6 +64,7 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
     """
     nodes = {}
     node_id = 4
+    valid_node_names = set()
     for flow_el in flow_node.elements:
         if not isinstance(flow_el, cst.DictElement): continue
         flow_name = module.code_for_node(flow_el.key)
@@ -72,6 +73,10 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
             if not isinstance(node_el, cst.DictElement): continue
             node_name = module.code_for_node(node_el.key)
             if node_name == "LOCAL": continue
+            if isinstance(node_el.key, cst.SimpleString):
+                valid_node_names.add(node_el.key.raw_value)
+            else:
+                valid_node_names.add(node_name)
 
             node = Node(node_name, flow_name, cast(cst.Dict, node_el.value), module)
             node_data: Dict[str, Any] = {
@@ -90,10 +95,10 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
                 node_id += 3 # Each edge will need three cells
             flow[node_name] = node_data
         nodes[flow_name] = flow
-    return nodes
+    return nodes, valid_node_names
 
 
-def graph2drawio(graph):
+def graph2drawio(graph, valid_node_names):
     """
     Convert graph to .drawio data
     """
@@ -104,7 +109,7 @@ def graph2drawio(graph):
             <mxGraphModel dx="1494" dy="610" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
                 <root>
                     <mxCell id="0"/>
-                    <mxCell id="2" flows_name= "flow" value="flow" parent="0"/>
+                    <mxCell id="2" flows_name= "flow" value="flow" parent="0" nodenames="{esc(json.dumps(list(valid_node_names)))}"/>
     """
     tail = """
                     <mxCell id="3" value="Suggestions" parent="0"/>
@@ -209,8 +214,8 @@ def pipeline(content):
     module = cst.parse_module(content)
     flow_node = find_flow(module)
     assert flow_node is not None
-    nodes = parse_flow(flow_node, module)
-    xml = graph2drawio(nodes)
+    nodes, valid_node_names = parse_flow(flow_node, module)
+    xml = graph2drawio(nodes, valid_node_names)
     return xml
 
 
