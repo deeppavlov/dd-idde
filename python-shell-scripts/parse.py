@@ -60,7 +60,8 @@ class DictUpdate:
         key = getattr(target_expr, "raw_value", key)
         sys.stderr.write(f"Looking for key {key} in {self.elements}\n\n")
         for k, v in self.elements.items():
-            if k == key: return k, v
+            if k == key:
+                return k, v
             expr = cst.parse_expression(str(k)) if k != "" else ""
             if getattr(expr, "value", None) == key:
                 return k, v
@@ -74,12 +75,16 @@ class DictUpdate:
                     return k.new_key, v
                 if getattr(expr, "raw_value", None) == key:
                     return k.new_key, v
-                elif isinstance(expr, cst.BaseExpression) and expr.deep_equals(target_expr):
+                elif isinstance(expr, cst.BaseExpression) and expr.deep_equals(
+                    target_expr
+                ):
                     return k.new_key, v
-                
+
         return None, None
 
-    def pop(self, key: Union[str, cst.BaseExpression], _) -> Union[Tuple[None, None], Tuple[str, Optional[BaseUpdate]]]:
+    def pop(
+        self, key: Union[str, cst.BaseExpression], _
+    ) -> Union[Tuple[None, None], Tuple[str, Optional[BaseUpdate]]]:
         if isinstance(key, (cst.Name, cst.SimpleString)):
             str_key = key.value
         elif isinstance(key, cst.Tuple):
@@ -118,7 +123,7 @@ class ListUpdate:
     allow_extra: bool = True
     order_significant: bool = True
 
-    def pop(self, item: Union[BaseUpdate, cst.BaseExpression], idx = None):
+    def pop(self, item: Union[BaseUpdate, cst.BaseExpression], idx=None):
         if not self.order_significant:
             idx = next((i for i, el in enumerate(self.elements) if el == item), None)
         if idx is not None and idx < len(self.elements):
@@ -188,7 +193,9 @@ def find_flow(py_tree: cst.Module) -> Optional[cst.Dict]:
         ]
         all_nodes = all(
             any(
-                m.matches(el, m.DictElement(key=m.Name("TRANSITIONS")))
+                isinstance(el, cst.DictElement)
+                and isinstance(el.key, cst.Name)
+                and el.key.value in ("TRANSITIONS", "RESPONSE", "PROCESSING")
                 for el in node.elements
             )
             for node in nodes
@@ -440,18 +447,16 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
             if new_key_str and isinstance(el, cst.DictElement):
                 if isinstance(el.key, cst.SimpleString):
                     if not new_key_str.startswith(('"', "'", "f'", 'f"')):
-                        new_key_str = el.key.value.replace(el.key.raw_value, new_key_str)
-                    new_key = el.key.with_changes(
-                        value=new_key_str
-                    )
+                        new_key_str = el.key.value.replace(
+                            el.key.raw_value, new_key_str
+                        )
+                    new_key = el.key.with_changes(value=new_key_str)
                     el = el.with_changes(key=new_key)
                 elif isinstance(el.key, cst.Name):
                     new_key = el.key.with_changes(value=new_key_str)
                     el = el.with_changes(key=new_key)
                 else:
-                    el = el.with_changes(
-                        key=cst.parse_expression(new_key_str)
-                    )
+                    el = el.with_changes(key=cst.parse_expression(new_key_str))
             if isinstance(update, ValueUpdate):
                 if not update.remove:
                     if update != el.value:
@@ -517,9 +522,9 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         node = node.with_changes(elements=new_elements, **ws_dict)
         if len(node.elements) == 0:
             if isinstance(node, cst.Dict):
-                node = cst.parse_expression('{}')
+                node = cst.parse_expression("{}")
             else:
-                node = cst.parse_expression('[]')
+                node = cst.parse_expression("[]")
         else:
             if not is_expanded:
                 line_len = max(

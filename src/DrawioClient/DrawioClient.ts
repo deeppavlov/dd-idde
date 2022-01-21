@@ -352,7 +352,7 @@ export class DrawioClient<
 				});
 				var options = {
 					method: 'POST',
-					uri: "http://localhost:8107/annotation",
+					uri: "http://lnsigo.mipt.ru:8107/annotation",
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
@@ -381,6 +381,7 @@ export class DrawioClient<
 							var cel = drawioEvt.cells[i];
 							var cel_preds = predictions[i + speech_functions.length]
 							var sug_sf: any[] = [];
+              console.log("cel_preds", cel_preds)
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
