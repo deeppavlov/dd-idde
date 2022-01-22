@@ -79,7 +79,6 @@ export class DrawioClient<
 		(window as any).suggestions_visible = false;
 
 
-
 	}
 
 	private currentActionId = 0;
@@ -352,7 +351,7 @@ export class DrawioClient<
 				});
 				var options = {
 					method: 'POST',
-					uri: "http://lnsigo.mipt.ru:8107/annotation",
+					uri: this.sfc_url.get(),
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
