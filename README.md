@@ -48,6 +48,9 @@ TBD
 1. Run DD-IDDE SDK Runtime with Docker-Compose: ```docker-compose up --build```
 
 ## Design & Run Your Open-Domain/Scenario-Driven Chatbot in DD-IDDE
+
+*NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
+
 ### Start With The Built-In Example
 1. Open VS Code in your ```dd_idde_sdk``` folder by running ```code .```.
 2. Go to ```experiments``` folder.
