@@ -35,9 +35,11 @@ class Node:
             prop_name = module.code_for_node(node_prop_el.key)
             if prop_name == 'TRANSITIONS':
                 # sys.stderr.write(f"{name} transitions:\n{node_prop_el.value}\n")
-                self._parse_transitions(cast(cst.Dict, node_prop_el.value), module)
+                if isinstance(node_prop_el.value, cst.Dict):
+                    self._parse_transitions(node_prop_el.value, module)
             elif prop_name == 'MISC':
-                self._parse_misc(cast(cst.Dict, node_prop_el.value), module)
+                if isinstance(node_prop_el.value, cst.Dict):
+                    self._parse_misc(node_prop_el.value, module)
 
     def _parse_transitions(self, trans: cst.Dict, module: cst.Module):
         for elem in trans.elements:
