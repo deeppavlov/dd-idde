@@ -70,6 +70,7 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
     for flow_el in flow_node.elements:
         if not isinstance(flow_el, cst.DictElement): continue
         flow_name = module.code_for_node(flow_el.key)
+        if flow_name == "GLOBAL": continue
         flow = {}
         for node_el in cast(cst.Dict, flow_el.value).elements:
             if not isinstance(node_el, cst.DictElement): continue

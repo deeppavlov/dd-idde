@@ -468,7 +468,9 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                         new_elements.append(el)
             elif isinstance(update, (DictUpdate, ListUpdate)):
                 new_elements.append(el)
-            elif update is None and target.allow_extra:
+            elif update is None and (
+                target.allow_extra or m.matches(el, m.DictElement(key=m.Name("GLOBAL")))
+            ):
                 # if self.path[-1] == "TRANSITIONS":
                 #     flow_name = str(self.path[0])
                 #     node_name = self.path[1]
