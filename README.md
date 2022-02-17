@@ -1,11 +1,11 @@
-# DD-IDDE: Design Discourse-Driven Open-Domain Chatbots
+# DF Designer: Design Discourse-Driven Open-Domain Chatbots with DeepPavlov Conversational AI technologies
 
 
 [![](https://img.shields.io/twitter/follow/deeppavlov.svg?style=social)](https://twitter.com/intent/follow?screen_name=deeppavlov)
 
-This extension enables developers of the open-domain chatbots with an option to design them within VS Code using customized Draw.io UI and **Discourse Moves Recommendations** to make dialog more smooth and natural.
+This extension (previously known as DD-IDDE) enables developers of the open-domain chatbots with an option to design them within VS Code using customized Draw.io UI and **Discourse Moves Recommendations** to make dialog more smooth and natural.
 
-This extension uses DeepPavlov's [Dialog Flow Framework](https://github.com/deepmipt/dialog_flow_framework) as the runtime environment for the open-domain chatbots. It also uses [DD-IDDE SDK](https://github.com/deepmipt/dd_idde_sdk) that enables the use of the Discourse Moves recommendations during the design phase as well in the runtime.
+This extension uses DeepPavlov's [Dialog Flow Framework](https://github.com/deepmipt/dialog_flow_framework) as the runtime environment for the open-domain chatbots. It can be used to build simple chatbots using [DF SDK](https://github.com/deepmipt/dialog_flow_sdk) or to build complex multi-skill AI Assistants using our [DeepPavlov Dream](https://github.com/deepmipt/dream) platform. 
 
 **Discourse Moves Recommendation System** has been built based on the Discourse & Speech Functions theory originally created by M.A.K. Halliday and further developed by Eggins & Slade in their book ["Analysing Casual Conversation"](https://www.equinoxpub.com/home/analysing-casual-conversation-suzanne-eggins-diana-slade/).
 
@@ -37,34 +37,62 @@ TBD
 | ---- | ------------ | ----------------------------------------- |
 | lxml | v4.6.3       | This version was tested with lxml v4.6.3. |
 
-### DD-IDDE SDK Installation
+### Build Simple Chatbots with DF SDK
+#### DF SDK Installation
 
-1. Clone SDK: ```git clone https://github.com/deepmipt/dd_idde_sdk```
-2. Change to its directory: ```cd dd_idde_sdk```
+1. Clone SDK: ```git clone https://github.com/deepmipt/dialog_flow_sdk```
+2. Change to its directory: ```cd dialog_flow_sdk```
 3. Install requirements: ```pip3 install -r requirements.txt```
 
-### DD-IDDE SDK Runtime
+#### DF SDK Runtime
 
-1. Run DD-IDDE SDK Runtime with Docker-Compose: ```docker-compose up --build```
+1. Run DF SDK Runtime with Docker-Compose: ```docker-compose up --build```
 
-## Design & Run Your Open-Domain/Scenario-Driven Chatbot in DD-IDDE
+#### Design & Run Your Open-Domain/Scenario-Driven Chatbot in DF Designer
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
-### Start With The Built-In Example
-1. Open VS Code in your ```dd_idde_sdk``` folder by running ```code .```.
+#### Start With The Built-In Example
+1. Open VS Code in your ```dialog_flow_sdk``` folder by running ```code .```.
 2. Go to ```experiments``` folder.
 3. Open ```example_1_basics.py```.
 3. Right click on ```example_1_basics.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
-### Use Discourse Moves Recommendation System
+#### Use Discourse Moves Recommendation System
 1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
-### Run
+#### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
-1. Open Terminal in the ```dd_idde_sdk``` folder.
+1. Open Terminal in the ```dialog_flow_sdk``` folder.
 2. Run ```python3 experiments/example_1_basics.py```.
-3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DD-IDDE SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+
+### Build Complex Multi-Skill AI Assistants with DeepPavlov Dream
+#### DeepPavlov Dream Installation
+
+1. Clone Dream: ```git clone https://github.com/deepmipt/dream```
+2. Change to its directory: ```cd dream```
+3. Follow [instructions](https://github.com/deepmipt/dream#readme) to configure running your Dream distribution through our **proxy**.
+
+#### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
+
+*NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
+
+#### Start With The Built-In Example
+1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_template_skill/``` folder by running ```code .```.
+2. Go to ```scenario``` folder.
+3. Open ```main.py```.
+3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
+#### Use Discourse Moves Recommendation System
+1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
+2. Pick the suggestion based on the Speech Function you want to add support for.
+3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
+#### Run
+Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
+1. Open Terminal in the ```dream``` folder.
+2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream/docker-compose.override.yml -f assistant_dists/dream/proxy.yml up --build```.
+3. In a sepate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```
+4. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
 
 ## Themes
 
