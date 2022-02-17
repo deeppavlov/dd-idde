@@ -1,7 +1,7 @@
 {
 	"name": "vscode-dd-idde",
 	"private": true,
-	"displayName": "DD-IDDE",
+	"displayName": "DF Designer",
 	"description": "Discourse-Driven Integrated Dialog Development Environment.",
 	"version": "0.2.44",
 	"license": "GPL-3.0",
@@ -10,7 +10,10 @@
 		"deeppavlov",
 		"discourse",
 		"dialog",
-		"IDE"
+		"IDE",
+		"dd-idde",
+		"dff",
+		"df designer"
 	],
 	"author": {
 		"email": "dima.babadeev@mail.ru",
