@@ -90,7 +90,7 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 #### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
-2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream/docker-compose.override.yml -f assistant_dists/dream/proxy.yml up --build```.
+2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/proxy.yml up --build```.
 3. In a sepate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```
 4. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
 
