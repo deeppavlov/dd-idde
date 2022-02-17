@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **##** **[****0.2.43-Alpha****]**
 
+\-  Fix: insert new transitions at the top
+
+**##** **[****0.2.43-Alpha****]**
+
 \-  Fix: handle GLOBAL keys
 
 **##** **[****0.2.42-Alpha****]**
