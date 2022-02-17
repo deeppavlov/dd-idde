@@ -503,7 +503,10 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                     new_el = node.elements[0].with_changes(**upd_attrs)
                 else:
                     new_el = self.new_element(target, **upd_attrs)
-                new_elements.append(new_el)
+                if self.path[-1] == "TRANSITIONS":
+                    new_elements.insert(0, new_el)
+                else:
+                    new_elements.append(new_el)
             else:
                 new_val = self.new_collection(update)
                 new_el = self.new_element(target, key=key, value=new_val)
@@ -514,7 +517,10 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
                         new_val, indent, True, has_trailing_comma
                     )
                     new_el = new_el.with_changes(value=new_val)
-                new_elements.append(new_el)
+                if self.path[-1] == "TRANSITIONS":
+                    new_elements.insert(0, new_el)
+                else:
+                    new_elements.append(new_el)
 
         ws_dict = {}
         if isinstance(node, cst.Dict):
