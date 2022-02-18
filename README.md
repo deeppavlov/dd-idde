@@ -112,9 +112,15 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
-2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build```.
-3. In a separate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
-4. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
+2. Run 
+```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build
+```
+4. In a separate Terminal tab run:
+```
+docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream/pipeline_conf.json
+```
+Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+6. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
 ```
 {
 	"user_id": "MyDearFriend",
