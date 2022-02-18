@@ -87,14 +87,24 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
-### Start With The Built-In Example
-1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_template_skill/``` folder by running ```code .```.
+#### Prepare Dream to Run Built-In Example Locally
+1. Create `local.yml`: 
+```
+python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-sfc-skill
+```
+3. Run distribution:
+```
+docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build
+```
+
+#### Start With The Built-In Example
+1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/``` folder by running ```code .```.
 2. Go to ```scenario``` folder.
 3. Open ```main.py```.
 3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
 
-### Use Discourse Moves Recommendation System
-#### Pre-Requisites
+#### Use Discourse Moves Recommendation System
+#### Pre-Requisites (needed in your custom skill, e.g., dff_template_skill)
 To use Discourse Moves Recommendation System using Speech Functions you need to add integration with Speech Functions classifier:
 1. Copy ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
 2. Add line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
@@ -108,12 +118,14 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
 2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/proxy.yml up --build```.
-3. In a separate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```
-4. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
-
-### Demo Skill: Books
-We've re-designed our DFF Books skill by augmenting it with Speech Functions. You can try it out here:
-
+3. In a separate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+4. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
+```
+{
+	"user_id": "MyDearFriend",
+	"payload": "hi how are you"
+}
+```
 
 ## Editing the Dialog Designer and its DFF Python Side by Side
 
