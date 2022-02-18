@@ -61,9 +61,9 @@ The image link below leads directly to the introduction of the **DF Designer** i
 
 ### Start With The Built-In Example
 1. Open VS Code in your ```dialog_flow_sdk``` folder by running ```code .```.
-2. Go to ```experiments``` folder.
-3. Open ```example_1_basics.py```.
-3. Right click on ```example_1_basics.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
+2. Go to ```examples``` folder.
+3. Open ```food.py```.
+3. Right click on ```food.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
 
 ### Use Discourse Moves Recommendation System
 1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
@@ -73,8 +73,8 @@ The image link below leads directly to the introduction of the **DF Designer** i
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dialog_flow_sdk``` folder.
-2. Run ```python3 experiments/example_1_basics.py```.
-3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+2. Run ```python3 examples/food.py```.
+3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```food.py``` file. 
 
 ## Build Complex Multi-Skill AI Assistants with DeepPavlov Dream
 ### DeepPavlov Dream Installation
