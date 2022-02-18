@@ -81,17 +81,16 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 
 1. Clone Dream: ```git clone https://github.com/deepmipt/dream```
 2. Change to its directory: ```cd dream```
-3. Follow [instructions](https://github.com/deepmipt/dream#readme) to configure running your Dream distribution through our **proxy**.
-
-### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
-#### Prepare Dream to Run Built-In Example Locally
+### Prepare Dream to Run Built-In Example Locally
 1. Create `local.yml`: 
 ```
 python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-sfc-skill
 ```
+
+### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
 
 #### Start With The Built-In Example
 1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/``` folder by running ```code .```.
