@@ -14,7 +14,7 @@ This extension is built on top of the unnoficial integration of the [Draw.io](ht
 ## Features
 
 -   Open ```.py``` files representing dialog flows of the open-domain chatbots using the Draw.io editor.
-    -   To create a new dialog flow, simply copy an example file from examples folder, right click on the file, choose "Open With", and select "DD-IDDE" diagram, simply create an empty `*.drawio`, `*.drawio.svg` or `*.drawio.png` file and open it.
+    -   To create a new dialog flow, simply copy an example file from examples folder, right click on the file, choose "Open With", and select "DF Designer".
 -   Uses an offline version of Draw.io by default.
 
 ## Tutorials
