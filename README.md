@@ -66,7 +66,7 @@ The image link below leads directly to the introduction of the **DF Designer** i
 3. Right click on ```example_1_basics.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
 
 ### Use Discourse Moves Recommendation System
-1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
+1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
 
@@ -100,7 +100,7 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 2. Add line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
 
 #### Using Recommendations in Dialogue Design
-1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
+1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
 
