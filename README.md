@@ -112,9 +112,7 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
-2. Run 
-```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build
-```
+2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build```
 4. In a separate Terminal tab run:
 ```
 docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream/pipeline_conf.json
