@@ -74,7 +74,7 @@ The image link below leads directly to the introduction of the **DF Designer** i
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dialog_flow_sdk``` folder.
 2. Run ```python3 examples/food.py```.
-3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```food.py``` file. 
+3. If you didn't edit the file, you can type “Hi” to begin the dialog. The system then will ask you a question. Give any answer you want. If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the Speech Function of your response from the start_node to the corresponding node in the food.py file.
 
 ## Build Complex Multi-Skill AI Assistants with DeepPavlov Dream
 ### DeepPavlov Dream Installation
