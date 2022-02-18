@@ -98,7 +98,7 @@ python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-s
 3. Open ```main.py```.
 3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DF Dialog Designer".
 
-#### Use Discourse Moves Recommendation System
+### Use Discourse Moves Recommendation System
 #### Pre-Requisites (needed in your custom skill, e.g., dff_template_skill)
 To use Discourse Moves Recommendation System using Speech Functions you need to add integration with Speech Functions classifier:
 1. Copy ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
