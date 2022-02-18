@@ -113,17 +113,36 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
 2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build```
-4. In a separate Terminal tab run:
+3. In a separate Terminal tab run:
 ```
-docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream/pipeline_conf.json
+docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream_sfc/pipeline_conf.json
 ```
-Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
-6. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
+Type your response. If you didn't edit the file, you can type "Hi". After the response was returned by the bot, type "I love reading". As you custom Dream distribution is running (in Docker), you should see debug output from the system. 
+4. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
 ```
 {
 	"user_id": "MyDearFriend",
-	"payload": "hi how are you"
+	"payload": "Hi!"
 }
+```
+then followed by:
+```
+{
+	"user_id": "MyDearFriend",
+	"payload": "I love reading"
+}
+```
+By this moment, we've arrived at ```book_start`` node.
+Now, you can see how Speech Function Classifier works in this situation. To trigger it, we want to say something that it would classify as "React.Rejoinder.Support.Track.Clarify". Here's one example:
+```
+{
+	"user_id": "MyDearFriend",
+	"payload": "Why of course I do of course I do. Why do you ask?"
+}
+```
+And at this very moment, you'll get the response that is conditioned by this very Speech Function:
+```
+Bot:  I think that reading is cool and all people should read books
 ```
 
 ## Editing the Dialog Designer and its DFF Python Side by Side
@@ -131,7 +150,7 @@ Type your response. If you didn't edit the file, you can type "How are you?" or 
 You can open the same `*.py` file with the Draw.io Dialog Designer and as `.py` file.
 They are synchronized, so you can switch between them as you like it.
 This is super pratical if you want to use find/replace to rename text or other features of VS Code to speed up your diagram creation/edit process.
-Use the `View: Reopen Editor With...` command to toggle between the text or the Draw.io-based **DD-IDDE Dialog Designer** editor. You can open multiple editors for the same file.
+Use the `View: Reopen Editor With...` command to toggle between the text or the Draw.io-based **DF Designer** editor. You can open multiple editors for the same file.
 
 ## DF Designer Contributors
 
