@@ -18,8 +18,15 @@ This extension is built on top of the unnoficial integration of the [Draw.io](ht
 -   Uses an offline version of Draw.io by default.
 
 ## Demo
+### English
+Stay tuned for a demo!
 
-TBD
+### Russian
+Here's a recording of [introduction to DFF & DF Designer](https://www.youtube.com/watch?v=lNTu1QMB0XI) we've made back in the end of December. 
+
+The image link below leads directly to the introduction of the **DF Designer** itself:
+
+[![Introducing DF Designer](https://img.youtube.com/vi/lNTu1QMB0XI/1.jpg)](https://www.youtube.com/watch?v=lNTu1QMB0XI?t=2268 "Introducing DF Designer")
 
 ## Prerequisites
 ### Environment
@@ -37,75 +44,66 @@ TBD
 | ---- | ------------ | ----------------------------------------- |
 | lxml | v4.6.3       | This version was tested with lxml v4.6.3. |
 
-### Build Simple Chatbots with DF SDK
-#### DF SDK Installation
+## Build Simple Chatbots with DF SDK
+### DF SDK Installation
 
 1. Clone SDK: ```git clone https://github.com/deepmipt/dialog_flow_sdk```
 2. Change to its directory: ```cd dialog_flow_sdk```
 3. Install requirements: ```pip3 install -r requirements.txt```
 
-#### DF SDK Runtime
+### DF SDK Runtime
 
 1. Run DF SDK Runtime with Docker-Compose: ```docker-compose up --build```
 
-#### Design & Run Your Open-Domain/Scenario-Driven Chatbot in DF Designer
+### Design & Run Your Open-Domain/Scenario-Driven Chatbot in DF Designer
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
-#### Start With The Built-In Example
+### Start With The Built-In Example
 1. Open VS Code in your ```dialog_flow_sdk``` folder by running ```code .```.
 2. Go to ```experiments``` folder.
 3. Open ```example_1_basics.py```.
 3. Right click on ```example_1_basics.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
-#### Use Discourse Moves Recommendation System
+
+### Use Discourse Moves Recommendation System
 1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
-#### Run
+
+### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dialog_flow_sdk``` folder.
 2. Run ```python3 experiments/example_1_basics.py```.
 3. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If DF SDK Runtime is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
 
-### Build Complex Multi-Skill AI Assistants with DeepPavlov Dream
-#### DeepPavlov Dream Installation
+## Build Complex Multi-Skill AI Assistants with DeepPavlov Dream
+### DeepPavlov Dream Installation
 
 1. Clone Dream: ```git clone https://github.com/deepmipt/dream```
 2. Change to its directory: ```cd dream```
 3. Follow [instructions](https://github.com/deepmipt/dream#readme) to configure running your Dream distribution through our **proxy**.
 
-#### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
+### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
-#### Start With The Built-In Example
+### Start With The Built-In Example
 1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_template_skill/``` folder by running ```code .```.
 2. Go to ```scenario``` folder.
 3. Open ```main.py```.
 3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
-#### Use Discourse Moves Recommendation System
+
+### Use Discourse Moves Recommendation System
 1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
-#### Run
+
+### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dream``` folder.
 2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/proxy.yml up --build```.
 3. In a separate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```
 4. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
-
-## Themes
-
-<details>
-    <summary><b>Available Draw.io Themes</b></summary>
-    <!-- Please use HTML syntax here so that it works for Github and mkdocs -->
-    <ul>
-        <li><p>Theme "atlas"</p><img src="docs/theme-atlas.png" alt="atlas" width="800"></li>
-        <li><p>Theme "Kennedy"</p><img src="docs/theme-Kennedy.png" alt="Kennedy" width="800"></li>
-        <li><p>Theme "min"</p><img src="docs/theme-min.png" alt="min" width="800"</li>
-        <li><p>Theme "dark"</p><img src="docs/theme-dark.png" alt="dark" width="800"></li>
-    </ul>
-</details>
 
 ## Editing the Dialog Designer and its DFF Python Side by Side
 
@@ -114,7 +112,7 @@ They are synchronized, so you can switch between them as you like it.
 This is super pratical if you want to use find/replace to rename text or other features of VS Code to speed up your diagram creation/edit process.
 Use the `View: Reopen Editor With...` command to toggle between the text or the Draw.io-based **DD-IDDE Dialog Designer** editor. You can open multiple editors for the same file.
 
-## DD-IDDE Contributors
+## DF Designer Contributors
 
 -   Oleg Serikov, [oserikov](https://github.com/oserikov) on Github (Original Author)
 -   Bálint Magyar, [mablin7](https://github.com/mablin7) on Github (Frontend Software Engineer)
@@ -122,7 +120,13 @@ Use the `View: Reopen Editor With...` command to toggle between the text or the 
 -   Denis Kuznetsov, [kudep](https://github.com/kudep) on Github (Author of DD-IDDE SDK & Dialog Flow Framework/DFF)
 -   Lida Ostyakova, [lnpetrova](https://github.com/lnpetrova) on Github (Author of Discourse Moves Recommendation System)
 -   Dmitry Evseev, [dmitrijeuseew](https://github.com/dmitrijeuseew) on Github (Author of Wiki-based entity detection extensions for DFF)
--   Daniel Kornev, [DanielKornev](https://github.com/DanielKornev) on Github (PM)
+-   Kseniya Petukhova, [Kpetyxova](https://github.com/Kpetyxova) on GitHub (Developer & Tester of SFC-enabled skills)
+-   Veronika Smilga, [NikaSmilga](https://github.com/NikaSmilga) on GitHub (Developer & Tester of SFC-enabled skills) 
+-   Maria Molchanova, [mary-silence](https://github.com/mary-silence) on Github (PM, Dev Tools)
+-   Maxim Talimanchuk, [mtalimanchuk](https://github.com/mtalimanchuk) on Github (DevOps)
+-   Daniel Kornev, [DanielKornev](https://github.com/DanielKornev) on Github (CPO)
+
+Special thanks to Yuri Kuratov, [yurakuratov](https://github.com/yurakuratov) on Github (Senior Researcher at DeepPavlov.ai)
 
 ## Original Draw.io Extension Contributors
 
@@ -133,6 +137,9 @@ Use the `View: Reopen Editor With...` command to toggle between the text or the 
 
 -   [Draw.io](https://app.diagrams.net/) - This extension relies on the giant work of Draw.io. Their embedding feature enables this extension! This extension bundles a recent version of Draw.io.
 -   [vscode-drawio](https://github.com/eightHundreds/vscode-drawio) by eightHundreds.
+
+## Research Paper
+-   [Discourse-Driven Integrated Dialogue Development Environment for Open-Domain Dialogue Systems](https://aclanthology.org/2021.codi-main.4/)
 
 ## Other Cool Conversational AI Tech by DeepPavlov
 
