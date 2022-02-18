@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "DF Designer",
 	"description": "Discourse-Driven Integrated Dialog Development Environment.",
-	"version": "0.2.45",
+	"version": "0.2.48",
 	"license": "GPL-3.0",
 	"publisher": "deeppavlov",
 	"keywords": [
@@ -75,7 +75,7 @@
 			},
 			{
 				"viewType": "hediet.vscode-drawio-text",
-				"displayName": "DD-IDDE Dialog Designer",
+				"displayName": "DF Designer",
 				"selector": [
 					{
 						"filenamePattern": "*.drawio"
@@ -143,7 +143,7 @@
 			}
 		],
 		"configuration": {
-			"title": "DD-IDDE",
+			"title": "DF Designer",
 			"properties": {
 				"hediet.vscode-drawio.offline": {
 					"type": "boolean",
