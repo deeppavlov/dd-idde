@@ -17,7 +17,7 @@ This extension is built on top of the unnoficial integration of the [Draw.io](ht
     -   To create a new dialog flow, simply copy an example file from examples folder, right click on the file, choose "Open With", and select "DD-IDDE" diagram, simply create an empty `*.drawio`, `*.drawio.svg` or `*.drawio.png` file and open it.
 -   Uses an offline version of Draw.io by default.
 
-## Demo
+## Tutorials
 ### English
 Stay tuned for a demo!
 
@@ -94,6 +94,12 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DD-IDDE Dialog Designer".
 
 ### Use Discourse Moves Recommendation System
+#### Pre-Requisites
+To use Discourse Moves Recommendation System using Speech Functions you need to add integration with Speech Functions classifier:
+1. Copy ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
+2. Add line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
+
+#### Using Recommendations in Dialogue Design
 1. In Draw.io designer tab in VS Code, click on the node, e.g., ```start_node```, then click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
@@ -104,6 +110,10 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/proxy.yml up --build```.
 3. In a separate Terminal tab run: ```docker-compose exec agent python -m deeppavlov_agent.run```
 4. Type your response. If you didn't edit the file, you can type "How are you?" or "How are you doing?". If your custom Dream distribution is running (in Docker), you should see debug output from the system that says how your utterance was classified by the Speech Function classifier, and the system will provide the response based on the transition conditioned by the "Open.Demand.Fact" Speech Function from the ```start_node``` to the corresponding node in the ```example_1_basics.py``` file. 
+
+### Demo Skill: Books
+We've re-designed our DFF Books skill by augmenting it with Speech Functions. You can try it out here:
+
 
 ## Editing the Dialog Designer and its DFF Python Side by Side
 
