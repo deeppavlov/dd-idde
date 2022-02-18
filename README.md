@@ -81,6 +81,7 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 
 1. Clone Dream: ```git clone https://github.com/deepmipt/dream```
 2. Change to its directory: ```cd dream```
+3. Until **Feb 21 2022**, switch to ```feat/speech-function-dist-book-skill```
 
 *NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
 
@@ -93,7 +94,7 @@ python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-s
 ### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
 
 #### Start With The Built-In Example
-1. Open VS Code in your ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/``` folder by running ```code .```.
+1. Open VS Code in your ```/skills/dff_book_sfc_skill/``` folder by running ```code .```.
 2. Go to ```scenario``` folder.
 3. Open ```main.py```.
 3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DF Dialog Designer".
@@ -101,11 +102,11 @@ python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-s
 ### Use Discourse Moves Recommendation System
 #### Pre-Requisites (needed in your custom skill, e.g., dff_template_skill)
 To use Discourse Moves Recommendation System using Speech Functions you need to add integration with Speech Functions classifier:
-1. Copy ```https://github.com/deepmipt/dream/blob/main/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
+1. Copy ```/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
 2. Add line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
 
 #### Using Recommendations in Dialogue Design
-1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
+1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
 
@@ -117,7 +118,7 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 ```
 docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream_sfc/pipeline_conf.json
 ```
-Type your response. If you didn't edit the file, you can type "Hi". After the response was returned by the bot, type "I love reading". As you custom Dream distribution is running (in Docker), you should see debug output from the system. 
+Type your response. If you didn't edit the file of the demo ```dff_book_sfc_skill```, you can type "Hi". After the response was returned by the bot, type "I love reading". As you custom Dream distribution is running (in Docker), you should see debug output from the system. 
 4. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
 ```
 {
