@@ -103,7 +103,7 @@ python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-s
 #### Pre-Requisites (needed in your custom skill, e.g., dff_template_skill)
 To use Discourse Moves Recommendation System using Speech Functions you need to add integration with Speech Functions classifier:
 1. Copy ```/skills/dff_book_sfc_skill/scenario/sf_conditions.py``` next to ```main.py``` in the ```scenario``` folder of your ```dff_template_skill```.
-2. Add line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
+2. Add line ```from df_engine.core.keywords import MISC``` and line ```import scenario.sf_conditions as dm_cnd``` to your main.py file after ```line 14```.
 
 #### Using Recommendations in Dialogue Design
 1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
