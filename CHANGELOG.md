@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-**##** **[****0.2.43-Alpha****]**
+**##** **[****0.2.49-Alpha****]**
+
+\-  Fix: Better fix for view reset issue
+\-  Docs update
+
+**##** **[****0.2.44-Alpha****]**
 
 \-  Fix: insert new transitions at the top
 
