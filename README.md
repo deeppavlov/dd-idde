@@ -69,6 +69,7 @@ The image link below leads directly to the introduction of the **DF Designer** i
 1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
+4. To add the text, you need to find the node of your target response in code and write the text in the ```RESPONSE``` field.
 
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
@@ -109,6 +110,7 @@ To use Discourse Moves Recommendation System using Speech Functions you need to 
 1. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start```, then choose a speech function from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
 2. Pick the suggestion based on the Speech Function you want to add support for.
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
+4. To add the text, you need to find the node of your target response in code and write the text in the ```RESPONSE``` field.
 
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
