@@ -53,8 +53,8 @@ update_dict = {
             }
         },
         node_title: {
-            "TRANSITIONS": {},
             "RESPONSE": "''",
+            "TRANSITIONS": {},
         }
     }
 }
