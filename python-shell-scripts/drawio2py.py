@@ -16,7 +16,8 @@ def unesc(s: str):
     return s.replace("&amp;", "&") \
         .replace("&lt;", "<") \
         .replace("&gt;", ">") \
-        .replace("&quot;", "\"")
+        .replace("&quot;", "\"") \
+        .replace("&#10;", "\n")
 
 def parse_file(drawio_fn):
     sys.stderr.write(f"{drawio_fn}\n\n")

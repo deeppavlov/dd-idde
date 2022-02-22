@@ -15,7 +15,8 @@ def unesc(s: str):
     return s.replace("&amp;", "&") \
         .replace("&lt;", "<") \
         .replace("&gt;", ">") \
-        .replace("&quot;", "\"")
+        .replace("&quot;", "\"") \
+        .replace("&#10;", "\n")
 
 
 class CustomCondFinder(cst.CSTVisitor):

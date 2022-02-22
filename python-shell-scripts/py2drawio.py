@@ -13,7 +13,8 @@ def esc(s: str):
     return s.replace("&", "&amp;") \
         .replace("<", "&lt;") \
         .replace(">", "&gt;") \
-        .replace("\"", "&quot;")
+        .replace("\"", "&quot;") \
+        .replace("\n", "&#10;")
 
 class Node:
     """

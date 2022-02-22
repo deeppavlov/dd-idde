@@ -5,7 +5,12 @@ import dff.conditions as cnd
 plot = {
     "flow": {
         "start_node": {
-            TRANSITIONS: {("flow2", "fallback_node"): cnd},
+            TRANSITIONS: {
+                ("flow2", "suggestion"): cnd(
+                    a_multiline_condition,
+                    hello
+                )
+            },
             RESPONSE: "",
             MISC: {
                 "speech_functions": ["React.Rejoinder.Support.Response.Resolve"],
@@ -13,11 +18,6 @@ plot = {
         },
     },
     "flow2": {
-        "fallback_node": {
-            TRANSITIONS: {"suggestion": dm_cnd.is_sf("React.Rejoinder.Support.Track.Clarify")},
-            RESPONSE: "",
-            MISC: {"speech_functions": ["Open.Demand.Opinion"]},
-        },
         "suggestion": {
             TRANSITIONS: {},
             RESPONSE: '',
