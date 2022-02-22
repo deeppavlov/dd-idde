@@ -15,12 +15,12 @@ import examples from './examples';
 
 
 function quoteattr(s: string): string {
-    return ('' + s) /* Forces the conversion to string. */
-        .replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
-        .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+	return ('' + s) /* Forces the conversion to string. */
+		.replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
+		.replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
+		.replace(/"/g, '&quot;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
 }
 
 /**
@@ -57,7 +57,7 @@ export class DrawioClient<
 	private visibility: boolean = false;
 	private ts: number = 0;
 
-  private showingSugg = false;
+	private showingSugg = false;
 
 	constructor(
 		private readonly messageStream: MessageStream,
@@ -129,7 +129,7 @@ export class DrawioClient<
 
 	protected async handleEvent(evt: { event: string }): Promise<void> {
 		const drawioEvt = evt as DrawioEvent;
-    console.warn('drawioEvt', drawioEvt)
+		console.warn('drawioEvt', drawioEvt)
 		// window.showInformationMessage(evt.event);
 		if ("message" in drawioEvt) {
 			const actionId = (drawioEvt.message as any).actionId as
@@ -238,11 +238,11 @@ export class DrawioClient<
 			form.pipe(req);
 			// end oleg
 			*/
-			
+
 
 
 			/* Edited Request (Stable version of request to Flask server) */
-			
+
 			var content = (this as any)._doc.document.getText();
 			var curfil = (this as any)._doc.document.uri.path;
 			// window.showInformationMessage(`Current file content: ${content}`);
@@ -258,9 +258,9 @@ export class DrawioClient<
 				path: '/drawio2dff',
 				method: 'POST',
 				headers: {
-				  'Content-Type': 'application/json',
+					'Content-Type': 'application/json',
 				}
-			  }
+			}
 			const req = request(options, res => {
 				const chunks: Uint8Array[] = [];
 				res.on('data', (chunk) => {
@@ -290,19 +290,19 @@ export class DrawioClient<
 					});
 				})
 			});
-			  
+
 			req.on('error', error => {
 				// POST failed, send message to WebView
-				this.vwP.webview.postMessage({ connectionError: "showDFFConnError"});
+				this.vwP.webview.postMessage({ connectionError: "showDFFConnError" });
 				console.log(error);
 			})
-			
+
 			req.write(data)
 			req.end()
 			/* End of edited request */
 
 		} else if (drawioEvt.event === "get_suggs") {
-      this.showingSugg = true;
+			this.showingSugg = true;
 			const speech_functions = ['Open.Attend',
 				'Open.Demand.Fact',
 				'Open.Demand.Opinion',
@@ -326,7 +326,7 @@ export class DrawioClient<
 				'React.Respond.Support.Reply.Affirm',
 				'React.Respond.Support.Reply.Agree',
 				'React.Rejoinder.Support.Response.Resolve',
-        'Sustain.Continue',
+				'Sustain.Continue',
 				'Sustain.Continue.Monitor',
 				'Sustain.Continue.Prolong.Elaborate',
 				'Sustain.Continue.Prolong.Enhance',
@@ -334,7 +334,7 @@ export class DrawioClient<
 			var cells_i: any[] = []
 			let ts = Date.now();
 			let delta = ts - this.ts;
-      console.warn('delta', delta)
+			console.warn('delta', delta)
 			if (delta > 500) {
 				this.ts = ts;
 				var vis = this.visibility;
@@ -346,7 +346,7 @@ export class DrawioClient<
 				});
 				drawioEvt.cells.forEach((cel) => {
 					var cel_sfc = cel.sfc.split(" ");
-          console.log('celsfc', cel_sfc)
+					console.log('celsfc', cel_sfc)
 					sfcs.push(cel_sfc[0].replace(/^f?['"]/, '').replace(/['"]$/, ''));
 				});
 				var options = {
@@ -355,9 +355,9 @@ export class DrawioClient<
 					body: sfcs,
 					json: true // Automatically stringifies the body to JSON
 				};
-        console.warn('req', sfcs)
+				console.warn('req', sfcs)
 				var basic_sfcs: any = {};
-        var defaultSuggs: any[] = [{ sug: "Custom condition", conf: 1 }, { sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
+				var defaultSuggs: any[] = [{ sug: "Custom condition", conf: 1 }, { sug: "exact_match", conf: 1 }, { sug: "regex_match", conf: 1 }]
 				rp(options)
 					.then((parsedBody: any) => {
 						var predictions = parsedBody[0].batch;
@@ -380,13 +380,13 @@ export class DrawioClient<
 							var cel = drawioEvt.cells[i];
 							var cel_preds = predictions[i + speech_functions.length]
 							var sug_sf: any[] = [];
-              console.log("cel_preds", cel_preds)
+							console.log("cel_preds", cel_preds)
 							cel_preds.forEach((pred_: any) => {
 								if (Object.keys(pred_).length > 0) {
 									sug_sf.push({ sug: pred_.prediction, conf: pred_.confidence });
 								}
 							});
-              sug_sf = [...sug_sf, ...defaultSuggs];
+							sug_sf = [...sug_sf, ...defaultSuggs];
 							if (!(cel.x == 0 && cel.y == 0 && cel.h == 0 && cel.w == 0)) {
 								cells_i.push({
 									x: cel.x, y: cel.y, h: cel.h, w: cel.w,
@@ -407,7 +407,7 @@ export class DrawioClient<
 					.catch((err: any) => {
 						// POST failed, send message to WebView
 						// this.vwP.webview.postMessage({ connectionError: "getSuggsError" });
-            console.error(err)
+						console.error(err)
 						for (var is in drawioEvt.cells) {
 							var i = Number(is);
 							var cel = drawioEvt.cells[i];
@@ -432,23 +432,23 @@ export class DrawioClient<
 				this.visibility = !vis;
 
 			} else {
-        console.warn('SUGG REQ TOO FAST')
-      }
+				console.warn('SUGG REQ TOO FAST')
+			}
 
 
 		} else if (drawioEvt.event === "oleg") {
-      console.warn("OLEG", drawioEvt)
+			console.warn("OLEG", drawioEvt)
 			let cid = drawioEvt.cell_id;
 			let cell_title = drawioEvt.cell_title;
 			let cell_content = JSON.parse(drawioEvt.curr_content);
-      cell_title = cell_content.node_title || cell_title;
+			cell_title = cell_content.node_title || cell_title;
 			let node_info = {
 				"cell_id": cid,
 				"title": cell_title,
 				"cell_content": cell_content,
 				"children": drawioEvt.children,
 				"suggs": drawioEvt.suggs,
-        "nodeNames": drawioEvt.nodeNames,
+				"nodeNames": drawioEvt.nodeNames,
 			}
 			if (!this.openedForms.hasOwnProperty(cid)) {
 				// vscode.window.showInformationMessage(cid);
@@ -473,50 +473,50 @@ export class DrawioClient<
 						switch (message.command) {
 							case 'saveAsPng':
 								var form_data_str: string = message.form_data;
-                var form_data = JSON.parse(form_data_str)
-                if (form_data.sfc.includes('----')) {
-                  form_data.sfc = ''
-                }
-                console.warn('form_data', form_data_str)
+								var form_data = JSON.parse(form_data_str)
+								if (form_data.sfc.includes('----')) {
+									form_data.sfc = ''
+								}
+								console.warn('form_data', form_data_str)
 
 								// this.saveAsPng(message.text);
 								webviewPanel.dispose();
 
-                if (drawioEvt.suggs) {
-                  // newly inserted
-                  console.warn("added suggestion", drawioEvt)
-                  let sfc = form_data.sfc.split(" ")[0]
-                  if (sfc != '' && !sfc.endsWith('"')) sfc += '"'
-                  this.addSuggNode({
-                    title: form_data.node_title,
-                    flow: drawioEvt.flow,
-                    parent: drawioEvt.parent,
-                    sfc,
-                    cnd: drawioEvt.cnd,
-                  }).then(async ({ newPyCode, customCondPos }) => {
-                      let workspaceEdit = new WorkspaceEdit()
-                      workspaceEdit.replace(
-                        (this as any)._doc.document.uri,
-                        new Range(0, 0, (this as any)._doc.document.lineCount, 0),
-                        newPyCode
-                      );
-                      console.warn('customCondPos', customCondPos)
-                      if (customCondPos) {
-                        for (let editor of window.visibleTextEditors){
-                          if (editor.document.uri === (this as any)._doc.document.uri) {
-                            window.showTextDocument((this as any)._doc.document, { preview: false, viewColumn: editor.viewColumn, })
-                            setTimeout(() => {
-                              editor.selection = new vscode.Selection(customCondPos.line-1, customCondPos.col, customCondPos.line-1, customCondPos.end)
-                            }, 10)
-                          }
-                        }
-                      }
-                      await workspace.applyEdit(workspaceEdit);
-                      // (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
-                    })
-                } else {
-                  (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: JSON.stringify(form_data) });
-                }
+								if (drawioEvt.suggs) {
+									// newly inserted
+									console.warn("added suggestion", drawioEvt)
+									let sfc = form_data.sfc.split(" ")[0]
+									if (sfc != '' && !sfc.endsWith('"')) sfc += '"'
+									this.addSuggNode({
+										title: form_data.node_title,
+										flow: drawioEvt.flow,
+										parent: drawioEvt.parent,
+										sfc,
+										cnd: drawioEvt.cnd,
+									}).then(async ({ newPyCode, customCondPos }) => {
+										let workspaceEdit = new WorkspaceEdit()
+										workspaceEdit.replace(
+											(this as any)._doc.document.uri,
+											new Range(0, 0, (this as any)._doc.document.lineCount, 0),
+											newPyCode
+										);
+										console.warn('customCondPos', customCondPos)
+										if (customCondPos) {
+											for (let editor of window.visibleTextEditors) {
+												if (editor.document.uri === (this as any)._doc.document.uri) {
+													window.showTextDocument((this as any)._doc.document, { preview: false, viewColumn: editor.viewColumn, })
+													setTimeout(() => {
+														editor.selection = new vscode.Selection(customCondPos.line - 1, customCondPos.col, customCondPos.line - 1, customCondPos.end)
+													}, 10)
+												}
+											}
+										}
+										await workspace.applyEdit(workspaceEdit);
+										// (webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: form_data });
+									})
+								} else {
+									(webviewPanel as any)._drawiovw.postMessage({ oleg: "Privet", cell_id: cid, data: JSON.stringify(form_data) });
+								}
 
 								break;
 							// vscode.window.showInformationMessage("closed a panel");
@@ -546,10 +546,10 @@ export class DrawioClient<
 				webviewPanel.onDidDispose(
 					() => { delete this.openedForms[(webviewPanel as any)._cid] }, null, this.context.subscriptions
 				)
-        if (!drawioEvt.suggs) {
-          const idx = node_info.nodeNames.indexOf(node_info.title.replace(/^f?['"]/, '').replace(/['"]$/, ''))
-          if (idx !== -1) node_info.nodeNames.splice(idx, 1)
-        }
+				if (!drawioEvt.suggs) {
+					const idx = node_info.nodeNames.indexOf(node_info.title.replace(/^f?['"]/, '').replace(/['"]$/, ''))
+					if (idx !== -1) node_info.nodeNames.splice(idx, 1)
+				}
 				this.setHtmlContent(webviewPanel.webview, this.context, node_info);
 			}
 			else {
@@ -567,7 +567,7 @@ export class DrawioClient<
 		extensionContext: vscode.ExtensionContext,
 		node_info: any) {
 
-    console.warn('seththis.setHtmlContent', node_info)
+		console.warn('seththis.setHtmlContent', node_info)
 		const base_speech_functions = ['Open.Attend',
 			'Open.Demand.Fact',
 			'Open.Demand.Opinion',
@@ -591,7 +591,7 @@ export class DrawioClient<
 			'React.Respond.Support.Reply.Acknowledge',
 			'React.Respond.Support.Reply.Affirm',
 			'React.Respond.Support.Reply.Agree',
-      'Sustain.Continue',
+			'Sustain.Continue',
 			'Sustain.Continue.Monitor',
 			'Sustain.Continue.Prolong.Elaborate',
 			'Sustain.Continue.Prolong.Enhance',
@@ -608,7 +608,7 @@ export class DrawioClient<
 		if (speech_functions.length == 0) {
 			speech_functions = base_speech_functions
 		}
-    speech_functions = ['----', ...speech_functions]
+		speech_functions = ['----', ...speech_functions]
 		var title = node_info.cell_content.node_title || node_info["title"];
 		if (title == "Cell") {
 			title = "";
@@ -641,7 +641,7 @@ export class DrawioClient<
 			<br/>
 			<h3>SFC</h3><select name="sfc" id="sfc-selector">`
 		speech_functions.forEach((element: any, idx: number) => {
-      let sfc_name = node_info_sfc.replace(/^f?['"]/, '').replace(/['"]$/, '')
+			let sfc_name = node_info_sfc.replace(/^f?['"]/, '').replace(/['"]$/, '')
 			htmlContent2 += `<option value="${element}"`
 			if (element.split(' ')[0] === sfc_name || (node_info["suggs"] && idx === 1) || (sfc_name === '' && idx === 0)) {
 				htmlContent2 += ` selected`
@@ -752,8 +752,8 @@ export class DrawioClient<
 		}
 		return text;
 	}
-  
-  public async addSuggNode(data: { title: string; sfc: string; flow: string; parent: string; cnd: string }): Promise<any> {
+
+	public async addSuggNode(data: { title: string; sfc: string; flow: string; parent: string; cnd: string }): Promise<any> {
 		return new Promise((resolve, reject) => {
 			let pyData = (this as any)._doc.document.getText();
 			if (!pyData) {
@@ -764,18 +764,18 @@ export class DrawioClient<
 			);
 			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
 			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
-      const input = {
-        pyData, ...data
-      }
+			const input = {
+				pyData, ...data
+			}
 			shell.send(JSON.stringify(input));
 
-      let out = ""
+			let out = ""
 			shell.on('message', function (batch) {
 				// received a message sent from the Python script
 				out += batch;
-				});
+			});
 			// end the input stream and allow the process to exit
-			shell.end( (err,code,signal) => {
+			shell.end((err, code, signal) => {
 				if (err) throw err;
 				var res_parsed = JSON.parse(out);
 				var dff_base64 = res_parsed.pycode;
@@ -784,12 +784,12 @@ export class DrawioClient<
 				resolve({ newPyCode, customCondPos: res_parsed.customCondPos });
 			});
 		})
-  }
+	}
 
 	/**
 	 * Convert Python code to XML content
 	 */
-	 public async convertPyData(): Promise<any> {
+	public async convertPyData(): Promise<any> {
 		return new Promise((resolve, reject) => {
 			let pyData = (this as any)._doc.document.getText();
 			let xmlData = "";
@@ -799,7 +799,7 @@ export class DrawioClient<
 			const pathToPyScript = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts/py2drawio.py')
 			);
-      const pathToVenv = vscode.Uri.file(
+			const pathToVenv = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts', 'venv', 'bin', 'python')
 			);
 			let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text' });
@@ -809,13 +809,13 @@ export class DrawioClient<
 			shell.on('message', function (batch) {
 				// received a message sent from the Python script
 				xmlData += batch;
-				});
-				
+			});
+
 			// end the input stream and allow the process to exit
-			shell.end( (err,code,signal) => {
+			shell.end((err, code, signal) => {
 				if (err) throw err;
-        console.log('got xml: ')
-        console.log(xmlData)
+				console.log('got xml: ')
+				console.log(xmlData)
 				resolve(xmlData);
 			});
 		})
@@ -835,7 +835,7 @@ export class DrawioClient<
 			const pathToPyScript = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts/drawio2py.py')
 			);
-      const pathToVenv = vscode.Uri.file(
+			const pathToVenv = vscode.Uri.file(
 				path.join(this.context.extensionPath, 'python-shell-scripts', 'venv', 'bin', 'python')
 			);
 			// let shell = new PythonShell(pathToPyScript.fsPath, { mode: 'text', pythonPath: pathToVenv.fsPath });
@@ -845,10 +845,10 @@ export class DrawioClient<
 			shell.on('message', function (batch) {
 				// received a message sent from the Python script
 				chunks += batch
-				});
-				
+			});
+
 			// end the input stream and allow the process to exit
-			shell.end( (err, code, signal) => {
+			shell.end((err, code, signal) => {
 				if (err) throw err;
 				console.log('The exit code was: ' + code);
 				console.log('The exit signal was: ' + signal);
@@ -867,9 +867,9 @@ export class DrawioClient<
 	 * This changes an xml Draw.io diagram
 	 * Modified for Python Scripts
 	 */
-	 public async mergeXmlLike(xmlLike: string): Promise<void> {
+	public async mergeXmlLike(xmlLike: string): Promise<void> {
 		//
-    console.log('merging XML')
+		console.log('merging XML')
 		let currFile = (this as any)._doc.document.uri.path;
 		if (currFile.endsWith(".py")) {
 			this.convertPyData()
@@ -878,7 +878,7 @@ export class DrawioClient<
 						action: "replace",
 						xml: result,
 					});
-					this.vwP.webview.postMessage( { graphOperations: "rearrangeGraph" });
+					this.vwP.webview.postMessage({ graphOperations: "rearrangeGraph" });
 				})
 				.catch(error => {
 					console.log(error);
@@ -912,7 +912,7 @@ export class DrawioClient<
 						xml: result,
 						autosave: 1,
 					});
-					this.vwP.webview.postMessage( { graphOperations: "rearrangeGraph" });
+					this.vwP.webview.postMessage({ graphOperations: "rearrangeGraph" });
 				})
 				.catch(error => {
 					console.log(error);
