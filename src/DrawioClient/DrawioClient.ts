@@ -20,7 +20,8 @@ function quoteattr(s: string): string {
 		.replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
 		.replace(/"/g, '&quot;')
 		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;');
+		.replace(/>/g, '&gt;')
+		.replace(/\n/g, '&#10;');
 }
 
 /**
