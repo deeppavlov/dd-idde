@@ -10,6 +10,7 @@ function saveAsPng(event) {
   data.old_titles = JSON.parse(data.old_titles)
   data.node_title = `"${data.node_title}"`
   data.sfc = `"${data.sfc}"`
+  data.midas = `"${data.midas}"`
   vscode.postMessage({
     command: 'saveAsPng', form_data: JSON.stringify(data)
   });

@@ -325,6 +325,22 @@
 					],
 					"description": "The theme to use for the Draw.io editor. Use \"automatic\" to automatically choose a Draw.io theme that matches your current VS Code theme."
 				},
+				"dff.vscode-drawio.selected-predictor": {
+					"type": "string",
+					"enum": [
+						"midas",
+						"sfc"
+					],
+					"default": "midas",
+					"title": "Predictor",
+					"description": "Which predictor to use for showing suggestions. Currently MIDAS works best, but it needs to be run locally."
+				},
+				"dff.vscode-drawio.midas-predictor-url": {
+					"type": "string",
+					"default": "http://localhost:8121/respond",
+					"title": "Speech Functions Predictor URL",
+					"description": "An endpoint to predict the possible next speech functions given by the current dialog flow"
+				},
 				"dff.vscode-drawio.sfc-predictor-url": {
 					"type": "string",
 					"default": "http://lnsigo.mipt.ru:8107/annotation",

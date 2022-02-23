@@ -76,6 +76,7 @@ def get_updated_nodes(nodes, edges):
         if old_title != node_name:
             renames[old_title] = node_name
         sfc = from_form.get("sfc", "")
+        midas = from_form.get("midas", "")
 
         node_key = KeyUpdate(old_key=old_title, new_key=node_name)
         updated[flow_name][node_key] = {
@@ -83,10 +84,13 @@ def get_updated_nodes(nodes, edges):
         }
         valid_node_names[flow_name].add(node_name)
 
+        if sfc != "" or midas != "":
+           updated[flow_name][node_key]["MISC"] = {}
         if sfc != "":
-            updated[flow_name][node_key]["MISC"] = {
-                '"speech_functions"': ListUpdate([sfc], order_significant=True)
-            }
+            updated[flow_name][node_key]["MISC"]['"speech_functions"'] = ListUpdate([sfc], order_significant=True)
+        if midas != "":
+            updated[flow_name][node_key]["MISC"]['"dialog_act"'] = midas
+            
 
     for node_dict in nodes.values():
         node = node_dict["node"]

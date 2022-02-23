@@ -6,22 +6,24 @@ plot = {
     "flow": {
         "start_node": {
             TRANSITIONS: {
-                ("flow2", "suggestion"): cnd(
-                    a_multiline_condition,
-                    hello
-                )
+                "suggestionasd": lambda ctx, actor, *args, **kwargs: True,
+                "suggestion011": dm_cnd.is_sf("yes_no_question")
             },
             RESPONSE: "",
             MISC: {
-                "speech_functions": ["React.Rejoinder.Support.Response.Resolve"],
+                "speech_functions": ["opinion"],
             },
         },
-    },
-    "flow2": {
-        "suggestion": {
-            TRANSITIONS: {},
+        "suggestion011": {
             RESPONSE: '',
-            MISC: {"speech_functions": ["React.Rejoinder.Support.Response.Resolve"]}
-        }
+            TRANSITIONS: {"suggestion": dm_cnd.is_midas("opinion")},
+            MISC: {"dialog_act": "comment"},
+        },
+        "suggestion": {
+            RESPONSE: '',
+            TRANSITIONS: {},
+            MISC: {"dialog_act": "opinion"},
+        },
+        "suggestionasd": {RESPONSE: '', TRANSITIONS: {}},
     }
 }

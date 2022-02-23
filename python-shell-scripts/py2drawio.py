@@ -7,7 +7,7 @@ import json
 from base64 import b64encode
 import libcst as cst
 from parse import find_flow
-from typing import Dict, List, Any, Tuple, cast
+from typing import Dict, List, Any, Optional, Tuple, cast
 
 def esc(s: str):
     return s.replace("&", "&amp;") \
@@ -24,6 +24,7 @@ class Node:
     misc: Dict[str, str]
     transitions: Dict[Tuple[str, str], str]
     sfcs: List[str]
+    midas: Optional[str] = None
 
     def __init__(self, name: str, flow_name: str, node: cst.Dict, module: cst.Module):
         self.name = name
@@ -59,6 +60,8 @@ class Node:
             if not isinstance(elem, cst.DictElement): continue
             if 'speech_functions' in getattr(elem.key, "value", "") and isinstance(elem.value, cst.List):
                 self.sfcs = [ module.code_for_node(e.value) for e in elem.value.elements ]
+            if 'dialog_act' in getattr(elem.key, "value", "") and isinstance(elem.value, cst.SimpleString):
+                self.midas = module.code_for_node(elem.value)
 
 
 def parse_flow(flow_node: cst.Dict, module: cst.Module):
@@ -86,6 +89,7 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
             node_data: Dict[str, Any] = {
                 "id": node_id,
                 "sfcs": node.sfcs,
+                "midas": node.midas,
                 "edges": {}
             }
             node_id += 3 # Each node will need to ids
@@ -131,12 +135,14 @@ def graph2drawio(graph, valid_node_names):
                 sfcs = data['sfcs'][0]
             else:
                 sfcs = ""
+            midas = data['midas'] if data['midas'] else ""
             sys.stderr.write(f"{sfcs}\n")
             # assert False
             data_from_form = {
                 "node_title": node_name,
                 "old_titles": [node_name],
-                "sfc": sfcs
+                "sfc": sfcs,
+                "midas": midas
             }
             data_from_form = esc(json.dumps(data_from_form))
             # sys.stderr.write(f"{node_name}: {data['id']}\n")

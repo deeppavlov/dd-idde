@@ -82,7 +82,9 @@ export class DrawioClientFactory {
 			},
 			webviewPanel,
 			this.context,
-			config._sfcUrl
+			config._selectedPredictor,
+			config._sfcUrl,
+			config._midasUrl,
 		);
 
 		drawioClient.onUnknownMessage.sub(({ message }) => {

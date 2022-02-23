@@ -324,11 +324,27 @@ export class DiagramConfig {
 		}
 	);
 
+	public readonly _selectedPredictor = new VsCodeSetting(
+		`dff.vscode-drawio.selected-predictor`,
+		{
+			scope: this.uri,
+			serializer: serializerWithDefault("midas"),
+		}
+	);
+
 	public readonly _sfcUrl = new VsCodeSetting(
 		`dff.vscode-drawio.sfc-predictor-url`,
 		{
 			scope: this.uri,
 			serializer: serializerWithDefault("https://7068.lnsigo.mipt.ru/annotation"),
+		}
+	);
+
+	public readonly _midasUrl = new VsCodeSetting(
+		`dff.vscode-drawio.midas-predictor-url`,
+		{
+			scope: this.uri,
+			serializer: serializerWithDefault("http://localhost:8121/respond"),
 		}
 	);
 
