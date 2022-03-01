@@ -655,6 +655,24 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       }
 
       // this.onInitEmitter.emit();
+    } else if (drawioEvt.event === "jumpToNode") {
+      const {line, col} = drawioEvt.pos;
+      for (let editor of window.visibleTextEditors) {
+        if (editor.document.uri === (this as any)._doc.document.uri) {
+          window.showTextDocument((this as any)._doc.document, {
+            preview: false,
+            viewColumn: editor.viewColumn,
+          });
+          setTimeout(() => {
+            editor.selection = new vscode.Selection(
+              line - 1,
+              col,
+              line - 1,
+              col,
+            );
+          }, 10);
+        }
+      }
     } else {
       this.onUnknownMessageEmitter.emit({ message: drawioEvt });
     }

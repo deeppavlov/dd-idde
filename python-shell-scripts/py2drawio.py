@@ -6,6 +6,7 @@ sys.path.insert(0, str(deps_path))
 import json
 from base64 import b64encode
 import libcst as cst
+from libcst.metadata import PositionProvider
 from parse import find_flow
 from typing import Dict, List, Any, Optional, Tuple, cast
 
@@ -64,10 +65,11 @@ class Node:
                 self.midas = module.code_for_node(elem.value)
 
 
-def parse_flow(flow_node: cst.Dict, module: cst.Module):
+def parse_flow(flow_node: cst.Dict, module: cst.Module, wrapper: cst.MetadataWrapper):
     """
     Parse a flow from a cst.Dict
     """
+    pos_data = wrapper.resolve(PositionProvider)
     nodes = {}
     node_id = 4
     valid_node_names = set()
@@ -86,11 +88,16 @@ def parse_flow(flow_node: cst.Dict, module: cst.Module):
                 valid_node_names.add(node_name)
 
             node = Node(node_name, flow_name, cast(cst.Dict, node_el.value), module)
+            pos = pos_data[node_el].start
             node_data: Dict[str, Any] = {
                 "id": node_id,
                 "sfcs": node.sfcs,
                 "midas": node.midas,
-                "edges": {}
+                "edges": {},
+                "pos": {
+                    "line": pos.line,
+                    "col": pos.column
+                }
             }
             node_id += 3 # Each node will need to ids
 
@@ -147,15 +154,16 @@ def graph2drawio(graph, valid_node_names):
             data_from_form = esc(json.dumps(data_from_form))
             # sys.stderr.write(f"{node_name}: {data['id']}\n")
             node_name = esc(node_name)
+            pos = esc(json.dumps(data['pos']))
             node_text = f"""
-                <UserObject data_from_form="{data_from_form}" label="{node_name}" id="{data['id']}">
+                <UserObject data_from_form="{data_from_form}" label="{node_name}" id="{data['id']}" pos="{pos}">
                     <mxCell id="{data['id'] + 1}" label="{node_name}" style="swimlane;fontStyle=0;fontColor=default;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;autosize=1;" vertex="1" parent="2" collapsed="1">
                           <mxGeometry x="150" y="{70 + y_shift}" width="150" height="26" as="geometry">
                               <mxRectangle x="10" y="40" width="150" height="90" as="alternateBounds" />
                           </mxGeometry>
                     </mxCell>
                 </UserObject>
-                <mxCell isnode="1" id="{data['id'] + 2}" old_title="{node_name}" parent="{data['id']}" label="{node_name}" value="" flow="{flow_name}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
+                <mxCell isnode="1" pos="{pos}" id="{data['id'] + 2}" old_title="{node_name}" parent="{data['id']}" label="{node_name}" value="" flow="{flow_name}" style="text;strokeColor=none;fontColor=default;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontStyle=2;whiteSpace=wrap" vertex="1" >
                     <mxGeometry y="26" width="150" height="64" as="geometry" />
                 </mxCell>
             """
@@ -222,9 +230,11 @@ def graph2drawio(graph, valid_node_names):
 
 def pipeline(content):
     module = cst.parse_module(content)
+    wrapper = cst.MetadataWrapper(module)
+    module = wrapper.module
     flow_node = find_flow(module)
     assert flow_node is not None
-    nodes, valid_node_names = parse_flow(flow_node, module)
+    nodes, valid_node_names = parse_flow(flow_node, module, wrapper)
     xml = graph2drawio(nodes, valid_node_names)
     return xml
 

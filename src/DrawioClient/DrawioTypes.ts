@@ -1,5 +1,9 @@
 export type DrawioEvent =
 	| {
+		event: "jumpToNode";
+		pos: {line: number; col: number}
+	}
+	| {
 		event: "oleg";
 		cell_id: string;
 		curr_content: string;
