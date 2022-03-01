@@ -111,6 +111,16 @@ export class DrawioEditorService {
 			})
 		);
 
+		this.dispose.track(
+			commands.registerCommand("dp.df-designer.jumpToNode", () => {
+				const activeEditor = window.activeTextEditor
+				if (!activeEditor) return;
+				const activeDrawioEditor = [...this.openedEditors].find((e) => e.uri === activeEditor.document.uri);
+				if (!activeDrawioEditor) return;
+				// activeDrawioEditor.webviewPanel.reveal();
+				activeDrawioEditor.drawioClient.handleJumpToNearestNode();
+			})
+		);
 
 
 		this.dispose.track({

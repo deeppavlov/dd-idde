@@ -133,6 +133,10 @@
 			{
 				"command": "catCoding.start",
 				"title": "Start new cat coding session"
+			},
+			{
+				"command": "dp.df-designer.jumpToNode",
+				"title": "DF Designer: Jump to the node in the graph, whose definition in the code is closest to the cursor"
 			}
 		],
 		"keybindings": [
@@ -140,6 +144,10 @@
 				"command": "hediet.vscode-drawio.linkCodeWithSelectedNode",
 				"key": "shift+F3",
 				"when": "!findWidgetVisible"
+			},
+			{
+				"command": "dp.df-designer.jumpToNode",
+				"key": "ctrl+alt+j"
 			}
 		],
 		"configuration": {

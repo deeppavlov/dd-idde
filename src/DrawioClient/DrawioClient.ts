@@ -61,7 +61,10 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
   private visibility: boolean = false;
   private ts: number = 0;
 
-  private showingSugg = false;
+  /** For some reason the selection handler fires twice, so we need to keep
+   * count to prevent jumping in the code after jumping in the UI.
+   * hacky but works well (: */
+  private jumpingToNodeInUI = 0;
 
   constructor(
     private readonly messageStream: MessageStream,
@@ -294,7 +297,6 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       /* End of edited request */
     } else if (drawioEvt.event === "get_suggs") {
       const predictor = this.selected_predictor.get();
-      this.showingSugg = true;
       const speech_functions = [
         "Open.Attend",
         "Open.Demand.Fact",
@@ -656,19 +658,24 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
 
       // this.onInitEmitter.emit();
     } else if (drawioEvt.event === "jumpToNode") {
-      const {line, col} = drawioEvt.pos;
-      for (let editor of window.visibleTextEditors) {
-        if (editor.document.uri === (this as any)._doc.document.uri) {
-          window.showTextDocument((this as any)._doc.document, {
-            preview: false,
-            viewColumn: editor.viewColumn,
-          }).then(() => {
-            const range = new vscode.Range(line - 1, col, line - 1, col);
-            editor.selection = new vscode.Selection(range.start, range.end);
-            editor.revealRange(range, vscode.TextEditorRevealType.AtTop);
-          });
+      // Prevent jumping to a node after we jumped to a UI node
+      if (!this.jumpingToNodeInUI) {
+        const { line, col } = drawioEvt.pos;
+        for (let editor of window.visibleTextEditors) {
+          if (editor.document.uri === (this as any)._doc.document.uri) {
+            window
+              .showTextDocument((this as any)._doc.document, {
+                preview: false,
+                viewColumn: editor.viewColumn,
+              })
+              .then(() => {
+                const range = new vscode.Range(line - 1, col, line - 1, col);
+                editor.selection = new vscode.Selection(range.start, range.end);
+                editor.revealRange(range, vscode.TextEditorRevealType.AtTop);
+              });
+          }
         }
-      }
+      } else this.jumpingToNodeInUI--;
     } else {
       this.onUnknownMessageEmitter.emit({ message: drawioEvt });
     }
@@ -938,6 +945,53 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+  }
+
+  public async handleJumpToNearestNode() {
+    const editor = window.visibleTextEditors.find(
+      (ed) => ed.document.uri === (this as any)._doc.document.uri
+    );
+    if (!editor) return window.showErrorMessage("DF code is not open in a visible editor");
+
+    const line = editor.selection.start.line;
+
+    const node = await new Promise<{ flowName: string; nodeName: string }>((resolve, reject) => {
+      let pyData = (this as any)._doc.document.getText();
+      if (!pyData) {
+        return;
+      }
+      const pathToPyScript = vscode.Uri.file(
+        path.join(this.context.extensionPath, "python-shell-scripts/get_nearest_node.py")
+      );
+      let shell = new PythonShell(pathToPyScript.fsPath, {
+        mode: "text",
+      });
+      const input = {
+        pyData,
+        line,
+      };
+      shell.send(JSON.stringify(input));
+
+      let out = "";
+      shell.on("message", function (batch) {
+        out += batch;
+      });
+      // end the input stream and allow the process to exit
+      shell.end((err, code, signal) => {
+        if (err) reject(err);
+        resolve(JSON.parse(out));
+      });
+    });
+
+    // For some reason the selection handler fires twice, so we need to keep
+    // count to prevent jumping in the code after jumping in the UI.
+    // hacky but works well (:
+    this.jumpingToNodeInUI = 2;
+    this.vwP.webview.postMessage({
+      oleg: "jumpToNode",
+      ...node,
+    });
+    setTimeout(() => (this.jumpingToNodeInUI = 0), 1000); // Just in case something goes wrong
   }
 
   public async addSuggNode(data: {
