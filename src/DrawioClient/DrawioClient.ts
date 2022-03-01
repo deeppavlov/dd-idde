@@ -662,15 +662,11 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
           window.showTextDocument((this as any)._doc.document, {
             preview: false,
             viewColumn: editor.viewColumn,
+          }).then(() => {
+            const range = new vscode.Range(line - 1, col, line - 1, col);
+            editor.selection = new vscode.Selection(range.start, range.end);
+            editor.revealRange(range, vscode.TextEditorRevealType.AtTop);
           });
-          setTimeout(() => {
-            editor.selection = new vscode.Selection(
-              line - 1,
-              col,
-              line - 1,
-              col,
-            );
-          }, 10);
         }
       }
     } else {
