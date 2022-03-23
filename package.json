@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "DF Designer",
 	"description": "Discourse-Driven Integrated Dialog Development Environment.",
-	"version": "0.2.53",
+	"version": "0.2.56",
 	"license": "GPL-3.0",
 	"publisher": "deeppavlov",
 	"keywords": [
@@ -345,13 +345,13 @@
 				},
 				"dff.vscode-drawio.midas-predictor-url": {
 					"type": "string",
-					"default": "http://localhost:8121/respond",
+					"default": "http://dream.deeppavlov.ai:8121/respond",
 					"title": "Speech Functions Predictor URL",
 					"description": "An endpoint to predict the possible next speech functions given by the current dialog flow"
 				},
 				"dff.vscode-drawio.sfc-predictor-url": {
 					"type": "string",
-					"default": "http://lnsigo.mipt.ru:8107/annotation",
+					"default": "http://dream.deeppavlov.ai:8107/annotation",
 					"title": "Speech Functions Predictor URL",
 					"description": "An endpoint to predict the possible next speech functions given by the current dialog flow"
 				}

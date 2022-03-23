@@ -1,15 +1,15 @@
 {
-	"files.exclude": {
-		"out": false
-	},
-	"search.exclude": {
-		"out": true
-	},
-	"editor.formatOnSave": true,
-	"typescript.tsc.autoDetect": "off",
-	"workbench.editorAssociations": {
-		"*.drawio": "default",
-		"*.dio": "default",
-		"*.dff": "default"
-	}
+  "files.exclude": {
+    "out": false
+  },
+  "search.exclude": {
+    "out": true
+  },
+  "typescript.tsc.autoDetect": "off",
+  "workbench.editorAssociations": {
+    "*.drawio": "default",
+    "*.dio": "default",
+    "*.dff": "default"
+  },
+  "editor.formatOnSave": false
 }
