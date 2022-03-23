@@ -71,6 +71,15 @@ The image link below leads directly to the introduction of the **DF Designer** i
 3. Double click on that suggestion. You can specify the speech function of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
 4. To add the text, you need to find the node of your target response in code and write the text in the ```RESPONSE``` field.
 
+### Use MIDAS Recommendation System
+If you want to work not with speech functions, but with dialog acts:
+1. In extension settings find `Dff > Vscode-drawio: Selected-predictor` and change `sfc` to `midas`
+2. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a dialog act (MIDAS) from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
+3. Pick the suggestion based on the dialog act you want to add support for.
+4. Double click on that suggestion. You can specify the dialog act of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
+5. To add the text, you need to find the node of your target response in code and write the text in the ```RESPONSE``` field.
+6. You can see the list of dialog acts and examples [here](https://github.com/deepmipt/dream/blob/feat/is_midas/skills/dff_book_sfc_skill/README.md#all-dialog-acts-available-for-use).
+
 ### Run
 Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 1. Open Terminal in the ```dialog_flow_sdk``` folder.
@@ -98,7 +107,7 @@ python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-s
 1. Open VS Code in your ```/skills/dff_book_sfc_skill/``` folder by running ```code .```.
 2. Go to ```scenario``` folder.
 3. Open ```main.py```.
-3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DF Dialog Designer".
+4. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DF Dialog Designer".
 
 ### Use Discourse Moves Recommendation System
 #### Pre-Requisites (needed in your custom skill, e.g., dff_template_skill)
@@ -121,7 +130,7 @@ Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
 docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream_sfc/pipeline_conf.json
 ```
 Type your response. If you didn't edit the file of the demo ```dff_book_sfc_skill```, you can type "Hi". After the response was returned by the bot, type "I love reading". As you custom Dream distribution is running (in Docker), you should see debug output from the system. 
-4. Alternatively, can talk directly via REST API. Go to localhost:4242 and send POST requests like this:
+4. Alternatively, can talk directly via REST API. Go to ```localhost:4242``` and send POST requests like this (where ```user_id``` should be different for each session):
 ```
 {
 	"user_id": "MyDearFriend",
@@ -147,6 +156,50 @@ And at this very moment, you'll get the response that is conditioned by this ver
 ```
 Bot:  I think that reading is cool and all people should read books
 ```
+
+#### More examples of SF-based conditions
+For a detailed description of each speech function and more examples of working with speech functions when building skills, see SF-augmented version of Book Skill: ```https://github.com/deepmipt/dream/tree/feat/sf-bookskill-new/skills/dff_book_sfc_skill```
+
+### Use MIDAS Recommendation System
+If you want to use dialog acts (from MIDAS) instead of Speech Functions:
+1. Clone Dream: ```git clone https://github.com/deepmipt/dream```
+2. Change to its directory: ```cd dream```
+3. Switch to ```feat/is_midas```
+
+*NOTE: By default, the extension uses an SFC predictor running in the cloud, so you do not need to have the SDK running locally for predictions to work. You can still use a local predictor by changing the `sfc-predictor-url` in VS Code settings.*
+
+#### Prepare Dream to Run Built-In Example Locally
+1. Create `local.yml`: 
+```
+python3 utils/create_local_yml.py -p -d assistant_dists/dream_sfc/ -s dff-book-sfc-skill
+```
+
+#### Design & Run Your Open-Domain/Scenario-Driven Skill in DF Designer
+
+#### Start With The Built-In Example
+1. Open VS Code in your ```/skills/dff_book_sfc_skill/``` folder by running ```code .```.
+2. Go to ```scenario``` folder.
+3. Open ```main.py```.
+3. Right click on ```main.py```, choose "Open with...", and in the dialog box choose "DF Dialog Designer".
+
+#### Using Recommendations in Dialogue Design
+1. In extension settings find `Dff > Vscode-drawio: Selected-predictor` and change `sfc` to `midas`
+2. In Draw.io designer tab in VS Code, double click on the node, e.g., ```start_node```, then choose a dialog act (MIDAS) from the list and click on ```save```. Now you can click on the node again and click on ```Show Suggestions``` menu item. If nothing shows up click again.
+3. Pick the suggestion based on the dialog act you want to add support for.
+4. Double click on that suggestion. You can specify the dialog act of your target response if you like, or you can do that later, either in code or from the Draw.io Dialog Designer.
+5. To add the text, you need to find the node of your target response in code and write the text in the ```RESPONSE``` field.
+6. You can see the list of dialog acts and examples [here](https://github.com/deepmipt/dream/blob/feat/is_midas/skills/dff_book_sfc_skill/README.md#all-dialog-acts-available-for-use).
+
+#### Run
+Once you've designed your Discourse-Driven open-domain chatbot, you can run it:
+1. Open Terminal in the ```dream``` folder.
+2. Run ```docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml up --build```
+3. In a separate Terminal tab run:
+```
+docker-compose -f docker-compose.yml -f assistant_dists/dream_sfc/docker-compose.override.yml -f assistant_dists/dream_sfc/dev.yml -f assistant_dists/dream_sfc/local.yml exec agent python -m deeppavlov_agent.run -pl assistant_dists/dream_sfc/pipeline_conf.json
+```
+
+Provide any user id and type your response.
 
 ## Editing the Dialog Designer and its DFF Python Side by Side
 
