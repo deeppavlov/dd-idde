@@ -304,12 +304,15 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
         "Open.Give.Fact",
         "Open.Give.Opinion",
         "React.Rejoinder.Confront.Challenge.Counter",
+        "React.Rejoinder.Confront.Challenge.Detach",
+        "React.Rejoinder.Confront.Challenge.Rebound",
         "React.Rejoinder.Confront.Response.Re-challenge",
-        "React.Rejoinder.Support.Challenge.Rebound",
+        "React.Rejoinder.Support.Response.Resolve",
         "React.Rejoinder.Support.Track.Check",
         "React.Rejoinder.Support.Track.Clarify",
         "React.Rejoinder.Support.Track.Confirm",
         "React.Rejoinder.Support.Track.Probe",
+        "React.Respond.Confront.Reply.Contradict",
         "React.Respond.Confront.Reply.Disagree",
         "React.Respond.Confront.Reply.Disawow",
         "React.Respond.Support.Develop.Elaborate",
@@ -320,8 +323,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
         "React.Respond.Support.Reply.Acknowledge",
         "React.Respond.Support.Reply.Affirm",
         "React.Respond.Support.Reply.Agree",
-        "React.Rejoinder.Support.Response.Resolve",
-        "Sustain.Continue",
+        "React.Respond.Support.Response.Resolve",
         "Sustain.Continue.Monitor",
         "Sustain.Continue.Prolong.Elaborate",
         "Sustain.Continue.Prolong.Enhance",
@@ -367,20 +369,20 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
         var rp = require("request-promise");
 
         if (predictor === "sfc") {
-          var midasClasses: Array<string> = [];
+          let sfcClasses: Array<string> = [];
           speech_functions.forEach((sf) => {
-            midasClasses.push(sf);
+            sfcClasses.push(sf);
           });
           drawioEvt.cells.forEach((cel) => {
             var cel_sfc = cel.sfc.split(" ");
             console.log("celsfc", cel_sfc);
-            midasClasses.push(cel_sfc[0].replace(/^f?['"]/, "").replace(/['"]$/, ""));
+            sfcClasses.push(cel_sfc[0].replace(/^f?['"]/, "").replace(/['"]$/, ""));
           });
 
           var getReqOpts = {
             method: "POST",
             uri: this.sfc_url.get(),
-            body: midasClasses,
+            body: sfcClasses,
             json: true, // Automatically stringifies the body to JSON
           };
           rp(getReqOpts)
@@ -445,7 +447,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
               showDefaultSuggestions();
             });
         } else if (predictor === "midas") {
-          var midasClasses: Array<string> = drawioEvt.cells.map((cel) =>
+          let midasClasses: Array<string> = drawioEvt.cells.map((cel) =>
             cel.midas.replace(/^f?['"]/, "").replace(/['"]$/, "")
           );
           const getReqOpts = (classes: string[]) => ({
@@ -689,18 +691,20 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
     console.warn("seththis.setHtmlContent", node_info);
     const base_speech_functions = [
       "Open.Attend",
-      "Open.Demand.Fact",
-      "Open.Demand.Opinion",
-      "Open.Give.Fact",
-      "Open.Give.Opinion",
+      "Open.Initiate.Demand.Fact",
+      "Open.Initiate.Demand.Opinion",
+      "Open.Initiate.Give.Fact",
+      "Open.Initiate.Give.Opinion",
       "React.Rejoinder.Confront.Challenge.Counter",
+      "React.Rejoinder.Confront.Challenge.Detach",
+      "React.Rejoinder.Confront.Challenge.Rebound",
       "React.Rejoinder.Confront.Response.Re-challenge",
-      "React.Rejoinder.Support.Challenge.Rebound",
       "React.Rejoinder.Support.Response.Resolve",
       "React.Rejoinder.Support.Track.Check",
       "React.Rejoinder.Support.Track.Clarify",
       "React.Rejoinder.Support.Track.Confirm",
       "React.Rejoinder.Support.Track.Probe",
+      "React.Respond.Confront.Reply.Contradict",
       "React.Respond.Confront.Reply.Disagree",
       "React.Respond.Confront.Reply.Disawow",
       "React.Respond.Support.Develop.Elaborate",
@@ -711,7 +715,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       "React.Respond.Support.Reply.Acknowledge",
       "React.Respond.Support.Reply.Affirm",
       "React.Respond.Support.Reply.Agree",
-      "Sustain.Continue",
+      "React.Respond.Support.Response.Resolve",
       "Sustain.Continue.Monitor",
       "Sustain.Continue.Prolong.Elaborate",
       "Sustain.Continue.Prolong.Enhance",
