@@ -299,10 +299,10 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       const predictor = this.selected_predictor.get();
       const speech_functions = [
         "Open.Attend",
-        "Open.Demand.Fact",
-        "Open.Demand.Opinion",
-        "Open.Give.Fact",
-        "Open.Give.Opinion",
+        "Open.Initiate.Demand.Fact",
+        "Open.Initiate.Demand.Opinion",
+        "Open.Initiate.Give.Fact",
+        "Open.Initiate.Give.Opinion",
         "React.Rejoinder.Confront.Challenge.Counter",
         "React.Rejoinder.Confront.Challenge.Detach",
         "React.Rejoinder.Confront.Challenge.Rebound",
@@ -323,12 +323,20 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
         "React.Respond.Support.Reply.Acknowledge",
         "React.Respond.Support.Reply.Affirm",
         "React.Respond.Support.Reply.Agree",
-        "React.Respond.Support.Response.Resolve",
         "Sustain.Continue.Monitor",
         "Sustain.Continue.Prolong.Elaborate",
         "Sustain.Continue.Prolong.Enhance",
         "Sustain.Continue.Prolong.Extend",
       ];
+      const localSfc2Api = {
+        "Open.Initiate.Demand.Fact": "Open.Demand.Fact",
+        "Open.Initiate.Demand.Opinion": "Open.Demand.Opinion",
+        "Open.Initiate.Give.Fact": "Open.Give.Fact",
+        "Open.Initiate.Give.Opinion": "Open.Give.Opinion",
+      };
+      const apiSfc2Local: { [k: string]: string } = {};
+      Object.entries(localSfc2Api).forEach(([k, v]) => (apiSfc2Local[v] = k));
+      const sub = (el: string, map: { [k: string]: string }) => (el in map ? map[el] : el);
       let ts = Date.now();
       let delta = ts - this.ts;
 
@@ -378,6 +386,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
             console.log("celsfc", cel_sfc);
             sfcClasses.push(cel_sfc[0].replace(/^f?['"]/, "").replace(/['"]$/, ""));
           });
+          sfcClasses = sfcClasses.map((sfc) => sub(sfc, localSfc2Api));
 
           var getReqOpts = {
             method: "POST",
@@ -398,7 +407,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
                 predictions[j].forEach((pred: any) => {
                   if (Object.keys(pred).length > 0) {
                     curr_preds.push({
-                      sug: pred.prediction,
+                      sug: sub(pred.prediction, apiSfc2Local),
                       conf: pred.confidence,
                     });
                   }
@@ -415,7 +424,7 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
                 cel_preds.forEach((pred_: any) => {
                   if (Object.keys(pred_).length > 0) {
                     sug_sf.push({
-                      sug: pred_.prediction,
+                      sug: sub(pred_.prediction, apiSfc2Local),
                       conf: pred_.confidence,
                     });
                   }
@@ -715,7 +724,6 @@ export class DrawioClient<TCustomAction extends {} = never, TCustomEvent extends
       "React.Respond.Support.Reply.Acknowledge",
       "React.Respond.Support.Reply.Affirm",
       "React.Respond.Support.Reply.Agree",
-      "React.Respond.Support.Response.Resolve",
       "Sustain.Continue.Monitor",
       "Sustain.Continue.Prolong.Elaborate",
       "Sustain.Continue.Prolong.Enhance",
