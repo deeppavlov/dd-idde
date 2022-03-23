@@ -3,7 +3,7 @@
 	"private": true,
 	"displayName": "DF Designer",
 	"description": "Discourse-Driven Integrated Dialog Development Environment.",
-	"version": "0.2.58",
+	"version": "0.2.59",
 	"license": "GPL-3.0",
 	"publisher": "deeppavlov",
 	"keywords": [

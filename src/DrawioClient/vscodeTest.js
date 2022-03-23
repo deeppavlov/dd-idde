@@ -6,6 +6,7 @@ const localSfc2Api = {
   "Open.Initiate.Demand.Opinion": "Open.Demand.Opinion",
   "Open.Initiate.Give.Fact": "Open.Give.Fact",
   "Open.Initiate.Give.Opinion": "Open.Give.Opinion",
+  "React.Respond.Confront.Reply.Disawow": "React.Respond.Confront.Reply.Disavow",
 };
 const apiSfc2Local  = {};
 Object.entries(localSfc2Api).forEach(([k, v]) => (apiSfc2Local[v] = k));
