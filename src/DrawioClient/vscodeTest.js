@@ -1,6 +1,17 @@
 const vscode = acquireVsCodeApi();
 const nodeTitleField = document.getElementById('b');
 
+const localSfc2Api = {
+  "Open.Initiate.Demand.Fact": "Open.Demand.Fact",
+  "Open.Initiate.Demand.Opinion": "Open.Demand.Opinion",
+  "Open.Initiate.Give.Fact": "Open.Give.Fact",
+  "Open.Initiate.Give.Opinion": "Open.Give.Opinion",
+};
+const apiSfc2Local  = {};
+Object.entries(localSfc2Api).forEach(([k, v]) => (apiSfc2Local[v] = k));
+const sub = (el, map) => (el in map ? map[el] : el);
+const getExamples = (sfc) => window.SFCExamples[sub(sfc, localSfc2Api)]
+
 function saveAsPng(event) {
   if (window.nodeNames.includes(nodeTitleField.value)) return
   const input_elements = document.querySelectorAll('.formbuilder-text [name]')
@@ -47,9 +58,9 @@ const updateEx = (ev) => {
     examples.style.display = 'block'
     exTitle.style.display = 'block'
   }
-  if (val in window.SFCExamples) {
+  if (getExamples(val)) {
     console.warn('found example!')
-    examples.innerHTML = window.SFCExamples[val].map(l => `<p>${l}</p>`).join('\n')
+    examples.innerHTML = getExamples(val).map(l => `<p>${l}</p>`).join('\n')
   } else {
     examples.innerHTML = "---"
   }
