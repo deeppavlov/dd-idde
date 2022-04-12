@@ -83,7 +83,7 @@ class DictUpdate:
         return None, None
 
     def pop(
-        self, key: Union[str, cst.BaseExpression], _
+        self, key: Union[str, cst.BaseExpression], _, __
     ) -> Union[Tuple[None, None], Tuple[str, Optional[BaseUpdate]]]:
         if isinstance(key, (cst.Name, cst.SimpleString)):
             str_key = key.value
@@ -122,14 +122,21 @@ class ListUpdate:
     elements: List[BaseUpdate] = field(default_factory=list)
     allow_extra: bool = True
     order_significant: bool = True
+    reverse: bool = False
 
-    def pop(self, item: Union[BaseUpdate, cst.BaseExpression], idx=None):
+    def pop(self, item: Union[BaseUpdate, cst.BaseExpression], idx=None, neg_idx=None):
         if not self.order_significant:
             idx = next((i for i, el in enumerate(self.elements) if el == item), None)
-        if idx is not None and idx < len(self.elements):
-            return None, self.elements.pop(idx)
+        if self.reverse:
+            if neg_idx is not None and abs(neg_idx) <= len(self.elements):
+                return None, self.elements.pop(neg_idx)
+            else:
+                return None, None
         else:
-            return None, None
+            if idx is not None and idx < len(self.elements):
+                return None, self.elements.pop(idx)
+            else:
+                return None, None
 
     def __iter__(self):
         for i in range(len(self.elements)):
@@ -443,7 +450,7 @@ class NodeVisitor(m.MatcherDecoratableTransformer):
         new_elements = []
         for i, el in enumerate(node.elements):
             key = el.key if isinstance(el, cst.DictElement) else el.value
-            new_key_str, update = target.pop(key, i)
+            new_key_str, update = target.pop(key, i, i - len(node.elements))
             if new_key_str and isinstance(el, cst.DictElement):
                 if isinstance(el.key, cst.SimpleString):
                     if not new_key_str.startswith(('"', "'", "f'", 'f"')):

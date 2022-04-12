@@ -139,7 +139,7 @@ def graph2drawio(graph, valid_node_names):
         flow_name = esc(flow_name)
         for node_name, data in flow_data.items():
             if len(data['sfcs']) > 0:
-                sfcs = data['sfcs'][0]
+                sfcs = data['sfcs'][-1]
             else:
                 sfcs = ""
             midas = data['midas'] if data['midas'] else ""

@@ -87,7 +87,7 @@ def get_updated_nodes(nodes, edges):
         if sfc != "" or midas != "":
            updated[flow_name][node_key]["MISC"] = {}
         if sfc != "":
-            updated[flow_name][node_key]["MISC"]['"speech_functions"'] = ListUpdate([sfc], order_significant=True)
+            updated[flow_name][node_key]["MISC"]['"speech_functions"'] = ListUpdate([sfc], order_significant=True, reverse=True)
         if midas != "":
             updated[flow_name][node_key]["MISC"]['"dialog_act"'] = midas
             
